@@ -1,0 +1,108 @@
+#generalNav {
+  background-color:#333;
+  width:100% !important;
+}
+
+ul.dropdown-menu {
+  width:100%;
+}
+
+@media (min-width:400px) {
+  .navbar-toggle {
+    display:none !important;
+  }
+}
+
+@media (min-width:766px) {
+  #onlyPhoneNav {
+    display:none;
+  }
+}
+
+@media (max-width:765px) {
+  #onlyBigNav {
+    display:none;
+  }
+}
+
+.nav {
+  float:right;
+  padding-left:0;
+  list-style:none;
+}
+
+.navbar {
+  position:fixed;
+  margin-bottom:0px;
+  border:none;
+  box-shadow:none;
+  -webkit-box-shadow:none;
+  top:0;
+  width:100%;
+}
+
+.navbar-default {
+  background:none;
+  z-index:10;
+}
+
+.navbar-default .navbar-nav > li > a {
+  color:#800000;
+}
+
+.navbar-brand, .navbar-nav > li > a {
+  text-shadow:none;
+}
+
+.navbar-default .navbar-nav > li > a:focus, .navbar-default .navbar-nav > li > a:hover {
+  color:black;
+  background-color:transparent !important;
+  background:transparent;
+}
+
+.navbar-brand {
+  height:80px;
+  padding:0px;
+}
+
+.nav > li > a {
+  margin-top:30px;
+}
+
+.navbar-nav > li > a {
+  padding-top:0px;
+  padding-bottom:0px;
+  line-height:20px;
+}
+
+button.navbar-toggle {
+  border:none;
+  top:15px;
+}
+
+button.navbar-toggle:hover {
+  border:none;
+  top:15px;
+  background-color:transparent!important;
+}
+
+button.navbar-toggle:active {
+  border:none;
+  top:15px;
+  background-color:transparent!important;
+}
+
+button.navbar-toggle:focus {
+  border:none;
+  top:15px;
+  background-color:transparent!important;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+  background-color:white;
+}
+
+.navbar-default .navbar-collapse, .navbar-default .navbar-form {
+  border-color:transparent;
+}
+

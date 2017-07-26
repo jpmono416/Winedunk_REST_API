@@ -1,0 +1,17 @@
+eclipse.preferences.version=1
+encoding//WebContent/WEB-INF/templates/filtersPanel.jsp=UTF-8
+encoding//WebContent/WEB-INF/templates/footer.jsp=UTF-8
+encoding//WebContent/WEB-INF/templates/head.jsp=UTF-8
+encoding//WebContent/WEB-INF/templates/navbar.jsp=UTF-8
+encoding//WebContent/WEB-INF/templates/recommendedWines.jsp=UTF-8
+encoding//WebContent/WEB-INF/templates/script.jsp=UTF-8
+encoding//WebContent/WEB-INF/templates/sidePannelLinks.jsp=UTF-8
+encoding//WebContent/WEB-INF/views/aboutUs.jsp=UTF-8
+encoding//WebContent/WEB-INF/views/advertiseWithUs.jsp=UTF-8
+encoding//WebContent/WEB-INF/views/home.jsp=UTF-8
+encoding//WebContent/WEB-INF/views/login.jsp=UTF-8
+encoding//WebContent/WEB-INF/views/privacyPolicy.jsp=UTF-8
+encoding//WebContent/WEB-INF/views/product.jsp=UTF-8
+encoding//WebContent/WEB-INF/views/profile.jsp=UTF-8
+encoding//WebContent/WEB-INF/views/results.jsp=UTF-8
+encoding//WebContent/WEB-INF/views/termsOfService.jsp=UTF-8

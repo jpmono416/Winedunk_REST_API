@@ -1,0 +1,152 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <c:import url="../templates/head.jsp"/>
+    <c:import url="../templates/google_analytics.jsp"/>
+</head>
+
+<body style="background-color: #e7e7e7;">
+    <c:import url="../templates/navbar.jsp"/>
+    <c:import url="../templates/google_analytics.jsp"/>
+    <div class="modal fade" role="dialog" tabindex="-1" id="modal-register">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background:#f7f7f7;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="modal-body" style="background:#f7f7f7;">
+	                <div class="row">
+	                	<div class="col-xs-12">
+		                	<h3 class="text-center">Register now!</h3>
+			                <hr class="sep-bar">
+			                <p>Register now to Winedunk! You will enjoy lots of benefits being a member. <b>Join now!</b></p>
+			                <a href="http://www.winedunk.com/Login?action=signUp" style="float:right;" class="btn btn-primary btn-md redButton" type="submit">Register</a>
+	                	</div>
+	                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section id="top-section" style="padding-top:100px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-7 col-xs-12">
+                    <h2 class="text-center" id="user-comment"><em>Let Winedunk help you find the right wine</em></h2>
+                    <div class="card">
+                        <form id="search-form" action="Results" method="POST">
+                        	<input class="hidden" name="currentPage" value="1">
+						    <input class="hidden" name="lastSearch" value="">
+                            <div class="row">
+                                <div class="col-md-9 col-xs-12">
+                                    <input name="name" class="form-control input-md" type="text" placeholder="Find your wine">
+                                </div>
+                                <div class="col-xs-12 col-md-3">
+	                                <button class="btn btn-primary btn-block btn-md" type="submit" id="submitSearch"><i class="glyphicon glyphicon-search"></i> Find wines</button>
+                                </div>
+                                <div class="col-md-12">
+								    <a href="Results" class="btn btn-link" type="button" id="advancedSearch"><i class="glyphicon glyphicon-search"></i> Advanced search</a>
+								</div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!--  
+                <div class="col-sm-4 col-xs-12">
+                    <h2 class="text-center" id="user-comment"><em>"Great to find the best prices"</em></h2>
+                    <h2 class="text-center" id="user-comment"><span id="stars"><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i></span></h2>
+                </div>
+                 -->
+            </div>
+        </div>
+    </section>
+
+	<section>
+	    <h1 class="text-center" id="best-offers">Recommended Wines</h1>
+	    <hr class="sep-bar">
+	    <div class="container pictures-container">
+	        <div class="row articles">
+	        	<c:forEach items= "${sessionScope.recommendedWines}" var="i">
+					<div class="col-xs-12 col-sm-6 col-md-4 item">
+						<div class="card item">
+							<a href="Product?id=<c:out value="${ i.getId() }" />">
+								<div style="width:100%;height:170px;background:url(<c:out value = "${i.getImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
+							</a>
+							<div class="text-wrapper">
+								<a style="text-decoration: none;" href="Product?id=<c:out value="${ i.getId() }" />"><h3 style="color:#800000;" class="name"><c:out value="${i.getName()}"/></h3></a>
+								<p class="description"><c:out value="${i.getShortDescription()}"/>
+									<c:if test="${i.getShortDescription().length() == 169}">
+										<a href="Product?id=<c:out value="${ i.getId() }" />"> See more</a>
+									</c:if>
+								</p>
+								<div class="row" style="margin-top:15px; bottom:0px;">
+								<a style="text-decoration:none;" href="Product?id=<c:out value="${ i.getId() }" />" class="action">
+									<i class="glyphicon glyphicon-circle-arrow-right"></i>
+								</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</c:forEach>
+	        </div>
+	    </div>
+	</section>
+	
+	<c:if test="${ sessionScope.merchantsWithOffers != null }">
+		<c:forEach items="${ sessionScope.merchantsWithOffers }" var="merchant">
+			<section id="mid-section">
+				<h1 class="text-center" id="best-offers"><c:out value="${merchant.getName() }"/> - Best offers</h1>
+			    <hr class="sep-bar">
+			    <div class="container pictures-container">
+			    	<div class="row articles">
+				    	<c:forEach items= "${merchant.bestOffers}" var="offer">
+							<div class="col-xs-12 col-sm-6 col-md-4 item">
+								<div class="card item">
+									<form class="nopadding" id="<c:out value="${ offer.getId() }"/>Form" action="Results" method="POST">
+										<input type="hidden" id="chosenShop" name="chosenShop" value="<c:out value="${ merchant.getId() }"/>">
+										<a onclick="document.getElementById('<c:out value="${ offer.getId() }"/>Form').submit();">
+											<div style="width:100%;height:170px;background:url(<c:out value = "${offer.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
+										</a>
+										<div class="text-wrapper">
+											<a style="text-decoration: none;" onclick="document.getElementById('<c:out value="${ offer.getId() }"/>Form').submit();">
+												<h3 style="color:#800000;" class="name"><c:out value="${offer.getWineName()}"/></h3>
+											</a>
+											<p class="description"><c:out value="${offer.getWineShortDescription()}"/>
+												<c:if test="${offer.getWineShortDescription().length() == 169}">
+													<a onclick="document.getElementById('<c:out value="${ offer.getId() }"/>Form').submit();"> See more</a>
+												</c:if>
+											</p>
+											<div class="row" style="margin-top:15px; bottom:0px;">
+												<input type="hidden" value="<c:out value="${ merchant.getId() }"/>">
+												<a style="text-decoration:none;" onclick="document.getElementById('<c:out value="${ offer.getId() }"/>Form').submit();" class="action">
+													<i class="glyphicon glyphicon-circle-arrow-right"></i>
+												</a>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</c:forEach>
+			    	</div>
+				</div>
+		    </section>
+	    </c:forEach>
+	</c:if>
+	
+    <hr class="sep-bar">
+	<c:import url="../templates/footer.jsp"/>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/navbar-appear.js"></script>
+    <script>
+    	<c:if test="${requestScope.displayMessage == true}">
+    		setTimeout(showRegisterModal, 3000);
+    		function showRegisterModal() { $("#modal-register").modal('show'); }
+    	</c:if>
+    </script>
+</body>
+
+</html>
