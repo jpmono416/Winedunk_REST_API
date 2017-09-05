@@ -265,6 +265,7 @@ public class Home extends HttpServlet {
 										"inputName", "inputSurname", "registerInputEmail", "registerInputEmail2",
 										"inputPassword", "inputPassword2", "day", "month", "year"
 								};
+							
 							// Then set a variable for each one, to store what the user input was
 							for(String field : fields) { request.setAttribute("previous"+field, request.getParameter(field)); }
 							

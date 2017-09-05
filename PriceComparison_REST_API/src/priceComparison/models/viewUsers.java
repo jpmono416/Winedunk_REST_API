@@ -92,7 +92,11 @@ public class viewUsers {
     public String getRecoveringPassToken() { return recoveringPassToken; }
 	public void setRecoveringPassToken(String recoveringPassToken) { this.recoveringPassToken = recoveringPassToken; }
 	
-    private Boolean deleted;
+	private Boolean isAdmin;
+    public Boolean getIsAdmin() { return isAdmin; }
+	public void setIsAdmin(Boolean isAdmin) { this.isAdmin = isAdmin; }
+
+	private Boolean deleted;
     public Boolean isDeleted() {return deleted;}
     public void setDeleted(Boolean deleted) {this.deleted = deleted;}
 
@@ -122,5 +126,6 @@ public class viewUsers {
         this.loginPassword = null;
         this.loginToken = null;
         this.recoveringPassToken = null;
+        this.isAdmin = null;
     }
 }

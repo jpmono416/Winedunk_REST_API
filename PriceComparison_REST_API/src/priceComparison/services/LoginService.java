@@ -94,6 +94,7 @@ public class LoginService {
 	RequestsCreator requestCreator = new RequestsCreator();
 	JsonChecker jsonChecker = new JsonChecker();
 	GeneralService generalService = new GeneralService();
+	UserEmailAddressesService userEmailsService = new UserEmailAddressesService(); 
 	
 	public  LoginService() { }
 	
@@ -128,7 +129,7 @@ public class LoginService {
 		{
 			user = objectMapper.readValue(wholeResult, viewUsers.class);
 			//Compare passwords
-			 String userPassword = user.getLoginPassword();
+			String userPassword = user.getLoginPassword();
 			if (userPassword.equals(encryptedPassword)) { return true; }
 			
 			return false;
@@ -150,19 +151,15 @@ public class LoginService {
 		
 		//Check all required data is present
 		checkNotNull();
-		System.out.println("Null reached and passed. Errors: " + registerErrors.toString());
 		
 		// Validate email and check they match
 		emailsOK();
-		System.out.println("Emails reached and passed. Errors: " + registerErrors.toString());
 
 		// Check passwords are strong enough and match
 		passwordsOK();
-		System.out.println("PWs reached and passed. Errors: " + registerErrors.toString());
 
 		//Check the user is over 18 years old
 		isOverAged();
-		System.out.println("Date reached and passed. Errors: " + registerErrors.toString());
 
 		//Checking everything is fine
 		if(!registerErrors.isEmpty()) { System.out.println("Will return false"); return false; }
@@ -181,14 +178,14 @@ public class LoginService {
 		String relURL = "users?action=addUser";
 		Integer responseUserId = Integer.parseInt(requestCreator.createPostRequest(urlPath, relURL, userJsonString));
 		
-		//Check if user was created
+		//Check if user was created and add the email to the table of user emails
 		if(responseUserId <= 0) { registerErrors.add("userNotCreated"); return false; }
-		else 
-		{
-			cookieString = userJsonString;
-			LoginUser();
-			return true;
-		}
+		userEmailsService.setUrlPath(urlPath);
+		if(!userEmailsService.addEmailAddress(email)) {registerErrors.add("userNotCreated"); return false; }
+		
+		cookieString = userJsonString;
+		LoginUser();
+		return true;
 	}
 	
 	//Used to encrypt the password
@@ -265,10 +262,10 @@ public class LoginService {
 	
 	private String createJson(String hashedPassword, String loginToken)
 	{
-		
+		// TODO change this, use a userObject and set values with native methods
 		String userJsonString = 
 			"{"
-			+ "\"countryId\": 235,"
+			+ "\"countryId\": 484,"
 			+ "\"preferredCurrencyId\": 58,"
 			+ "\"preferredTimeZoneId\": 1,"
 			+ "\"preferredLanguageId\": 1,"

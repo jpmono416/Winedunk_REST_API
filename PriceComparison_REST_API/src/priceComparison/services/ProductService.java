@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
+import priceComparison.models.tblUserWineReviews;
+import priceComparison.models.tblUserWinesRatings;
 import priceComparison.models.viewWinePriceComparison;
 import priceComparison.models.viewWinesMinimumPrice;
 
@@ -19,6 +21,12 @@ public class ProductService {
 	
 	private viewWinesMinimumPrice wine;
  	public void setWine(viewWinesMinimumPrice wine) { this.wine = wine; }
+ 	
+ 	private tblUserWineReviews review;
+ 	public void setReview(tblUserWineReviews review) { this.review = review; }
+
+	private tblUserWinesRatings rating;
+	public void setRating(tblUserWinesRatings rating) { this.rating = rating; }
 
  	private List<viewWinePriceComparison> priceComparisonList;
 	public List<viewWinePriceComparison> getPriceComparisonList() { return priceComparisonList; }

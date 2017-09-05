@@ -47,10 +47,12 @@
                                 <div class="col-xs-12 col-md-3">
 	                                <button class="btn btn-primary btn-block btn-md" type="submit" id="submitSearch"><i class="glyphicon glyphicon-search"></i> Find wines</button>
                                 </div>
-                                <div class="col-md-12">
+                            </div>
+                            <div class="row">
+                            	<div class="col-md-12">
 								    <a href="Results" class="btn btn-link" type="button" id="advancedSearch"><i class="glyphicon glyphicon-search"></i> Advanced search</a>
 								</div>
-                            </div>
+							</div>
                         </form>
                     </div>
                 </div>

@@ -250,7 +250,7 @@ public class Profile extends HttpServlet {
 					
 					break;
 					
-					//TODO CODE ALL OF THIS
+					//TODO CODE ALL OF THIS - PERSONAL DETAILS OF THE USER
 				case "editDetails" : 
 					break;
 					

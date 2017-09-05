@@ -92,7 +92,7 @@ public class Results extends HttpServlet {
 			}	
 		} else { request.setAttribute("resultsList", session.getAttribute("sessionResults")); }
 		
-		if(amountOfPages.equals("")) { amountOfPages = 0; }
+		if(amountOfPages.equals("")) { amountOfPages = 0; } //TODO CHECK
 		
 		//Get recommended wines
 		try 

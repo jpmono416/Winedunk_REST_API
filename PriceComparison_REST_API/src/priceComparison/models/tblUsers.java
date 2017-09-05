@@ -47,6 +47,10 @@ public class tblUsers {
     private String recoveringPassToken;
     public String getRecoveringPassToken() { return recoveringPassToken; }
 	public void setRecoveringPassToken(String recoveringPassToken) { this.recoveringPassToken = recoveringPassToken; }
+	
+	private Boolean isAdmin;
+	public Boolean getIsAdmin() { return isAdmin; }
+	public void setIsAdmin(Boolean isAdmin) { this.isAdmin = isAdmin; }
 
     private Boolean deleted;
     public Boolean isDeleted() {return deleted;}
@@ -60,6 +64,7 @@ public class tblUsers {
         this.preferredPhoneNumber = null;
         this.DoB = null;
         this.recoveringPassEmail = null;
+        this.isAdmin = false;
         this.deleted = false;
         this.loginEmail = null;
         this.loginPassword = null;
@@ -67,14 +72,14 @@ public class tblUsers {
         this.recoveringPassToken = null;
     }
     public tblUsers(Integer id) { this.id = id; }
-	@Override
-	public String toString() {
-		return "{ \"id\" : \"" + id + "\", name\" : \"" + name + "\", preferredEmail\" : \"" + preferredEmail
-				+ "\", preferredPhoneNumber\" : \"" + preferredPhoneNumber + "\", DoB\" : \"" + DoB
-				+ "\", loginEmail\" : \"" + loginEmail + "\", loginPassword\" : \"" + loginPassword
-				+ "\", loginToken\" : \"" + loginToken + "\", recoveringPassEmail\" : \"" + recoveringPassEmail
-				+ "\", recoveringPassToken\" : \"" + recoveringPassToken + "\", deleted\" : \"" + deleted + " }";
-	}
 	
-    
+    @Override
+	public String toString() {
+		return "tblUsers { \"id\" : \"" + id + "\" , name\" : \"" + name + "\" , preferredEmail\" : \"" + preferredEmail
+				+ "\" , preferredPhoneNumber\" : \"" + preferredPhoneNumber + "\" , DoB\" : \"" + DoB
+				+ "\" , loginEmail\" : \"" + loginEmail + "\" , loginPassword\" : \"" + loginPassword
+				+ "\" , loginToken\" : \"" + loginToken + "\" , recoveringPassEmail\" : \"" + recoveringPassEmail
+				+ "\" , recoveringPassToken\" : \"" + recoveringPassToken + "\" , isAdmin\" : \"" + isAdmin
+				+ "\" , deleted\" : \"" + deleted + " }";
+	}
 }

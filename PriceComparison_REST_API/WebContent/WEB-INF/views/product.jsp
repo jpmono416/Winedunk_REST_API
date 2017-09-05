@@ -138,8 +138,8 @@
 									<div class="card settingsCard">
 										<h2 class="text-center">Lowest price:</h2>
 										<h3 class="text-center red-text" style="margin-top:0;"><fmt:formatNumber type="currency" value="${requestScope.wine.getMinimumPrice()}"/></h3>
-										<p class="text-center">At <c:out value="${requestScope.wine.getMinimumPriceShopName()}"/></p>
 										<hr class="sep-bar">
+										<p class="text-center">At <c:out value="${requestScope.wine.getMinimumPriceShopName()}"/></p>
 										<button class="btn btn-primary btn-block secondaryButton" id="toBasketButton" onclick="addToCart(<c:out value="${requestScope.wine.getWineId()}"/>)">To basket</button>
 										<button class="btn btn-primary btn-block secondaryButton" id="toFavouriteButton" onclick="addToFav(<c:out value="${requestScope.wine.getWineId()}"/>)"><i class="fa fa-heart linkIcon"></i>Add to favourites</button>
 										<a class="btn btn-primary btn-block redButton" target="_blank" style="text-decoration: none;" href="<c:out value="${requestScope.wine.getMinimumPriceDestinationURL() }"/>">Buy now</a>
@@ -148,18 +148,37 @@
 										<div id="successfulFavMessage" role="alert" class="alert alert-success" style="margin-top:10px; margin-bottom: 0; display:none;"><span><strong>Added to favourites!</strong></span></div>
 									</div>
 								</div>
-								<!--  REVIEWS
 								<div class="col-md-12">
 									<div class="card settingsCard">
+										<h2 class="text-center">Ratings </h2>
+										<hr class="sep-bar" />
 										<h1 class="text-center"><span id="stars"><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i></span></h1>
+										<p class="text-center">Based on 0 ratings</p>
+										<button class="btn btn-primary btn-block secondaryButton" type="button">See all ratings</button>
+										<a data-toggle="modal" data-target="#modal-giveRating" class="btn btn-primary btn-block redButton" type="button">Give a rating</a>
+										<c:if test="${ requestScope.hasRated == true }">
+											<div id="hasRated" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"
+											data-toggle="tooltip" title="To edit or delete the rating please refer to your profile page.">
+												<span><strong>You already gave a rating.</strong></span>
+											</div>
+										</c:if>
+									</div>
+								</div> 
+								<div class="col-md-12">
+									<div class="card settingsCard">
 										<h2 class="text-center">Reviews </h2>
 										<hr class="sep-bar" />
 										<p class="text-center">0 reviews</p>
-										<button class="btn btn-link btn-block" type="button">See all reviews</button>
-										<button class="btn btn-primary btn-block redButton" type="button">Write a review</button>
+										<a class="btn btn-primary btn-block secondaryButton" type="button">See all reviews</a>
+										<a data-toggle="modal" data-target="#modal-writeReview" class="btn btn-primary btn-block redButton" type="button">Write a review</a>
+										<c:if test="${ requestScope.hasReviewed == true }">
+											<div id="hasRated" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"
+											data-toggle="tooltip" title="To edit or delete the review please refer to your profile page.">
+												<span><strong>You already gave a review.</strong></span>
+											</div>
+										</c:if>
 									</div>
 								</div>
-								-->
 							</div>
                         </div>
                     </div>
@@ -169,7 +188,7 @@
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <div class="row">
-	                                        <h1 class="text-center"><c:out value="Price comparison"/></h1>
+	                                        <h1 class="text-center">Price comparison</h1>
 	                                		<hr class="sep-bar">
 	                                        <c:forEach items="${requestScope.priceComparisonList}" var="shop">
 	                                        	<div class="col-sm-4 col-xs-12 rightBar">
@@ -200,6 +219,30 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                    	<div class="col-xs-12">
+                    		<div class="card settingsCard">
+                    			<h1 class="text-center">All reviews</h1>
+	                            <hr class="sep-bar">
+                    		</div>
+                    	</div>
+                    	<c:forEach items="${ requestScope.reviewsList }" var="review">
+	                    	<div class="col-xs-12">
+	                    		<div data-aos="fade-up" data-aos-duration="800" data-aos-delay="50" data-aos-once="true" class="card settingsCard aos-init aos-animate">
+	                                <div class="row">
+	                                    <div class="col-xs-12">
+	                                        <h3 style="color:#800000;">Title of the review</h3>
+	                                    </div>
+	                                </div>
+	                                <div class="row">
+	                                    <div class="col-md-12">
+	                                        <p><c:out value="${ review.getComments() }"/></p>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                    	</div>
+                    	</c:forEach>
+                    </div>
                 </div>
             </div>
         </div>
@@ -223,15 +266,97 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" role="dialog" tabindex="-1" id="modal-giveRating">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background:#f7f7f7;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="modal-body" style="background:#f7f7f7;">
+	                <div class="row">
+	                	<div class="col-xs-12">
+		                	<h3 class="text-center">Give a rating</h3>
+			                <hr class="sep-bar">
+			                <form method="POST" action="Product">
+								<h1 class="text-center">
+			                	<span id="formStars">
+			                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar1" class="glyphicon glyphicon-star"></i>
+			                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar2" class="glyphicon glyphicon-star"></i>
+			                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar3" class="glyphicon glyphicon-star"></i>
+			                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar4" class="glyphicon glyphicon-star"></i>
+			                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar5" class="glyphicon glyphicon-star"></i>
+			                	</span>
+				                </h1>
+				                <input type="hidden" id="ratingValue" name="ratingValue">
+				                <input name="wineId" value="${requestScope.wine.getWineId()}" type="hidden">
+				                <input name="formChosen" value="ratingsForm" type="hidden">
+				                <p>Why don't you provide some more information to this rating with a short <span style="color:#800000"><strong>review</strong></span>? <a id="showReviewsInput" style="cursor: pointer;"> Do it!</a></p>
+				                <textarea placeholder="Enter your review" rows="3" id="reviewsOnRatingForm" name="reviewsOnRatingForm" class="form-control" style="display:none; margin-bottom:10px;"></textarea>
+				                <button style="float:right;" class="btn btn-primary btn-md redButton" type="submit">Submit </button>			                
+			                </form>
+	                	</div>
+	                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" role="dialog" tabindex="-1" id="modal-writeReview">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background:#f7f7f7;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="modal-body" style="background:#f7f7f7;">
+	                <div class="row">
+	                	<div class="col-xs-12">
+		                	<h3 class="text-center">Write review</h3>
+			                <hr class="sep-bar">
+			                <form method="POST" action="Product">
+								<textarea id="reviewText" name="reviewText" class="form-control" placeholder="Enter your review" rows="3"></textarea>
+				                <p>Why don't you complete your review by giving it a <span style="color:#800000"><strong>rating</strong></span> as well? <a id="showRatingInput" style="cursor: pointer;">Do it!</a></p>
+				                <h1 class="text-center" style="display:none;" id="ratingStarsOnReviews">
+				                	<span id="formStars">
+				                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="reviewsStar1" class="glyphicon glyphicon-star"></i>
+				                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="reviewsStar2" class="glyphicon glyphicon-star"></i>
+				                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="reviewsStar3" class="glyphicon glyphicon-star"></i>
+				                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="reviewsStar4" class="glyphicon glyphicon-star"></i>
+				                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="reviewsStar5" class="glyphicon glyphicon-star"></i>
+				                	</span>
+				                </h1>
+				                <input id="ratingOnReviewsForm" name="ratingOnReviewsForm" type="hidden">
+				                <input name="wineId" value="${requestScope.wine.getWineId()}" type="hidden">
+				                <input name="formChosen" value="reviewsForm" type="hidden">
+				                <button style="float: right;" class="btn btn-primary btn-md redButton" type="submit">Submit </button>			                
+			                </form>
+	                	</div>
+	                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="sep-bar">
+   	<c:import url="../templates/footer.jsp"/>
+	<script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/populate-inputs.js"></script>
     <script>
     	
+	    /*
+	    	This script handles the addition of a wine to favourites or basket
+	    	And manages the feedback message the user receives.
+	    */
+	    
 	    function addToCart(wineId)
 	   	{ 
 	   		var id = wineId;
 	   		$.ajax({
                url:'Product',
                type:'POST',
-               data: { wineId : id },
+               data: 
+               { 
+            	   wineId : id,
+            	   formChosen : 'basketForm'
+               },
                success : function(data)
                {
             	   $('#toBasketButton').animate({
@@ -239,11 +364,6 @@
             	   });
             	   
             	   $('#successfulMessage').fadeIn();
-            	   
-            	   if(data.length == 1)
-           		   {
-           		   	
-           		   }
                },
                error: function() 
                {
@@ -279,7 +399,6 @@
             	   } else
            		   {
             		   $("#modal-register").modal('show');
-            		   alert('modal?');
            		   }
                },
                error: function() 
@@ -292,14 +411,75 @@
                }
              });
 	   	}
-	    
     </script>
-    <hr class="sep-bar">
-   	<c:import url="../templates/footer.jsp"/>
-	<script src="assets/js/jquery.min.js"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/populate-inputs.js"></script>
+    <script>
+    
+    	/*
+    		This script is used for handling the hidden inputs
+    		on the modal forms of the reviews and the ratings
+    	*/
+    	
+   		$('#showRatingInput').click(function(){
+   			$('#ratingStarsOnReviews').fadeIn();
+   		});
+       	
+       	$('#showReviewsInput').click(function(){
+   			$('#reviewsOnRatingForm').fadeIn();
+   		});    		
+       	
+    </script>
+    <script>
+    	
+    	/*
+    		This function controls the colouring of the rating stars on hover.
+    		It gets the star that's hovered over and illuminates up to it.
+    	*/
+    	
+    	var defaultName;
+    	var elemId;
+    	
+    	function illuminateStars(elem)
+    	{
+   			defaultName = elem.getAttribute('id').slice(0, -1);
+   			elemId = elem.getAttribute('id').slice(-1)
+   			
+   			var i = 0;
+    		for(i = 1; i <= 5; i++)
+   			{
+    			var star = document.getElementById(defaultName + i);
+    			if(i > elemId) { star.setAttribute("style", "color: #bdc3c7"); } 
+    			else { star.setAttribute("style", "color: #f1c40f"); }
+   			}
+    	}
+    
+    	/*
+	   		This function is used for populating the hidden inputs
+	   		of the rating value. It populates both hidden inputs 
+	   		on both forms, since it can be called from either set of stars.
+	   		It also blocks the appropiate colour of the stars so they don't
+	   		change colour on mouse hover.
+		*/
+	
+		function populateRating(elem)
+	   	{
+   			defaultName = elem.getAttribute('id').slice(0, -1);
+   			elemId = elem.getAttribute('id').slice(-1)
+   			var i = 0;
+    		for(i = 1; i <= 5; i++)
+   			{
+    			var star = document.getElementById(defaultName + i);
+    			star.removeAttribute("onmouseover");
+    			/* if(i > elemId) { star.setAttribute("style", "color: #bdc3c7 !important;"); } 
+    			else { star.setAttribute("style", "color: #f1c40f !important;"); } */
+   			}
+    		
+    		document.getElementById("ratingOnReviewsForm").value = elemId;
+    		document.getElementById("ratingValue").value = elemId;
+	   	}
+    	
+    </script>
     <c:import url="../templates/script.jsp"/>
+    <c:import url="../templates/enableTooltips.jsp"/>
 </body>
 
 </html>
