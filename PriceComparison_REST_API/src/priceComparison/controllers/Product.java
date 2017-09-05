@@ -238,7 +238,6 @@ public class Product extends HttpServlet {
 								rating.setUserId(userId);
 								rating.setRating(Integer.parseInt(request.getParameter("ratingOnReviewsForm")));
 								rating.setWineId(Integer.parseInt(request.getParameter("wineId")));
-								
 								try 
 								{
 									if(ratingsService.addRating(rating)) 
