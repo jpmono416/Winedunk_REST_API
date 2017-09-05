@@ -2,7 +2,6 @@ package priceComparison.controllers;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -100,12 +99,22 @@ public class Product extends HttpServlet {
 		try { resultsService.loadFilters(request); } 
 		catch (Exception e) { e.printStackTrace(); }
 		
+		
+		
 		// Load reviews
 		try 
-		{ 
-			List<tblUserWineReviews> reviews = reviewsService.getReviewsForWine(Integer.parseInt(wineId));
-			if(reviews != null) { request.setAttribute("reviewsList", reviews); }
+		{
+			Integer countOfReviews = reviewsService.getCountForWine(Integer.parseInt(wineId)); 
+			if( countOfReviews > 0)
+			{
+				request.setAttribute("amountOfReviews", countOfReviews);
+				List<tblUserWineReviews> reviews = reviewsService.getReviewsForWine(Integer.parseInt(wineId));
+				if(reviews != null) { request.setAttribute("reviewsList", reviews); }
+			}
+			
 		} catch (Exception e) { e.printStackTrace(); }
+		
+		
 		
 		try
 		{
@@ -199,8 +208,10 @@ public class Product extends HttpServlet {
 					
 					if(isLoggedIn == null || isLoggedIn == false)
 					{
-						response.getWriter().write("False");
-						return; //TODO WHAT IF NOT?
+						request.setAttribute("id", request.getParameter("wineId"));
+						request.setAttribute("userNotRegisteredReview", true);
+						doGet(request, response);
+						return;
 					}
 					
 					// Get the user logged in
@@ -210,19 +221,26 @@ public class Product extends HttpServlet {
 					
 					if(request.getParameter("reviewText") == null || request.getParameter("reviewText").equals(""))
 					{
-						response.sendError(HttpServletResponse.SC_BAD_REQUEST); 
-						return; //TODO WHAT IF NOT?
+						if(request.getParameter("reviewTitle") == null || request.getParameter("reviewTitle").equals(""))
+						{
+							request.setAttribute("blanReview", true);
+							request.setAttribute("id", request.getParameter("wineId"));
+							doGet(request, response);
+							return;
+						}
 					}
 					
+					// Check if the user has previously reviewed the wine
 					if(reviewsService.hasReviewed(userId, Integer.parseInt(request.getParameter("wineId"))))
 					{
-						request.setAttribute("hasReviewed", true); // TODO CHECK FOR THIS ATTRIBUTE ON THE INTERFACE
+						request.setAttribute("hasReviewed", true);
 						request.setAttribute("id", request.getParameter("wineId"));
 						doGet(request, response);
 						return;
 					}
 					
 					review.setNumericUserId(userId);
+					review.setTitle(request.getParameter("reviewTitle"));
 					review.setNumericWineId(Integer.parseInt(request.getParameter("wineId")));
 					review.setComments(request.getParameter("reviewText"));
 					
@@ -232,25 +250,29 @@ public class Product extends HttpServlet {
 						// Try  to add the review
 						if(reviewsService.addReview(review)) 
 						{ 
+							request.setAttribute("reviewSuccessful", true);
+							
 							// Check if the user has entered any rating as well and persist it to the DB separately
-							if(request.getParameter("ratingOnReviewsForm") != null && !request.getParameter("ratingOnReviewsForm").equals(""))
+							if(!ratingsService.hasRated(userId, Integer.parseInt(request.getParameter("wineId"))))
 							{
-								rating.setUserId(userId);
-								rating.setRating(Integer.parseInt(request.getParameter("ratingOnReviewsForm")));
-								rating.setWineId(Integer.parseInt(request.getParameter("wineId")));
+								if(request.getParameter("ratingOnReviewsForm") == null 
+										|| request.getParameter("ratingOnReviewsForm").equals("")) { break; }
+								
 								try 
 								{
-									if(ratingsService.addRating(rating)) 
-									{ 
-										request.setAttribute("id", request.getParameter("wineId"));
-										doGet(request, response);
-										return;
-									}
+									rating.setUserId(userId);
+									rating.setRating(Integer.parseInt(request.getParameter("ratingOnReviewsForm")));
+									rating.setWineId(Integer.parseInt(request.getParameter("wineId")));
+									
+									// Try to add the rating
+									if(ratingsService.addRating(rating)) { request.setAttribute("ratingSuccessful", true); }
 								} catch (Exception e) { e.printStackTrace(); }
-							}
-								request.setAttribute("id", request.getParameter("wineId"));
-								doGet(request, response);
-								return;
+							} else { request.setAttribute("hasRated", true); }
+							
+							// Set relevant parameters and reload page
+							request.setAttribute("id", request.getParameter("wineId"));
+							doGet(request, response);
+							return;
 						}
 					} catch (Exception e) { e.printStackTrace(); }
 					
@@ -270,8 +292,10 @@ public class Product extends HttpServlet {
 					
 					if(isLoggedIn == null || isLoggedIn == false)
 					{
-						response.getWriter().write("False");
-						return; //TODO WHAT IF NOT?
+						request.setAttribute("id", request.getParameter("wineId"));
+						request.setAttribute("userNotRegisteredRating", true);
+						doGet(request, response);
+						return;
 					}
 
 					// Get the user logged in
@@ -281,13 +305,15 @@ public class Product extends HttpServlet {
 					
 					if(request.getParameter("ratingValue") == null ||request.getParameter("ratingValue").equals(""))
 					{
-						response.sendError(HttpServletResponse.SC_BAD_REQUEST); 
-						return; //TODO WHAT IF NOT?
+						request.setAttribute("blankRating", true);
+						request.setAttribute("id", request.getParameter("wineId"));
+						doGet(request, response);
+						return;
 					}
 					
-					if(ratingsService.hasReviewed(userId, Integer.parseInt(request.getParameter("wineId"))))
+					if(ratingsService.hasRated(userId, Integer.parseInt(request.getParameter("wineId"))))
 					{
-						request.setAttribute("hasRated", true); // TODO CHECK FOR THIS ATTRIBUTE ON THE INTERFACE
+						request.setAttribute("hasRated", true);
 						request.setAttribute("id", request.getParameter("wineId"));
 						doGet(request, response);
 						return;
@@ -298,27 +324,30 @@ public class Product extends HttpServlet {
 					rating.setWineId(Integer.parseInt(request.getParameter("wineId")));
 					
 					try {
-						
 						if(ratingsService.addRating(rating)) 
 						{ 
-							
-							if(request.getParameter("reviewsOnRatingForm") != null && !request.getParameter("reviewsOnRatingForm").equals(""))
+							request.setAttribute("ratingSuccessful", true);
+							// Check if the user has previously reviewed the wine
+							if(!reviewsService.hasReviewed(userId, Integer.parseInt(request.getParameter("wineId"))))
 							{
-								
-								review.setNumericUserId(userId);
-								review.setNumericWineId(Integer.parseInt(request.getParameter("wineId")));
-								review.setComments(request.getParameter("reviewsOnRatingForm"));
+								// Check if the user has entered review details
+								if(request.getParameter("reviewsOnRatingForm") == null || request.getParameter("reviewsOnRatingForm").equals(""))
+								{
+									if(request.getParameter("reviewTitleOnRatingForm") == null 
+											|| request.getParameter("reviewTitleOnRatingForm").equals("")) { break; }
+								}
 								
 								try
 								{
-									if(reviewsService.addReview(review))
-									{
-										request.setAttribute("id", request.getParameter("wineId"));
-										doGet(request, response);
-										return;
-									}
+									review.setNumericUserId(userId);
+									review.setTitle(request.getParameter("reviewTitleOnRatingForm"));
+									review.setNumericWineId(Integer.parseInt(request.getParameter("wineId")));
+									review.setComments(request.getParameter("reviewsOnRatingForm"));
+									
+									// Save the review
+									if(reviewsService.addReview(review)) { request.setAttribute("reviewSuccessful", true); }
 								} catch(Exception e) { e.printStackTrace(); }
-							}
+							} else { request.setAttribute("hasReviewed", true); }
 							
 							request.setAttribute("id", request.getParameter("wineId"));
 							doGet(request, response);

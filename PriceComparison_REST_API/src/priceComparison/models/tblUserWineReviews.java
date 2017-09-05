@@ -35,7 +35,7 @@ public class tblUserWineReviews {
     {
         this.id = null;
         this.addedDate = null;
-        // this.title = null;
+        this.title = null;
         this.comments = null;
         this.numericUserId = null;
         this.numericWineId = null;

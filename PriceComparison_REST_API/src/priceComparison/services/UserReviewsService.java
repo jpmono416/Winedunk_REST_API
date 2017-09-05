@@ -89,4 +89,12 @@ public class UserReviewsService {
 	   	
 	   	return resultsList;
 	}
+	
+	public Integer getCountForWine(Integer wineId) throws IOException
+	{
+		String relURL = "userWineReviews?action=getAmountOfReviewsForWine";
+		String response = requestCreator.createPostRequest(urlPath, relURL, wineId.toString());
+		
+		return Integer.parseInt(response);
+	}
 }

@@ -17,9 +17,9 @@ public class UserRatingsService {
 	public void setUrlPath(String urlPath) { this.urlPath = urlPath; }
 
 	
-	public Boolean hasReviewed(Integer userId, Integer wineId) throws IOException
+	public Boolean hasRated(Integer userId, Integer wineId) throws IOException
 	{
-		String relURL = "userWineRatings?action=checkUserHasReviewed";
+		String relURL = "userWineRatings?action=checkUserHasRated";
 		String response = requestCreator.createPostRequest(urlPath, relURL, userId + "," + wineId);
 		if(response.equalsIgnoreCase("true")) { return true; }
 		return false;
@@ -51,4 +51,13 @@ public class UserRatingsService {
     	if(!response.equalsIgnoreCase("true")) { return false; }
     	return true;
     }
+	
+	public Integer getCountForWine(Integer wineId) throws IOException
+	{
+		/* String relURL = "userWineReviews?action=getAmountOfReviewsForWine";
+		String response = requestCreator.createPostRequest(urlPath, relURL, wineId.toString());
+		
+		return Integer.parseInt(response); */
+		return null;
+	}
 }

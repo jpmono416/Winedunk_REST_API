@@ -162,20 +162,40 @@
 												<span><strong>You already gave a rating.</strong></span>
 											</div>
 										</c:if>
+										<c:if test="${ requestScope.ratingSuccessful == true }">
+											<div id="ratingSuccessful" role="alert" class="alert alert-success" style="margin-top:10px; margin-bottom: 0;"><span><strong>Rating saved!</strong></span></div>
+										</c:if>
+										<c:if test="${ requestScope.blankRating == true }">
+											<div id="blankRating" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span><strong>Please click a star!</strong></span></div>
+										</c:if>
+										<c:if test="${ requestScope.userNotRegisteredRating == true }">
+											<div  id="userNotRegisteredRating" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span><strong>Please <a href="http://winedunk.com/Login?action=signUp">register</a>!</strong></span></div>
+										</c:if>
 									</div>
 								</div> 
 								<div class="col-md-12">
 									<div class="card settingsCard">
 										<h2 class="text-center">Reviews </h2>
 										<hr class="sep-bar" />
-										<p class="text-center">0 reviews</p>
-										<a class="btn btn-primary btn-block secondaryButton" type="button">See all reviews</a>
+										<c:if test="${ requestScope.amountOfReviews > 0 }">
+											<p class="text-center"><c:out value="${ requestScope.amountOfReviews }" /> review<c:if test="${ requestScope.amountOfReviews > 1 }">s</c:if></p>
+											<a class="btn btn-primary btn-block secondaryButton" type="button">See all reviews</a>
+										</c:if>
 										<a data-toggle="modal" data-target="#modal-writeReview" class="btn btn-primary btn-block redButton" type="button">Write a review</a>
 										<c:if test="${ requestScope.hasReviewed == true }">
 											<div id="hasRated" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"
 											data-toggle="tooltip" title="To edit or delete the review please refer to your profile page.">
 												<span><strong>You already gave a review.</strong></span>
 											</div>
+										</c:if>
+										<c:if test="${ requestScope.reviewSuccessful == true }">
+											<div id="reviewSuccessful" role="alert" class="alert alert-success" style="margin-top:10px; margin-bottom: 0;"><span><strong>Review saved!</strong></span></div>
+										</c:if>
+										<c:if test="${ requestScope.blanReview == true }">
+											<div id="blanReview" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span><strong>Please enter a title or comment!</strong></span></div>
+										</c:if>
+										<c:if test="${ requestScope.userNotRegisteredReview == true }">
+											<div id="userNotRegisteredReview" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span><strong>Please <a href="http://winedunk.com/Login?action=signUp">register</a>!</strong></span></div>
 										</c:if>
 									</div>
 								</div>
@@ -219,30 +239,37 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                    	<div class="col-xs-12">
-                    		<div class="card settingsCard">
-                    			<h1 class="text-center">All reviews</h1>
-	                            <hr class="sep-bar">
-                    		</div>
-                    	</div>
-                    	<c:forEach items="${ requestScope.reviewsList }" var="review">
+                    <c:if test="${ requestScope.amountOfReviews > 0 }">
+	                    <div class="row">
 	                    	<div class="col-xs-12">
-	                    		<div data-aos="fade-up" data-aos-duration="800" data-aos-delay="50" data-aos-once="true" class="card settingsCard aos-init aos-animate">
-	                                <div class="row">
-	                                    <div class="col-xs-12">
-	                                        <h3 style="color:#800000;">Title of the review</h3>
-	                                    </div>
-	                                </div>
-	                                <div class="row">
-	                                    <div class="col-md-12">
-	                                        <p><c:out value="${ review.getComments() }"/></p>
-	                                    </div>
-	                                </div>
-	                            </div>
+	                    		<div class="card settingsCard">
+	                    			<h1 class="text-center">All reviews</h1>
+		                            <hr class="sep-bar">
+	                    		</div>
 	                    	</div>
-                    	</c:forEach>
-                    </div>
+	                    	<c:forEach items="${ requestScope.reviewsList }" var="review">
+		                    	<div class="col-xs-12">
+		                    		<div data-aos="fade-up" data-aos-duration="800" data-aos-delay="50" data-aos-once="true" class="card settingsCard aos-init aos-animate">
+		                                <c:if test="${ review.getTitle() != null && !review.getTitle().equals('') }">
+			                                <div class="row">
+			                                    <div class="col-xs-12">
+			                                        <h3 style="color:#800000;"><c:out value="${ review.getTitle() }"/></h3>
+			                                    </div>
+			                                </div>
+		                                </c:if>
+		                                <c:if test="${ review.getComments() != null && !review.getComments().equals('') }">
+			                                <div class="row">
+			                                    <div class="col-md-12">
+			                                        <p><c:out value="${ review.getComments() }"/></p>
+			                                    </div>
+			                                </div>
+		                                </c:if>
+		                            </div>
+		                    	</div>
+	                    	</c:forEach>
+	                    </div>
+                    </c:if>
+                    
                 </div>
             </div>
         </div>
@@ -291,6 +318,7 @@
 				                <input name="wineId" value="${requestScope.wine.getWineId()}" type="hidden">
 				                <input name="formChosen" value="ratingsForm" type="hidden">
 				                <p>Why don't you provide some more information to this rating with a short <span style="color:#800000"><strong>review</strong></span>? <a id="showReviewsInput" style="cursor: pointer;"> Do it!</a></p>
+				                <input class="form-control" id="reviewTitleOnRatingForm" name="reviewTitleOnRatingForm" placeholder="Give it a short title!" style="display:none; margin-bottom:10px;">
 				                <textarea placeholder="Enter your review" rows="3" id="reviewsOnRatingForm" name="reviewsOnRatingForm" class="form-control" style="display:none; margin-bottom:10px;"></textarea>
 				                <button style="float:right;" class="btn btn-primary btn-md redButton" type="submit">Submit </button>			                
 			                </form>
@@ -312,6 +340,7 @@
 		                	<h3 class="text-center">Write review</h3>
 			                <hr class="sep-bar">
 			                <form method="POST" action="Product">
+			                	<input class="form-control" style="margin-bottom: 10px;" id="reviewTitle" name="reviewTitle" placeholder="Give it a short title!">
 								<textarea id="reviewText" name="reviewText" class="form-control" placeholder="Enter your review" rows="3"></textarea>
 				                <p>Why don't you complete your review by giving it a <span style="color:#800000"><strong>rating</strong></span> as well? <a id="showRatingInput" style="cursor: pointer;">Do it!</a></p>
 				                <h1 class="text-center" style="display:none;" id="ratingStarsOnReviews">
@@ -424,7 +453,8 @@
    		});
        	
        	$('#showReviewsInput').click(function(){
-   			$('#reviewsOnRatingForm').fadeIn();
+       		$('#reviewTitleOnRatingForm').fadeIn();
+       		$('#reviewsOnRatingForm').fadeIn();
    		});    		
        	
     </script>
