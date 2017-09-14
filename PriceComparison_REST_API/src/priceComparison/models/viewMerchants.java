@@ -30,7 +30,7 @@ public class viewMerchants {
 	
 	public List<viewBestOffersbyMerchants> bestOffers;
 	public List<viewBestOffersbyMerchants> getBestOffers() { return bestOffers; }
-	public void setBestOffers(List<viewBestOffersbyMerchants> bestOffers) { 	this.bestOffers = bestOffers; }
+	public void setBestOffers(List<viewBestOffersbyMerchants> bestOffers) { this.bestOffers = bestOffers; }
 	
 	public viewMerchants(Integer id) { this.id = id; } 
 	public viewMerchants() 

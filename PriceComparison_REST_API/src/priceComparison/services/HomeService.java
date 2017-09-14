@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import priceComparison.models.viewBestOffersbyMerchants;
+import priceComparison.models.viewBestOffersbyWineTypes;
 import priceComparison.models.viewRecommendedWines;
 
 public class HomeService {
@@ -43,7 +44,7 @@ public class HomeService {
 		return resultsList;
 	}
 	
-	public List<viewBestOffersbyMerchants> getBestOffers(Integer merchantId) throws IOException
+	public List<viewBestOffersbyMerchants> getBestOffersByMerchant(Integer merchantId) throws IOException
 	{
 		String relURL = "bestOffersByMerchantView?action=getOffersForMerchant&id=" + merchantId;
 		String offersResponse = requestCreator.createGetRequest(crudURL, relURL);
@@ -62,6 +63,28 @@ public class HomeService {
 				return bestOffers;
 	    	}
     	}
+		return null;
+	}
+	
+	public List<viewBestOffersbyWineTypes> getBestOffersByWineType(Integer wineTypeId) throws IOException
+	{
+		String relURL = "bestOffersByWineTypeView?action=getOffersForWineType&id=" + wineTypeId;
+		String offersResponse = requestCreator.createGetRequest(crudURL, relURL);
+		ObjectMapper mapper = new ObjectMapper();
+		
+		if(offersResponse != null && !offersResponse.equals(""))
+		{
+			JsonNode offersJson = mapper.readTree(offersResponse);
+	    	if(offersJson == null) { return null; }
+	    	else
+	    	{
+	    		@SuppressWarnings("unchecked")
+				List<viewBestOffersbyWineTypes> bestOffers =  
+		    			(List<viewBestOffersbyWineTypes>) mapper.treeToValue(offersJson, viewBestOffersbyMerchants.class);
+				
+				return bestOffers;
+	    	}
+		}
 		return null;
 	}
 }

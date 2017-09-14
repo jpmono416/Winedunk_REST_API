@@ -10,6 +10,7 @@
 </head>
 
 <body style="background-color: #e7e7e7;">
+	<img class="hidden" src="assets/img/+.jpg">
     <c:import url="../templates/navbar.jsp"/>
     <c:import url="../templates/google_analytics.jsp"/>
     <div class="modal fade" role="dialog" tabindex="-1" id="modal-register">
@@ -107,37 +108,170 @@
 				    	<c:forEach items= "${merchant.bestOffers}" var="offer">
 							<div class="col-xs-12 col-sm-6 col-md-4 item">
 								<div class="card item">
-									<form class="nopadding" id="<c:out value="${ offer.getId() }"/>Form" action="Results" method="POST">
-										<input type="hidden" id="chosenShop" name="chosenShop" value="<c:out value="${ merchant.getId() }"/>">
-										<a onclick="document.getElementById('<c:out value="${ offer.getId() }"/>Form').submit();">
-											<div style="width:100%;height:170px;background:url(<c:out value = "${offer.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
+									<a href="Product?id=<c:out value="${ offer.getWineId() }"/>">
+										<div style="width:100%;height:170px;background:url(<c:out value = "${offer.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
+									</a>
+									<div class="text-wrapper">
+										<a style="text-decoration: none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>">
+											<h3 style="color:#800000;" class="name"><c:out value="${offer.getWineName()}"/></h3>
 										</a>
-										<div class="text-wrapper">
-											<a style="text-decoration: none;" onclick="document.getElementById('<c:out value="${ offer.getId() }"/>Form').submit();">
-												<h3 style="color:#800000;" class="name"><c:out value="${offer.getWineName()}"/></h3>
+										<p class="description"><c:out value="${offer.getWineShortDescription()}"/>
+											<c:if test="${offer.getWineShortDescription().length() == 169}">
+												<a href="Product?id=<c:out value="${ offer.getWineId() }"/>"> See more</a>
+											</c:if>
+										</p>
+										<div class="row" style="margin-top:15px; bottom:0px;">
+											<a style="text-decoration:none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>" class="action">
+												<i class="glyphicon glyphicon-circle-arrow-right"></i>
 											</a>
-											<p class="description"><c:out value="${offer.getWineShortDescription()}"/>
-												<c:if test="${offer.getWineShortDescription().length() == 169}">
-													<a onclick="document.getElementById('<c:out value="${ offer.getId() }"/>Form').submit();"> See more</a>
-												</c:if>
-											</p>
-											<div class="row" style="margin-top:15px; bottom:0px;">
-												<input type="hidden" value="<c:out value="${ merchant.getId() }"/>">
-												<a style="text-decoration:none;" onclick="document.getElementById('<c:out value="${ offer.getId() }"/>Form').submit();" class="action">
-													<i class="glyphicon glyphicon-circle-arrow-right"></i>
-												</a>
-											</div>
 										</div>
-									</form>
+									</div>
 								</div>
 							</div>
 						</c:forEach>
+						<div class="col-xs-12 col-sm-6 col-md-4 item">
+							<div class="card item">
+								<form class="nopadding" id="<c:out value="${ merchant.getId() }"/>Form" action="Results" method="POST">
+									<input type="hidden" id="chosenShop" name="chosenShop" value="<c:out value="${ merchant.getId() }"/>">
+									<a onclick="document.getElementById('<c:out value="${ merchant.getId() }"/>Form').submit();">
+										<div class="opacityDiv" style="width:100%;height:170px;background:url(https://tqbezw.dm2304.livefilestore.com/y4m7ImibB8RghV-NvoPSEWTgE7iHpyoKD8g7ubiIuhCkdJb16QKVw6cWSuio5dbn52nNCCOCGyGfoUAuUDi-VhM8Rau4ITh2Qw5GmbWfIT6qI104pntVSZWEqoGx6RE1KhCKM_9jCN-fPKBeUJ5KEwSsWc4BhNiWLS5E1cc3lKsuUJJKLo78B_v7OPu3NwLVfag?width=454&height=255&cropmode=none) no-repeat center center;background-size:contain;"></div>
+									</a>
+									<div class="text-wrapper">
+										<a style="text-decoration: none;" onclick="document.getElementById('<c:out value="${ merchant.getId() }"/>Form').submit();">
+											<h3 style="color:#800000;" class="name">view more</h3>
+										</a>
+										<p class="description">Offers from ${ merchant.getName() }</p>
+										<div class="row" style="margin-top:15px; bottom:0px;">
+											<input type="hidden" value="<c:out value="${ merchant.getId() }"/>">
+											<a style="text-decoration:none;" onclick="document.getElementById('<c:out value="${ merchant.getId() }"/>Form').submit();" class="action">
+												<i class="glyphicon glyphicon-circle-arrow-right"></i>
+											</a>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
 			    	</div>
 				</div>
 		    </section>
 	    </c:forEach>
 	</c:if>
-	
+	<c:if test="${ sessionScope.typesWithOffers != null }">
+		<c:forEach items="${ sessionScope.typesWithOffers }" var="type">
+			<section id="mid-section">
+				<h1 class="text-center" id="best-offers"><c:out value="${type.getWineTypeName() }"/> - Best offers</h1>
+			    <hr class="sep-bar">
+			    <div class="container pictures-container">
+			    	<div class="row articles">
+				    	<c:forEach items= "${type.bestOffers}" var="offer">
+							<div class="col-xs-12 col-sm-6 col-md-4 item">
+								<div class="card item">
+									<a href="Product?id=<c:out value="${ offer.getWineId() }"/>">
+										<div style="width:100%;height:170px;background:url(<c:out value = "${offer.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
+									</a>
+									<div class="text-wrapper">
+										<a style="text-decoration: none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>">
+											<h3 style="color:#800000;" class="name"><c:out value="${offer.getWineName()}"/></h3>
+										</a>
+										<p class="description"><c:out value="${offer.getWineShortDescription()}"/>
+											<c:if test="${offer.getWineShortDescription().length() == 169}">
+												<a href="Product?id=<c:out value="${ offer.getWineId() }"/>"> See more</a>
+											</c:if>
+										</p>
+										<div class="row" style="margin-top:15px; bottom:0px;">
+											<a style="text-decoration:none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>" class="action">
+												<i class="glyphicon glyphicon-circle-arrow-right"></i>
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</c:forEach>
+						<div class="col-xs-12 col-sm-6 col-md-4 item">
+							<div class="card item">
+								<form class="nopadding" id="<c:out value="${ type.getId() }"/>Form" action="Results" method="POST">
+									<input type="hidden" id="chosenShop" name="chosenShop" value="<c:out value="${ type.getId() }"/>">
+									<a onclick="document.getElementById('<c:out value="${ type.getId() }"/>Form').submit();">
+										<div class="opacityDiv" style="width:100%;height:170px;background:url(https://tqbezw.dm2304.livefilestore.com/y4m7ImibB8RghV-NvoPSEWTgE7iHpyoKD8g7ubiIuhCkdJb16QKVw6cWSuio5dbn52nNCCOCGyGfoUAuUDi-VhM8Rau4ITh2Qw5GmbWfIT6qI104pntVSZWEqoGx6RE1KhCKM_9jCN-fPKBeUJ5KEwSsWc4BhNiWLS5E1cc3lKsuUJJKLo78B_v7OPu3NwLVfag?width=454&height=255&cropmode=none) no-repeat center center;background-size:contain;"></div>
+									</a>
+									<div class="text-wrapper">
+										<a style="text-decoration: none;" onclick="document.getElementById('<c:out value="${ type.getId() }"/>Form').submit();">
+											<h3 style="color:#800000;" class="name">view more</h3>
+										</a>
+										<p class="description">Offers from ${ type.getWineTypeName() }</p>
+										<div class="row" style="margin-top:15px; bottom:0px;">
+											<input type="hidden" value="<c:out value="${ type.getId() }"/>">
+											<a style="text-decoration:none;" onclick="document.getElementById('<c:out value="${ type.getId() }"/>Form').submit();" class="action">
+												<i class="glyphicon glyphicon-circle-arrow-right"></i>
+											</a>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+			    	</div>
+				</div>
+		    </section>
+	    </c:forEach>
+	</c:if>
+	<c:if test="${ sessionScope.countriesWithOffers != null }">
+		<c:forEach items="${ sessionScope.countriesWithOffers }" var="country">
+			<section id="mid-section">
+				<h1 class="text-center" id="best-offers"><c:out value="${country.getCountryName() }"/> - Best offers</h1>
+			    <hr class="sep-bar">
+			    <div class="container pictures-container">
+			    	<div class="row articles">
+				    	<c:forEach items= "${country.bestOffers}" var="offer">
+							<div class="col-xs-12 col-sm-6 col-md-4 item">
+								<div class="card item">
+									<a href="Product?id=<c:out value="${ offer.getWineId() }"/>">
+										<div style="width:100%;height:170px;background:url(<c:out value = "${offer.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
+									</a>
+									<div class="text-wrapper">
+										<a style="text-decoration: none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>">
+											<h3 style="color:#800000;" class="name"><c:out value="${offer.getWineName()}"/></h3>
+										</a>
+										<p class="description"><c:out value="${offer.getWineShortDescription()}"/>
+											<c:if test="${offer.getWineShortDescription().length() == 169}">
+												<a href="Product?id=<c:out value="${ offer.getWineId() }"/>"> See more</a>
+											</c:if>
+										</p>
+										<div class="row" style="margin-top:15px; bottom:0px;">
+											<a style="text-decoration:none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>" class="action">
+												<i class="glyphicon glyphicon-circle-arrow-right"></i>
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</c:forEach>
+						<div class="col-xs-12 col-sm-6 col-md-4 item">
+							<div class="card item">
+								<form class="nopadding" id="<c:out value="${ country.getId() }"/>Form" action="Results" method="POST">
+									<input type="hidden" id="chosenShop" name="chosenShop" value="<c:out value="${ country.getId() }"/>">
+									<a onclick="document.getElementById('<c:out value="${ country.getId() }"/>Form').submit();">
+										<div class="opacityDiv" style="width:100%;height:170px;background:url(https://tqbezw.dm2304.livefilestore.com/y4m7ImibB8RghV-NvoPSEWTgE7iHpyoKD8g7ubiIuhCkdJb16QKVw6cWSuio5dbn52nNCCOCGyGfoUAuUDi-VhM8Rau4ITh2Qw5GmbWfIT6qI104pntVSZWEqoGx6RE1KhCKM_9jCN-fPKBeUJ5KEwSsWc4BhNiWLS5E1cc3lKsuUJJKLo78B_v7OPu3NwLVfag?width=454&height=255&cropmode=none) no-repeat center center;background-size:contain;"></div>
+									</a>
+									<div class="text-wrapper">
+										<a style="text-decoration: none;" onclick="document.getElementById('<c:out value="${ country.getId() }"/>Form').submit();">
+											<h3 style="color:#800000;" class="name">view more</h3>
+										</a>
+										<p class="description">Offers from ${ country.getCountryName() }</p>
+										<div class="row" style="margin-top:15px; bottom:0px;">
+											<input type="hidden" value="<c:out value="${ country.getId() }"/>">
+											<a style="text-decoration:none;" onclick="document.getElementById('<c:out value="${ country.getId() }"/>Form').submit();" class="action">
+												<i class="glyphicon glyphicon-circle-arrow-right"></i>
+											</a>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+			    	</div>
+				</div>
+		    </section>
+	    </c:forEach>
+	</c:if>
     <hr class="sep-bar">
 	<c:import url="../templates/footer.jsp"/>
     <script src="assets/js/jquery.min.js"></script>

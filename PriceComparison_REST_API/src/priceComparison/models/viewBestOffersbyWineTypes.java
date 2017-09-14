@@ -1,11 +1,27 @@
 package priceComparison.models;
 
-public class viewWines {
+public class viewBestOffersbyWineTypes extends Object {
 
-    private Integer wineId;
-    public Integer getWineId() { return wineId; }
-	public void setwineId(Integer id) { this.wineId = id; }
+    private Integer id;
+    public Integer getId() { return id; }
+	public void setId(Integer id) { this.id = id; }
 
+	private Integer wineTypeId;
+	public Integer getWineTypeId() { return wineTypeId; }
+	public void setWineTypeId(Integer wineTypeId) { this.wineTypeId = wineTypeId; }	
+	
+	private Integer wineId;
+	public Integer getWineId() { return wineId; }
+	public void setWineId(Integer wineId) { this.wineId = wineId; }
+
+	private Integer positionIndex;
+	public Integer getPositionIndex() { return positionIndex; }
+	public void setPositionIndex(Integer positionIndex) { this.positionIndex = positionIndex; }
+	
+	private String winetypeName;
+	public String getWinetypeName() { return winetypeName; }
+	public void setWinetypeName(String winetypeName) { this.winetypeName = winetypeName; }
+	
 	private Integer wineCountryId;
 	public Integer getWineCountryId() { return wineCountryId; }
 	public void setWineCountryId(Integer wineCountryId) { this.wineCountryId = wineCountryId; }
@@ -94,14 +110,15 @@ public class viewWines {
 	public Boolean getWineDeleted() { return wineDeleted; }
 	public void setWineDeleted(Boolean wineDeleted) { this.wineDeleted = wineDeleted; }
 	
-	private Float avgRating;
-	public Float getAvgRating() { return avgRating; }
-	public void setAvgRating(Float avgRating) { this.avgRating = avgRating; }
 	
-	public viewWines(Integer id) { this.wineId = id; } 
-	public viewWines() 
+	public viewBestOffersbyWineTypes(Integer id) { this.id = id; } 
+	public viewBestOffersbyWineTypes() 
 	{
-        this.wineId = null;
+        this.id = null;
+        this.wineTypeId = null;
+    	this.wineId = null;
+    	this.positionIndex = null;
+    	this.winetypeName = null;
         this.wineCountryId = null; 
         this.wineCountryName = null;
         this.wineRegionId = null;
@@ -124,22 +141,23 @@ public class viewWines {
         this.wineGtin = null;
         this.wineMinimumPrice = null;
         this.wineDeleted = false;
-        this.avgRating = null;
     }
+	
 	@Override
 	public String toString() {
-		return "{ \"wineId\" : \"" + wineId + "\" , \"wineCountryId\" : \"" + wineCountryId
-				+ "\" , \"wineCountryName\" : \"" + wineCountryName + "\" , \"wineRegionId\" : \"" + wineRegionId
-				+ "\" , \"wineRegionName\" : \"" + wineRegionName + "\" , \"wineWineryId\" : \"" + wineWineryId
-				+ "\" , \"wineWineryName\" : \"" + wineWineryName + "\" , \"wineAppellationId\" : \""
-				+ wineAppellationId + "\" , \"wineAppellationName\" : \"" + wineAppellationName
-				+ "\" , \"wineColourId\" : \"" + wineColourId + "\" , \"wineColourName\" : \"" + wineColourName
-				+ "\" , \"wineVintage\" : \"" + wineVintage + "\" , \"wineName\" : \"" + wineName
+		return "{ \"id\" : \"" + id + "\" , \"wineTypeId\" : \"" + wineTypeId + "\" , \"wineId\" : \"" + wineId
+				+ "\" , \"positionIndex\" : \"" + positionIndex + "\" , \"winetypeName\" : \"" + winetypeName
+				+ "\" , \"wineCountryId\" : \"" + wineCountryId + "\" , \"wineCountryName\" : \"" + wineCountryName
+				+ "\" , \"wineRegionId\" : \"" + wineRegionId + "\" , \"wineRegionName\" : \"" + wineRegionName
+				+ "\" , \"wineWineryId\" : \"" + wineWineryId + "\" , \"wineWineryName\" : \"" + wineWineryName
+				+ "\" , \"wineAppellationId\" : \"" + wineAppellationId + "\" , \"wineAppellationName\" : \""
+				+ wineAppellationName + "\" , \"wineColourId\" : \"" + wineColourId + "\" , \"wineColourName\" : \""
+				+ wineColourName + "\" , \"wineVintage\" : \"" + wineVintage + "\" , \"wineName\" : \"" + wineName
 				+ "\" , \"wineShortDescription\" : \"" + wineShortDescription + "\" , \"wineDefaultDescription\" : \""
 				+ wineDefaultDescription + "\" , \"wineBottleSize\" : \"" + wineBottleSize + "\" , \"wineAbv\" : \""
 				+ wineAbv + "\" , \"wineImageURL\" : \"" + wineImageURL + "\" , \"wineClosureId\" : \"" + wineClosureId
 				+ "\" , \"wineClosureName\" : \"" + wineClosureName + "\" , \"wineGtin\" : \"" + wineGtin
 				+ "\" , \"wineMinimumPrice\" : \"" + wineMinimumPrice + "\" , \"wineDeleted\" : \"" + wineDeleted
-				+ "\" , \"avgRating\" : \"" + avgRating + "\" }";
+				+ "\" }";
 	}
 }

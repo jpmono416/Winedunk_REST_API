@@ -14,15 +14,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import priceComparison.models.tblUserWinesRatings;
 import priceComparison.models.tblUsers;
 import priceComparison.models.userEmails;
 import priceComparison.models.userPhoneNumbers;
+import priceComparison.models.viewUserWinesRatings;
 import priceComparison.models.viewUsers;
+import priceComparison.models.viewUsersWinesReviews;
 import priceComparison.models.viewWines;
 import priceComparison.services.FavouriteWinesService;
 import priceComparison.services.ProfileService;
 import priceComparison.services.UserEmailAddressesService;
 import priceComparison.services.UserPhoneNumbersService;
+import priceComparison.services.UserRatingsService;
+import priceComparison.services.UserReviewsService;
 import priceComparison.services.ValidationService;
 
 /**
@@ -37,7 +42,9 @@ public class Profile extends HttpServlet {
 	FavouriteWinesService favWinesService = new FavouriteWinesService();
 	UserPhoneNumbersService phoneNumbersService = new UserPhoneNumbersService();
 	UserEmailAddressesService emailAddressService = new UserEmailAddressesService();
-
+	UserReviewsService reviewsService = new UserReviewsService(); 
+	UserRatingsService ratingsService = new UserRatingsService();
+	
     public Profile() { super(); }
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -57,7 +64,8 @@ public class Profile extends HttpServlet {
 		final Properties serviceProperties = new Properties();
 		serviceProperties.load(new FileInputStream(webInfPath+sep+"winedunk.properties"));
 		
-		viewUsers user = (viewUsers) session.getAttribute("userLoggedIn");;
+		viewUsers user = (viewUsers) session.getAttribute("userLoggedIn");
+		if(user == null) { request.getRequestDispatcher("/Login").forward(request, response); return; }
 		Integer userId = user.getId();
 		
 		// Check that any user is logged in
@@ -65,19 +73,44 @@ public class Profile extends HttpServlet {
 		else { return; }
 		
 		// Set CRUD's URL where needed
-		profileService.setUrlPath(serviceProperties.getProperty("crud.url"));
-		validationService.setUrlPath(serviceProperties.getProperty("crud.url"));
+		String crudURL = serviceProperties.getProperty("crud.url");
+		profileService.setUrlPath(crudURL);
+		reviewsService.setUrlPath(crudURL);
+		ratingsService.setUrlPath(crudURL);
+		validationService.setUrlPath(crudURL);
 		validationService.validateUser(request, response);
 		
-		//Load user emails list, phone numbers and details
-		List<userEmails> emailsList = emailAddressService.loadEmailAddresses();
-		request.setAttribute("emailsList", emailsList);
+		//Load various user lists
+		try
+		{
+			List<userEmails> emailsList = emailAddressService.loadEmailAddresses();
+			if(emailsList != null) { request.setAttribute("emailsList", emailsList); }
+			else { request.setAttribute("noEmails", true);}
+		} catch(Exception e) { e.printStackTrace(); }
 		
-		List<userPhoneNumbers> phoneNumbers = phoneNumbersService.loadPhoneNumbers();
-		request.setAttribute("phoneNumbersList", phoneNumbers);
+		try {
+			List<userPhoneNumbers> phoneNumbers = phoneNumbersService.loadPhoneNumbers();
+			if(phoneNumbers != null) { request.setAttribute("phoneNumbersList", phoneNumbers); }
+			else { request.setAttribute("noPhoneNumbers", true);}
+		} catch(Exception e) { e.printStackTrace(); }
 		
-		List<viewWines> favouriteWines = profileService.loadFavouriteWines();
-		request.setAttribute("favouriteWines", favouriteWines);
+		try {
+			List<viewWines> favouriteWines = profileService.loadFavouriteWines();
+			if(favouriteWines != null) { request.setAttribute("favouriteWines", favouriteWines); }
+			else { request.setAttribute("noFavourite", true);}
+		} catch(Exception e) { e.printStackTrace(); }
+		
+		try {
+			List<viewUsersWinesReviews> reviews = reviewsService.getReviewsForUser(userId);
+			if(reviews != null) { request.setAttribute("userReviews", reviews); }
+			else { request.setAttribute("noReviews", true); }
+		} catch(Exception e) { e.printStackTrace(); }
+		
+		try {
+			List<viewUserWinesRatings> ratingsList = ratingsService.getRatingsForUser(userId);
+			if(ratingsList != null) { request.setAttribute("ratingsList", ratingsList); }
+			else { request.setAttribute("noRatings", true); }
+		} catch(Exception e) { e.printStackTrace(); }
 		
 		tblUsers userToBeLoaded = profileService.loadUserDetails();
 		request.setAttribute("userForDetails", userToBeLoaded);
@@ -207,7 +240,7 @@ public class Profile extends HttpServlet {
 					String emailId = request.getParameter("emailId");
 					
 					if(editEmailAddress.equals("")) { break; }
-					if(emailAddressService.editEmailAddress(editEmailAddress, emailId))
+					if(!emailAddressService.editEmailAddress(editEmailAddress, emailId))
 					{
 						request.setAttribute("error", true); 
 						break;
@@ -221,8 +254,8 @@ public class Profile extends HttpServlet {
 				case "deleteEmailAddress" :
 					if(request.getParameter("emailId").equals("")) { break; }
 					
-					String emailToDeleteId = request.getParameter("emailId");
-					if(!emailAddressService.deleteEmailAddress(emailToDeleteId))
+					String emailToDeletedId = request.getParameter("emailId");
+					if(!emailAddressService.deleteEmailAddress(emailToDeletedId))
 					{
 						request.setAttribute("error", true); 
 						break;
@@ -232,7 +265,69 @@ public class Profile extends HttpServlet {
 					session.setAttribute("sectionToBeDisplayed", "contact");
 					
 					break;
+					
+				case "editReview" :
+					String editReview = request.getParameter("review");
+					String reviewId = request.getParameter("reviewId");
+					String wineId = request.getParameter("reviewWineId");
+					
+					if(editReview.equals("")) { break; }
+					reviewsService.setUserId(userId);
+					
+					if(!reviewsService.editReview(editReview, reviewId, wineId))
+					{
+						request.setAttribute("error", true); 
+						break;
+					}
+					
+					session.setAttribute("successful", true);
+					session.setAttribute("sectionToBeDisplayed", "wineReviews");
+				break;
 				
+				case "deleteReview" :
+					if(request.getParameter("reviewId").equals("")) { break; }
+					
+					String reviewToBeDeletedId = request.getParameter("reviewId");
+					if(!reviewsService.deleteReview(reviewToBeDeletedId))
+					{
+						request.setAttribute("error", true); 
+						break;
+					}
+					
+					session.setAttribute("successful", true);
+					session.setAttribute("sectionToBeDisplayed", "wineReviews");
+				break;
+				
+				case "editRating" :
+					String editRating = request.getParameter("ratingValue");
+					String ratingId = request.getParameter("ratingId");
+					String ratingWineId = request.getParameter("ratingWineId");
+					System.out.println("EDIT: " + editRating + ", ID: " + ratingId + ", WineId: " + ratingWineId); //TODO DELETE
+					if(editRating.equals("")) { break; }
+					ratingsService.setUserId(userId);
+					if(!ratingsService.editRating(editRating, ratingWineId, ratingId))
+					{
+						request.setAttribute("error", true);
+						break;
+					}
+					
+					session.setAttribute("successful", true);
+					session.setAttribute("sectionToBeDisplayed", "wineReviews");
+				break;
+				
+				case "deleteRating" : 
+					if(request.getParameter("ratingId").equals("")) { break; }
+					
+					String ratingToBeDeletedId = request.getParameter("ratingId");
+					if(!ratingsService.deleteRating(ratingToBeDeletedId))
+					{
+						request.setAttribute("error", true); 
+						break;
+					}
+					
+					session.setAttribute("successful", true);
+					session.setAttribute("sectionToBeDisplayed", "wineReviews");
+				break;
 				case "changePassword" :
 					if(request.getParameter("previousPassword").equals("") || request.getParameter("newPassword").equals("")) { break; }
 					

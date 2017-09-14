@@ -1,10 +1,34 @@
 package priceComparison.models;
 
-public class viewWines {
+public class viewBestOffersbyCountries extends Object {
 
-    private Integer wineId;
-    public Integer getWineId() { return wineId; }
-	public void setwineId(Integer id) { this.wineId = id; }
+    private Integer id;
+    public Integer getId() { return id; }
+	public void setId(Integer id) { this.id = id; }
+
+	private Integer countryId;
+	public Integer getCountryId() { return countryId; }
+	public void setCountryId(Integer countryId) { this.countryId = countryId; }
+	
+	private Integer wineId;
+	public Integer getWineId() { return wineId; }
+	public void setWineId(Integer wineId) { this.wineId = wineId; }
+
+	private Integer positionIndex;
+	public Integer getPositionIndex() { return positionIndex; }
+	public void setPositionIndex(Integer positionIndex) { this.positionIndex = positionIndex; }
+	
+	private String countryName;
+	public String getCountryName() { return countryName; }
+	public void setCountryName(String countryName) { this.countryName = countryName; }
+	
+	private String countryIsoAlpha2Code;
+	public String getCountryIsoAlpha2Code() { return countryIsoAlpha2Code; }
+	public void setCountryIsoAlpha2Code(String countryIsoAlpha2Code) { this.countryIsoAlpha2Code = countryIsoAlpha2Code; }
+	
+	private String countryIsoAlpha3Code;
+	public String getCountryIsoAlpha3Code() { return countryIsoAlpha3Code; }
+	public void setCountryIsoAlpha3Code(String countryIsoAlpha3Code) { this.countryIsoAlpha3Code = countryIsoAlpha3Code; }
 
 	private Integer wineCountryId;
 	public Integer getWineCountryId() { return wineCountryId; }
@@ -94,14 +118,17 @@ public class viewWines {
 	public Boolean getWineDeleted() { return wineDeleted; }
 	public void setWineDeleted(Boolean wineDeleted) { this.wineDeleted = wineDeleted; }
 	
-	private Float avgRating;
-	public Float getAvgRating() { return avgRating; }
-	public void setAvgRating(Float avgRating) { this.avgRating = avgRating; }
 	
-	public viewWines(Integer id) { this.wineId = id; } 
-	public viewWines() 
+	public viewBestOffersbyCountries(Integer id) { this.id = id; } 
+	public viewBestOffersbyCountries() 
 	{
-        this.wineId = null;
+        this.id = null;
+        this.countryId = null;
+        this.countryName = null;
+        this.countryIsoAlpha2Code = null;
+        this.countryIsoAlpha3Code = null;
+    	this.wineId = null;
+    	this.positionIndex = null;
         this.wineCountryId = null; 
         this.wineCountryName = null;
         this.wineRegionId = null;
@@ -124,22 +151,25 @@ public class viewWines {
         this.wineGtin = null;
         this.wineMinimumPrice = null;
         this.wineDeleted = false;
-        this.avgRating = null;
     }
+	
 	@Override
 	public String toString() {
-		return "{ \"wineId\" : \"" + wineId + "\" , \"wineCountryId\" : \"" + wineCountryId
-				+ "\" , \"wineCountryName\" : \"" + wineCountryName + "\" , \"wineRegionId\" : \"" + wineRegionId
-				+ "\" , \"wineRegionName\" : \"" + wineRegionName + "\" , \"wineWineryId\" : \"" + wineWineryId
-				+ "\" , \"wineWineryName\" : \"" + wineWineryName + "\" , \"wineAppellationId\" : \""
-				+ wineAppellationId + "\" , \"wineAppellationName\" : \"" + wineAppellationName
-				+ "\" , \"wineColourId\" : \"" + wineColourId + "\" , \"wineColourName\" : \"" + wineColourName
-				+ "\" , \"wineVintage\" : \"" + wineVintage + "\" , \"wineName\" : \"" + wineName
-				+ "\" , \"wineShortDescription\" : \"" + wineShortDescription + "\" , \"wineDefaultDescription\" : \""
-				+ wineDefaultDescription + "\" , \"wineBottleSize\" : \"" + wineBottleSize + "\" , \"wineAbv\" : \""
-				+ wineAbv + "\" , \"wineImageURL\" : \"" + wineImageURL + "\" , \"wineClosureId\" : \"" + wineClosureId
+		return "{ \"id\" : \"" + id + "\" , \"countryId\" : \"" + countryId + "\" , \"wineId\" : \"" + wineId
+				+ "\" , \"positionIndex\" : \"" + positionIndex + "\" , \"countryName\" : \"" + countryName
+				+ "\" , \"countryIsoAlpha2Code\" : \"" + countryIsoAlpha2Code + "\" , \"countryIsoAlpha3Code\" : \""
+				+ countryIsoAlpha3Code + "\" , \"wineCountryId\" : \"" + wineCountryId + "\" , \"wineCountryName\" : \""
+				+ wineCountryName + "\" , \"wineRegionId\" : \"" + wineRegionId + "\" , \"wineRegionName\" : \""
+				+ wineRegionName + "\" , \"wineWineryId\" : \"" + wineWineryId + "\" , \"wineWineryName\" : \""
+				+ wineWineryName + "\" , \"wineAppellationId\" : \"" + wineAppellationId
+				+ "\" , \"wineAppellationName\" : \"" + wineAppellationName + "\" , \"wineColourId\" : \""
+				+ wineColourId + "\" , \"wineColourName\" : \"" + wineColourName + "\" , \"wineVintage\" : \""
+				+ wineVintage + "\" , \"wineName\" : \"" + wineName + "\" , \"wineShortDescription\" : \""
+				+ wineShortDescription + "\" , \"wineDefaultDescription\" : \"" + wineDefaultDescription
+				+ "\" , \"wineBottleSize\" : \"" + wineBottleSize + "\" , \"wineAbv\" : \"" + wineAbv
+				+ "\" , \"wineImageURL\" : \"" + wineImageURL + "\" , \"wineClosureId\" : \"" + wineClosureId
 				+ "\" , \"wineClosureName\" : \"" + wineClosureName + "\" , \"wineGtin\" : \"" + wineGtin
 				+ "\" , \"wineMinimumPrice\" : \"" + wineMinimumPrice + "\" , \"wineDeleted\" : \"" + wineDeleted
-				+ "\" , \"avgRating\" : \"" + avgRating + "\" }";
+				+ "\" }";
 	}
 }

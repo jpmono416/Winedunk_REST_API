@@ -15,10 +15,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
+import priceComparison.models.tblWineTypes;
+import priceComparison.models.viewBestOffersbyCountries;
 import priceComparison.models.viewBestOffersbyMerchants;
+import priceComparison.models.viewBestOffersbyWineTypes;
+import priceComparison.models.viewCountriesWithBestOffers;
 import priceComparison.models.viewMerchants;
+import priceComparison.models.viewMerchantsWithBestOffers;
 import priceComparison.models.viewRecommendedWines;
+import priceComparison.models.viewWineTypesWithBestOffers;
 import priceComparison.services.GeneralService;
 import priceComparison.services.HomeService;
 import priceComparison.services.LoginService;
@@ -86,18 +91,46 @@ public class Home extends HttpServlet {
 				
 		try
 		{
-			List<viewMerchants> merchants = generalService.getMerchantsWithBestOffers();
-			System.out.println("Merchants before: " + merchants.toString());
-			for(ListIterator<viewMerchants> i = (ListIterator<viewMerchants>) merchants.listIterator(); i.hasNext();)
+			List<viewMerchantsWithBestOffers> merchants = generalService.getMerchantsWithBestOffers();
+			// Use listIterators to pass the objects byRef and make them remain modified when setting on session
+			for(ListIterator<viewMerchantsWithBestOffers> i = (ListIterator<viewMerchantsWithBestOffers>) merchants.listIterator(); i.hasNext();)
 			{
-				viewMerchants merchant = i.next();
+				viewMerchantsWithBestOffers merchant = i.next();
 				Integer id = merchant.getId();
 				
-				List<viewBestOffersbyMerchants> bestOffers = generalService.getBestOffers(id);
+				List<viewBestOffersbyMerchants> bestOffers = generalService.getBestOffersByMerchant(id);
 				if(bestOffers != null) { merchant.setBestOffers(bestOffers); }
 			}
-			System.out.println("Merchants after: " + merchants.toString());
 			session.setAttribute("merchantsWithOffers", merchants);
+		} catch (Exception e) { e.printStackTrace(); }
+		
+		try
+		{
+			List<viewWineTypesWithBestOffers> wineTypes = generalService.getWineTypesWithBestOffers();
+			for(ListIterator<viewWineTypesWithBestOffers> i = (ListIterator<viewWineTypesWithBestOffers>) wineTypes.listIterator(); i.hasNext();)
+			{
+				viewWineTypesWithBestOffers wineType = i.next();
+				Integer id = wineType.getId();
+				
+				List<viewBestOffersbyWineTypes> bestOffers = generalService.getBestOffersByWineType(id);
+				if(bestOffers != null) { wineType.setBestOffers(bestOffers); }
+			}
+			session.setAttribute("typesWithOffers", wineTypes);
+		} catch (Exception e) { e.printStackTrace(); }
+		
+		try
+		{
+			List<viewCountriesWithBestOffers> countries = generalService.getCountriesWithBestoffers();
+			for(ListIterator<viewCountriesWithBestOffers> i = (ListIterator<viewCountriesWithBestOffers>) countries.listIterator(); i.hasNext();)
+			{
+				viewCountriesWithBestOffers country = i.next();
+				Integer id = country.getId();
+				
+				List<viewBestOffersbyCountries> bestOffers = generalService.getBestOffersByCountry(id);
+				if(bestOffers != null) { country.setBestOffers(bestOffers); }
+			}
+			System.out.println("OBJECTS: " + countries); //TODO DELETE
+			session.setAttribute("countriesWithOffers", countries);
 		} catch (Exception e) { e.printStackTrace(); }
 		homePage.forward(request, response);
 	}

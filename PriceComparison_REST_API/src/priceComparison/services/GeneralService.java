@@ -23,9 +23,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
+import priceComparison.models.tblWineTypes;
+import priceComparison.models.viewBestOffersbyCountries;
 import priceComparison.models.viewBestOffersbyMerchants;
+import priceComparison.models.viewBestOffersbyWineTypes;
+import priceComparison.models.viewCountriesWithBestOffers;
 import priceComparison.models.viewMerchants;
+import priceComparison.models.viewMerchantsWithBestOffers;
 import priceComparison.models.viewRecommendedWines;
+import priceComparison.models.viewWineTypesWithBestOffers;
 import priceComparison.models.viewWines;
 
 public class GeneralService {
@@ -192,7 +198,7 @@ public class GeneralService {
 		    	//TODO CHECK AND FINISH THIS
 		    	String offersUrl = "bestOffersByMerchantView?action=getOffersForMerchant&id=" + merchant;
 		    	//Get the best offers for the merchant
-		    	List<viewBestOffersbyMerchants> bestOffers = this.getBestOffers(Integer.parseInt(merchant));
+		    	List<viewBestOffersbyMerchants> bestOffers = this.getBestOffersByMerchant(Integer.parseInt(merchant));
 		    	if(bestOffers != null) { request.setAttribute("bestOffers", bestOffers); }
 		    	else { request.setAttribute("noOffers", true); }
 		    	
@@ -330,10 +336,9 @@ public class GeneralService {
 		} catch(Exception e) { e.printStackTrace(); return null; }
 	}
 	
-	public List<viewBestOffersbyMerchants> getBestOffers(Integer merchantId) throws IOException
+	public List<viewBestOffersbyMerchants> getBestOffersByMerchant(Integer id) throws IOException
 	{
-		String relURL = "bestOffersByMerchantView?action=getOffersForMerchant&id=" + merchantId;
-		System.out.println("CRUD: " + crudURL); //TODO DELETE
+		String relURL = "bestOffersByMerchantView?action=getOffersForMerchant&id=" + id;
 		String offersResponse = requestCreator.createGetRequest(crudURL, relURL);
 		ObjectMapper mapper = new ObjectMapper();
 		
@@ -358,9 +363,62 @@ public class GeneralService {
 		return null;
 	}
 	
-	public List<viewMerchants> getMerchantsWithBestOffers() throws IOException
+	public List<viewBestOffersbyWineTypes> getBestOffersByWineType(Integer id) throws IOException
 	{
-		String merchantsUrl = "merchantsView?action=getMerchantsWithOffers";
+		String relURL = "bestOffersByWineTypeView?action=getOffersForWineType&id=" + id;
+		String offersResponse = requestCreator.createGetRequest(crudURL, relURL);
+		ObjectMapper mapper = new ObjectMapper();
+		
+    	if(offersResponse != null && !offersResponse.equals(""))
+    	{
+    		JsonNode offersJson = mapper.readTree(offersResponse);
+	    	if(offersJson == null) { return null; }
+	    	
+	    	ArrayNode offersNodes = (ArrayNode) offersJson.get("BestOffers");
+		   	Iterator<JsonNode> offersIterator = offersNodes.elements();
+			List<viewBestOffersbyWineTypes> bestOffers = new ArrayList<viewBestOffersbyWineTypes>();
+			
+			while(offersIterator.hasNext())
+			{
+		   		JsonNode offerNode = offersIterator.next();
+		   		viewBestOffersbyWineTypes offer = mapper.treeToValue(offerNode, viewBestOffersbyWineTypes.class);
+		   		bestOffers.add(offer);
+			}
+			
+			return bestOffers;
+    	}
+		return null;
+	}
+	
+	public List<viewBestOffersbyCountries> getBestOffersByCountry(Integer id) throws IOException
+	{
+		String relURL = "bestOffersByCountryView?action=getOffersForCountry&id=" + id;
+		String offersResponse = requestCreator.createGetRequest(crudURL, relURL);
+		ObjectMapper mapper = new ObjectMapper();
+		
+    	if(offersResponse != null && !offersResponse.equals(""))
+    	{
+    		JsonNode offersJson = mapper.readTree(offersResponse);
+	    	if(offersJson == null) { return null; }
+	    	
+	    	ArrayNode offersNodes = (ArrayNode) offersJson.get("BestOffers");
+		   	Iterator<JsonNode> offersIterator = offersNodes.elements();
+		   	List<viewBestOffersbyCountries> bestOffers = new ArrayList<viewBestOffersbyCountries>();
+		   	
+		   	while(offersIterator.hasNext())
+		   	{
+		   		JsonNode offerNode = offersIterator.next();
+		   		viewBestOffersbyCountries offer = mapper.treeToValue(offerNode, viewBestOffersbyCountries.class);
+		   		bestOffers.add(offer);
+		   	}
+		   	return bestOffers;
+    	}
+		return null;
+	}
+	
+	public List<viewMerchantsWithBestOffers> getMerchantsWithBestOffers() throws IOException
+	{
+		String merchantsUrl = "merchantsWithBestOffersView?action=getMerchantsWithBestOffers";
 		String responseString = requestCreator.createGetRequest(crudURL, merchantsUrl);
 		ObjectMapper mapper = new ObjectMapper();
 		
@@ -370,15 +428,65 @@ public class GeneralService {
 			
 			ArrayNode merchantNodes = (ArrayNode) merchantsNode.get("Merchants");
 		   	Iterator<JsonNode> merchantsIterator = merchantNodes.elements();
-		   	List<viewMerchants> merchants = new ArrayList<viewMerchants>();
+		   	List<viewMerchantsWithBestOffers> merchants = new ArrayList<viewMerchantsWithBestOffers>();
 		   	
 		   	while(merchantsIterator.hasNext())
 			{
 		   		JsonNode merchantNode = merchantsIterator.next();
-		   		viewMerchants merchant = mapper.treeToValue(merchantNode, viewMerchants.class);
+		   		viewMerchantsWithBestOffers merchant = mapper.treeToValue(merchantNode, viewMerchantsWithBestOffers.class);
 		   		merchants.add(merchant);
 			}
 		   	return merchants;
+		}
+		return null;
+	}
+	
+	public List<viewWineTypesWithBestOffers> getWineTypesWithBestOffers() throws IOException
+	{
+		String typesUrl = "wineTypesWithBestOffersView?action=getWineTypesWithBestOffers";
+		String responseString = requestCreator.createGetRequest(crudURL, typesUrl);
+		ObjectMapper mapper = new ObjectMapper();
+		
+		if(responseString != null && !responseString.equals(""))
+		{
+			JsonNode wineTypesNode = mapper.readTree(responseString);
+			
+			ArrayNode wineTypesNodes = (ArrayNode) wineTypesNode.get("WineTypes");
+			Iterator<JsonNode> wineTypesIterator = wineTypesNodes.elements();
+			List<viewWineTypesWithBestOffers> wineTypes = new ArrayList<viewWineTypesWithBestOffers>();
+			
+			while(wineTypesIterator.hasNext())
+			{
+				JsonNode wineTypeNode = wineTypesIterator.next();
+				viewWineTypesWithBestOffers wineType = mapper.treeToValue(wineTypeNode, viewWineTypesWithBestOffers.class);
+				wineTypes.add(wineType);
+			}
+			return wineTypes;
+		}
+		return null;
+	}
+	
+	public List<viewCountriesWithBestOffers> getCountriesWithBestoffers() throws IOException
+	{
+		String countriesUrl = "countriesWithBestOffersView?action=getCountriesWithBestOffers";
+		String responseString = requestCreator.createGetRequest(crudURL, countriesUrl);
+		ObjectMapper mapper = new ObjectMapper();
+		
+		if(responseString != null && !responseString.equals(""))
+		{
+			JsonNode countriesNode = mapper.readTree(responseString);
+			
+			ArrayNode countriesNodes = (ArrayNode) countriesNode.get("Countries");
+			Iterator<JsonNode> countriesIterator = countriesNodes.elements();
+			List<viewCountriesWithBestOffers> countries = new ArrayList<viewCountriesWithBestOffers>();
+			
+			while(countriesIterator.hasNext())
+			{
+				JsonNode countryNode = countriesIterator.next();
+				viewCountriesWithBestOffers country = mapper.treeToValue(countryNode, viewCountriesWithBestOffers.class);
+				countries.add(country);
+			}
+			return countries;
 		}
 		return null;
 	}

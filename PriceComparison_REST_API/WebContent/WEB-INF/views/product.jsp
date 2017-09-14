@@ -152,25 +152,30 @@
 									<div class="card settingsCard">
 										<h2 class="text-center">Ratings </h2>
 										<hr class="sep-bar" />
-										<h1 class="text-center"><span id="stars"><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i><i class="glyphicon glyphicon-star"></i></span></h1>
-										<p class="text-center">Based on 0 ratings</p>
-										<button class="btn btn-primary btn-block secondaryButton" type="button">See all ratings</button>
+										<c:if test="${ requestScope.noRatings != true }">
+											<h1 class="text-center">
+												<span id="stars">
+													<c:forEach varStatus="loop" begin="1" end="${ requestScope.wine.getAvgRating() }"><i class="glyphicon glyphicon-star"></i></c:forEach>
+												</span>
+											</h1>
+											<p class="text-center">Based on <c:out value="${ requestScope.amountOfRatings }"/> rating<c:if test="${ requestScope.amountOfRatings > 1 }">s</c:if></p>
+											<c:if test="${ requestScope.hasRated == true }">
+												<div id="hasRated" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"
+												data-toggle="tooltip" title="To edit or delete the rating please refer to your profile page.">
+													<span><strong>You already gave a rating.</strong></span>
+												</div>
+											</c:if>
+											<c:if test="${ requestScope.ratingSuccessful == true }">
+												<div id="ratingSuccessful" role="alert" class="alert alert-success" style="margin-top:10px; margin-bottom: 0;"><span><strong>Rating saved!</strong></span></div>
+											</c:if>
+											<c:if test="${ requestScope.blankRating == true }">
+												<div id="blankRating" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span><strong>Please click a star!</strong></span></div>
+											</c:if>
+											<c:if test="${ requestScope.userNotRegisteredRating == true }">
+												<div  id="userNotRegisteredRating" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span><strong>Please <a href="http://winedunk.com/Login?action=signUp">register</a>!</strong></span></div>
+											</c:if>
+										</c:if>
 										<a data-toggle="modal" data-target="#modal-giveRating" class="btn btn-primary btn-block redButton" type="button">Give a rating</a>
-										<c:if test="${ requestScope.hasRated == true }">
-											<div id="hasRated" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"
-											data-toggle="tooltip" title="To edit or delete the rating please refer to your profile page.">
-												<span><strong>You already gave a rating.</strong></span>
-											</div>
-										</c:if>
-										<c:if test="${ requestScope.ratingSuccessful == true }">
-											<div id="ratingSuccessful" role="alert" class="alert alert-success" style="margin-top:10px; margin-bottom: 0;"><span><strong>Rating saved!</strong></span></div>
-										</c:if>
-										<c:if test="${ requestScope.blankRating == true }">
-											<div id="blankRating" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span><strong>Please click a star!</strong></span></div>
-										</c:if>
-										<c:if test="${ requestScope.userNotRegisteredRating == true }">
-											<div  id="userNotRegisteredRating" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span><strong>Please <a href="http://winedunk.com/Login?action=signUp">register</a>!</strong></span></div>
-										</c:if>
 									</div>
 								</div> 
 								<div class="col-md-12">
@@ -179,7 +184,6 @@
 										<hr class="sep-bar" />
 										<c:if test="${ requestScope.amountOfReviews > 0 }">
 											<p class="text-center"><c:out value="${ requestScope.amountOfReviews }" /> review<c:if test="${ requestScope.amountOfReviews > 1 }">s</c:if></p>
-											<a class="btn btn-primary btn-block secondaryButton" type="button">See all reviews</a>
 										</c:if>
 										<a data-toggle="modal" data-target="#modal-writeReview" class="btn btn-primary btn-block redButton" type="button">Write a review</a>
 										<c:if test="${ requestScope.hasReviewed == true }">
@@ -250,17 +254,15 @@
 	                    	<c:forEach items="${ requestScope.reviewsList }" var="review">
 		                    	<div class="col-xs-12">
 		                    		<div data-aos="fade-up" data-aos-duration="800" data-aos-delay="50" data-aos-once="true" class="card settingsCard aos-init aos-animate">
-		                                <c:if test="${ review.getTitle() != null && !review.getTitle().equals('') }">
-			                                <div class="row">
-			                                    <div class="col-xs-12">
-			                                        <h3 style="color:#800000;"><c:out value="${ review.getTitle() }"/></h3>
-			                                    </div>
-			                                </div>
-		                                </c:if>
-		                                <c:if test="${ review.getComments() != null && !review.getComments().equals('') }">
+		                                <c:if test="${ review.getReviewComments() != null && !review.getReviewComments().equals('') }">
+		                                	<div class="row">
+		                                		<div class="col-md-12">
+		                                			<p class="text-right text-muted">${ review.getReviewDate() }</p>
+		                                		</div>
+		                                	</div>
 			                                <div class="row">
 			                                    <div class="col-md-12">
-			                                        <p><c:out value="${ review.getComments() }"/></p>
+			                                        <h3 style="color:#800000;"><c:out value="${ review.getReviewComments() }"/></h3>
 			                                    </div>
 			                                </div>
 		                                </c:if>

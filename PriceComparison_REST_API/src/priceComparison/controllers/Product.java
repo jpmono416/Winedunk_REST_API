@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import priceComparison.models.tblUserWineReviews;
 import priceComparison.models.tblUserWinesRatings;
 import priceComparison.models.viewUsers;
+import priceComparison.models.viewUsersWinesReviews;
 import priceComparison.models.viewWinesMinimumPrice;
 import priceComparison.services.ProductService;
 import priceComparison.services.ResultsService;
@@ -108,7 +109,7 @@ public class Product extends HttpServlet {
 			if( countOfReviews > 0)
 			{
 				request.setAttribute("amountOfReviews", countOfReviews);
-				List<tblUserWineReviews> reviews = reviewsService.getReviewsForWine(Integer.parseInt(wineId));
+				List<viewUsersWinesReviews> reviews = reviewsService.getReviewsForWine(Integer.parseInt(wineId));
 				if(reviews != null) { request.setAttribute("reviewsList", reviews); }
 			}
 			
@@ -118,9 +119,16 @@ public class Product extends HttpServlet {
 		
 		try
 		{
-
-			// Store the wine to be displayed and its shops's information
-			request.setAttribute("wine", productService.getWine(wineId));
+			viewWinesMinimumPrice wine = productService.getWine(wineId);
+			Integer amountOfRatings = ratingsService.getCountForWine(Integer.parseInt(wineId));
+			
+			// Check the amount of reviews and double check that there are ratings (i.e. not only ratings with value 0)
+			if( amountOfRatings == null || amountOfRatings <= 0 ) { request.setAttribute("noRatings", true); }
+			else { request.setAttribute("amountOfRatings", amountOfRatings); }
+			if(wine.getAvgRating() == null || wine.getAvgRating() <= 0) { request.setAttribute("noRatings", true); }
+			
+			// Store the wine to be displayed and its shops' information
+			request.setAttribute("wine", wine);
 			request.setAttribute("priceComparisonList", productService.getPriceComparison(wineId));
 			productPage.forward(request, response);
 		} catch (Exception e) { e.printStackTrace(); }
@@ -260,9 +268,9 @@ public class Product extends HttpServlet {
 								
 								try 
 								{
-									rating.setUserId(userId);
+									rating.setNumericUserId(userId);
 									rating.setRating(Integer.parseInt(request.getParameter("ratingOnReviewsForm")));
-									rating.setWineId(Integer.parseInt(request.getParameter("wineId")));
+									rating.setNumericWineId(Integer.parseInt(request.getParameter("wineId")));
 									
 									// Try to add the rating
 									if(ratingsService.addRating(rating)) { request.setAttribute("ratingSuccessful", true); }
@@ -319,9 +327,9 @@ public class Product extends HttpServlet {
 						return;
 					}
 					
-					rating.setUserId(userId);
+					rating.setNumericUserId(userId);
 					rating.setRating(Integer.parseInt(request.getParameter("ratingValue")));
-					rating.setWineId(Integer.parseInt(request.getParameter("wineId")));
+					rating.setNumericWineId(Integer.parseInt(request.getParameter("wineId")));
 					
 					try {
 						if(ratingsService.addRating(rating)) 

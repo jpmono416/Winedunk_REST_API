@@ -36,12 +36,9 @@
                        <hr class="sep-bar" style="margin-bottom:0;">
                        -->
 					<ul class="list-unstyled" style="margin-bottom: 0;">
-						<li class="settingsElement" onclick="showFavouriteWines()"><a
-							href="#"><i class="fa fa-heart linkIcon"></i>Favourite wines</a></li>
-						<!-- 
-	                           <li class="settingsElement" onclick="showWineReviews()"><a href="#"><i class="fa fa-commenting linkIcon"></i>Wine reviews</a></li>
-	                           <li class="settingsElement" onclick="showSavedSearches()"><a href="#"><i class="fa fa-search linkIcon"></i>Saved searches</a></li>
-                           -->
+						<li class="settingsElement" onclick="showFavouriteWines()"><a href="#"><i class="fa fa-heart linkIcon"></i>Favourite wines</a></li>
+                        <li class="settingsElement" onclick="showWineReviews()"><a href="#"><i class="fa fa-commenting linkIcon"></i>Wine reviews</a></li>
+                        <li class="settingsElement" onclick="showSavedSearches()"><a href="#"><i class="fa fa-search linkIcon"></i>Saved searches</a></li>
 					</ul>
 					<!--
 					<hr class="sep-bar" style="margin-bottom: 0;">
@@ -140,7 +137,7 @@
 						</form>
 					</div>
 					<div class="card settingsCard"
-						<c:if test="${sessionScope.sectionToBeDisplayed.equals(\"user\")}"> style="displau: block;"</c:if>
+						<c:if test="${sessionScope.sectionToBeDisplayed.equals(\"user\")}">style="display: block;"</c:if>
 						<c:if test="${!sessionScope.sectionToBeDisplayed.equals(\"user\")}">style="display: none;"</c:if>>
 						<h1 class="text-center">Login details</h1>
 						<hr class="sep-bar">
@@ -186,35 +183,37 @@
 												</tr>
 											</thead>
 											<tbody>
-												<c:forEach items="${requestScope.phoneNumbersList}"
-													var="phoneNumber">
-													<tr>
-														<td>
-															<form action="Profile" method="POST"
-																style="padding: 0; margin: 0; display: inline !important;">
-																<input class="hidden" name="phoneNumberId"
-																	value="${phoneNumber.getId()}"> <a
-																	onclick="populatePhoneEdition(this)"
-																	class="btn btn-default"
-																	data-id="${phoneNumber.getId()}" data-toggle="modal"
-																	data-target="#editPhoneModal"> <i
-																	class="fa fa-pencil"></i>
-																</a>
-															</form>
-															<form action="Profile" method="POST"
-																style="padding: 0; margin: 0; display: inline !important;">
-																<input class="hidden" name="phoneNumberId"
-																	value="${phoneNumber.getId()}"> <input
-																	class="hidden" name="formChosen"
-																	value="deletePhoneNumber">
-																<button class="btn btn-danger" type="submit">
-																	<i class="fa fa-trash"></i>
-																</button>
-															</form>
-														</td>
-														<td>${phoneNumber.getPhoneNumber()}</td>
-													</tr>
-												</c:forEach>
+												<c:if test="${ requestScope.noPhoneNumbers != true }">
+													<c:forEach items="${requestScope.phoneNumbersList}"
+														var="phoneNumber">
+														<tr>
+															<td>
+																<form action="Profile" method="POST"
+																	style="padding: 0; margin: 0; display: inline !important;">
+																	<input class="hidden" name="phoneNumberId"
+																		value="${phoneNumber.getId()}"> <a
+																		onclick="populatePhoneEdition(this)"
+																		class="btn btn-default"
+																		data-id="${phoneNumber.getId()}" data-toggle="modal"
+																		data-target="#editPhoneModal"> <i
+																		class="fa fa-pencil"></i>
+																	</a>
+																</form>
+																<form action="Profile" method="POST"
+																	style="padding: 0; margin: 0; display: inline !important;">
+																	<input class="hidden" name="phoneNumberId"
+																		value="${phoneNumber.getId()}"> <input
+																		class="hidden" name="formChosen"
+																		value="deletePhoneNumber">
+																	<button class="btn btn-danger" type="submit">
+																		<i class="fa fa-trash"></i>
+																	</button>
+																</form>
+															</td>
+															<td>${phoneNumber.getPhoneNumber()}</td>
+														</tr>
+													</c:forEach>
+												</c:if>
 											</tbody>
 										</table>
 									</div>
@@ -244,32 +243,34 @@
 												</tr>
 											</thead>
 											<tbody>
-												<c:forEach items="${requestScope.emailsList}" var="email">
-													<tr>
-														<td>
-															<form action="Profile" method="POST"
-																style="display: inline !important">
-																<input class="hidden" name="emailId"
-																	value="${email.getId()}"> <a
-																	onclick="populateEmailEdition(this)"
-																	class="btn btn-default" data-id="${email.getId()}"
-																	data-toggle="modal" data-target="#editEmailModal">
-																	<i class="fa fa-pencil"></i>
-																</a>
-															</form>
-															<form action="Profile" method="POST"
-																style="display: inline !important">
-																<input class="hidden" name="emailId"
-																	value="${email.getId()}"> <input class="hidden"
-																	name="formChosen" value="deleteEmailAddress">
-																<button class="btn btn-danger" type="submit">
-																	<i class="fa fa-trash"></i>
-																</button>
-															</form>
-														</td>
-														<td>${email.getEmailAddress()}</td>
-													</tr>
-												</c:forEach>
+												<c:if test="${ requestScope.noEmails != true }">
+													<c:forEach items="${requestScope.emailsList}" var="email">
+														<tr>
+															<td>
+																<form action="Profile" method="POST"
+																	style="display: inline !important">
+																	<input class="hidden" name="emailId"
+																		value="${email.getId()}"> <a
+																		onclick="populateEmailEdition(this)"
+																		class="btn btn-default" data-id="${email.getId()}"
+																		data-toggle="modal" data-target="#editEmailModal">
+																		<i class="fa fa-pencil"></i>
+																	</a>
+																</form>
+																<form action="Profile" method="POST"
+																	style="display: inline !important">
+																	<input class="hidden" name="emailId"
+																		value="${email.getId()}"> <input class="hidden"
+																		name="formChosen" value="deleteEmailAddress">
+																	<button class="btn btn-danger" type="submit">
+																		<i class="fa fa-trash"></i>
+																	</button>
+																</form>
+															</td>
+															<td>${email.getEmailAddress()}</td>
+														</tr>
+													</c:forEach>
+												</c:if>
 											</tbody>
 										</table>
 									</div>
@@ -362,143 +363,221 @@
 					</div>
 					<div>
 						<div class="row articles">
-							<c:forEach items="${requestScope.favouriteWines}" var="i">
-								<div class="col-xs-12 col-sm-6 col-md-4">
-									<div class="card item">
-										<a href="Product?id=<c:out value="${ i.getId() }" />">
-											<div style="width:100%;height:170px;background:url(<c:out value = "${i.getImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
-										</a>
-										<div class="text-wrapper">
-											<a style="text-decoration: none;"
-												href="Product?id=<c:out value="${ i.getId() }" />"><h3 style="color: #800000;" class="name">
-													<c:out value="${i.getName()}" />
-												</h3></a>
-											<p class="description">
-												<c:out value="${i.getShortDescription()}" />
-												<c:if test="${i.getShortDescription().length() == 169}">
-													<a href="Product?id=<c:out value="${ i.getId() }" />">
-														See more</a>
-												</c:if>
-											</p>
-										</div>
-										<div class="row" style="position:absolute; bottom:0; width:100% !important;">
-											<div class="col-xs-6">
-												<a style="text-decoration: none; margin-top:-50px;"
-												href="Product?id=<c:out value="${ i.getId() }" />"
-												class="action" data-toggle="tooltip" 
-											    title="Go to product page"><i
-												class="glyphicon glyphicon-circle-arrow-right"></i>
-												</a>												
+							<c:if test="${ requestScope.noFavourites != true }">
+								<c:forEach items="${requestScope.favouriteWines}" var="i">
+									<div class="col-xs-12 col-sm-6 col-md-4">
+										<div class="card item">
+											<a href="Product?id=<c:out value="${ i.getId() }" />">
+												<div style="width:100%;height:170px;background:url(<c:out value = "${i.getImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
+											</a>
+											<div class="text-wrapper">
+												<a style="text-decoration: none;"
+													href="Product?id=<c:out value="${ i.getId() }" />"><h3 style="color: #800000;" class="name">
+														<c:out value="${i.getName()}" />
+													</h3></a>
+												<p class="description">
+													<c:out value="${i.getShortDescription()}" />
+													<c:if test="${i.getShortDescription().length() == 169}">
+														<a href="Product?id=<c:out value="${ i.getId() }" />">
+															See more</a>
+													</c:if>
+												</p>
 											</div>
-											<div class="col-xs-6">
-												<a style="text-decoration: none; margin-top:-50px; cursor:pointer;"
-												class="action" data-toggle="tooltip" 
-											    title="Remove from favourite" onclick="deleteWine(<c:out value="${ i.getId() }" />)"><i
-												class="glyphicon glyphicon-remove"></i>
-												</a>												
+											<div class="row" style="position:absolute; bottom:0; width:100% !important;">
+												<div class="col-xs-6">
+													<a style="text-decoration: none; margin-top:-50px;"
+													href="Product?id=<c:out value="${ i.getId() }" />"
+													class="action" data-toggle="tooltip" 
+												    title="Go to product page"><i
+													class="glyphicon glyphicon-circle-arrow-right"></i>
+													</a>												
+												</div>
+												<div class="col-xs-6">
+													<a style="text-decoration: none; margin-top:-50px; cursor:pointer;"
+													class="action" data-toggle="tooltip" 
+												    title="Remove from favourite" onclick="deleteWine(<c:out value="${ i.getId() }" />)"><i
+													class="glyphicon glyphicon-remove"></i>
+													</a>												
+												</div>
 											</div>
 										</div>
 									</div>
-								</div>
-							</c:forEach>
+								</c:forEach>
+							</c:if>
 						</div>
 					</div>
 				</div>
-
-				<!--  
-                   <div id="wineReviewsArea" class="card settingsCard" style="display:none;">
-                       <h1 class="text-center">Reviews </h1>
-                       <hr class="sep-bar">
-                       <div class="row">
-                           <div class="col-md-12">
-                               <div class="panel panel-default panel-table">
-                                   <div class="panel-heading">
-                                       <div class="row">
-                                           <div class="col-md-12">
-                                               <h3 class="panel-title title-text">Reviews </h3></div>
-                                       </div>
-                                   </div>
-                                   <div class="panel-body">
-                                       <div class="table-responsive">
-                                           <table class="table table-striped table-bordered">
-                                               <thead>
-                                                   <tr>
-                                                       <th class="text-center"> <i class="fa fa-gear"></i></th>
-                                                       <th>Comment </th>
-                                                       <th>Wine </th>
-                                                       <th>Score </th>
-                                                   </tr>
-                                               </thead>
-                                               <tbody>
-                                                   <tr>
-                                                       <td class="text-center">
-                                                           <a href="#" class="btn btn-danger"> <i class="fa fa-trash"></i></a>
-                                                       </td>
-                                                       <td>I really liked this one because I find it...</td>
-                                                       <td>Some wine</td>
-                                                       <td>5 </td>
-                                                   </tr>
-                                                   <tr>
-                                                       <td class="text-center">
-                                                           <a href="#" class="btn btn-danger"> <i class="fa fa-trash"></i></a>
-                                                       </td>
-                                                       <td>Not too good value for the price</td>
-                                                       <td>Another wine</td>
-                                                       <td>3 </td>
-                                                   </tr>
-                                               </tbody>
-                                           </table>
-                                       </div>
-                                   </div>
-                               </div>
-                           </div>
-                       </div>
-                   </div>
-                   -->
-				<!--  
-                   <div id="savedSearchesArea" class="card settingsCard" style="display:none;">
-                       <h1 class="text-center">Saved searches</h1>
-                       <hr class="sep-bar">
-                       <div class="row">
-                           <div class="col-md-12">
-                               <div class="panel panel-default panel-table">
-                                   <div class="panel-heading">
-                                       <div class="row">
-                                           <div class="col-xs-12">
-                                               <h3 class="panel-title title-text">Saved searches</h3></div>
-                                       </div>
-                                   </div>
-                                   <div class="panel-body">
-                                       <div class="table-responsive">
-                                           <table class="table table-striped table-bordered">
-                                               <thead>
-                                                   <tr>
-                                                       <th class="text-center"> <i class="fa fa-gear"></i></th>
-                                                       <th>Name </th>
-                                                   </tr>
-                                               </thead>
-                                               <tbody>
-                                                   <tr>
-                                                       <td class="text-center">
-                                                           <a href="#" class="btn btn-danger"> <i class="fa fa-trash"></i></a>
-                                                       </td>
-                                                       <td>Red wines under Â£10</td>
-                                                   </tr>
-                                                   <tr>
-                                                       <td class="text-center">
-                                                           <a href="#" class="btn btn-danger"> <i class="fa fa-trash"></i></a>
-                                                       </td>
-                                                       <td>Expensive champagne</td>
-                                                   </tr>
-                                               </tbody>
-                                           </table>
-                                       </div>
-                                   </div>
-                               </div>
-                           </div>
-                       </div>
-                   </div>
-                   -->
+				
+                <div id="wineReviewsArea" <c:if test="${!sessionScope.sectionToBeDisplayed.equals(\"wineReviews\")}"> style="display: none" </c:if>>
+	                <div class="card settingsCard 
+	               	<c:if test="${sessionScope.sectionToBeDisplayed.equals(\"wineReviews\")}"> default </c:if>">
+	                    <h1 class="text-center">Reviews </h1>
+	                    <hr class="sep-bar">
+	                </div>
+	                <div class="card settingsCard
+	                <c:if test="${sessionScope.sectionToBeDisplayed.equals(\"wineReviews\")}"> default </c:if>">
+	                    <div class="row">
+	                        <div class="col-md-12">
+	                            <div class="panel panel-default panel-table">
+	                                <div class="panel-heading">
+	                                    <div class="row">
+	                                        <div class="col-md-12">
+	                                            <h3 class="panel-title title-text text-center">Reviews </h3></div>
+	                                    </div>
+	                                </div>
+	                                <div class="panel-body">
+	                                    <div class="table-responsive">
+	                                        <table class="table table-striped table-bordered">
+	                                            <thead>
+	                                                <tr>
+	                                                    <th class="text-center"> <i class="fa fa-gear"></i></th>
+	                                                    <th>Comment </th>
+	                                                    <th>Wine </th>
+	                                                    <th>Your score </th>
+	                                                </tr>
+	                                            </thead>
+	                                            <tbody>
+		                                            <c:if test="${ requestScope.noReviews != true }">
+		                                            	<c:forEach items="${ requestScope.userReviews }" var="review">
+			                                            	<tr>
+			                                                    <td class="text-center">
+																	<form action="Profile" method="POST"
+																		style="display: inline !important">
+																		<input class="hidden" name="reviewId"
+																			value="${review.getId()}"> <a
+																			onclick="populateReviewEdition(this)"
+																			class="btn btn-default" data-id="${ review.getId() }"
+																			data-wineId="${ review.getWineId() }"
+																			data-toggle="modal" data-target="#editReviewModal">
+																			<i class="fa fa-pencil"></i>
+																		</a>
+																	</form>
+																	<form action="Profile" method="POST"
+																		style="display: inline !important">
+																		<input class="hidden" name="reviewId"
+																			value="${review.getId()}"> <input class="hidden"
+																			name="formChosen" value="deleteReview">
+																		<button class="btn btn-danger" type="submit">
+																			<i class="fa fa-trash"></i>
+																		</button>
+																	</form>
+			                                                    </td>
+			                                                    <td><c:out value="${ review.getReviewComments() }"/></td>
+			                                                    <td>${ review.getWineName() }</td>
+			                                                    <td><c:out value="${ review.getUserRating() }"/></td>
+			                                                </tr>
+		                                            	</c:forEach>
+		                                            </c:if>
+	                                            </tbody>
+	                                        </table>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	                <div class="card settingsCard">
+	                	<h1 class="text-center">Ratings </h1>
+	                    <hr class="sep-bar">
+	                </div>
+	                <div class="card settingsCard">
+	                	<table class="table">
+					        <thead class="text-center">
+					            <tr>
+					                <th>Details</th>
+					                <th>Actions</th>
+					            </tr>
+					        </thead>
+					        <tbody>
+					        	<c:if test="${ requestScope.noRatings != true }">
+					        		<c:forEach items="${requestScope.ratingsList}" var="rating">
+								        <tr>
+							                <td>
+								                <div class="col-xs-12 col-md-3">
+								            		<a style="text-decoration:none;color:#800000;" href="http://www.winedunk.com/Product?id=<c:out value="${rating.getWineId()}"/>"><div style="width:100%;height:170px;background:url(<c:out value="${rating.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div></a>
+								            	</div>
+							                    <div class="col-xs-12 col-md-9">
+							                        <a style="text-decoration:none;color:#800000;" href="http://www.winedunk.com/Product?id=<c:out value="${rating.getWineId()}"/>"><h3 class="text-center"><c:out value="${ rating.getWineName() }"/></h3></a>
+							                    </div>
+							                    <div class="col-xs-12 col-md-9">
+							                        <h1 class="text-center">
+														<span id="stars">
+															<c:forEach varStatus="loop" begin="1" end="${ rating.getUserRating() }"><i class="glyphicon glyphicon-star"></i></c:forEach>
+														</span>
+													</h1>
+							                    </div>
+							                </td>
+							                <td>
+						                    	<form action="Profile" method="POST"
+													style="display: inline !important;">
+													<input class="hidden" name="reviewId"
+														value="${ rating.getId() }"> <a style="margin-top: 50px"
+														onclick="populateRatingEdition(this)"
+														class="btn btn-default" data-id="${ rating.getId() }"
+														data-wineId="${ rating.getWineId() }"
+														data-toggle="modal" data-target="#editRatingModal">
+														<i class="fa fa-pencil"></i>
+													</a>
+												</form>
+												<form action="Profile" method="POST"
+													style="display: inline !important">
+													<input class="hidden" name="ratingId"
+														value="${ rating.getId() }"> <input class="hidden"
+														name="formChosen" value="deleteRating">
+													<button class="btn btn-danger" type="submit" style="margin-top: 50px">
+														<i class="fa fa-trash"></i>
+													</button>
+												</form>
+							                </td>
+							            </tr>
+							        </c:forEach>
+					        	</c:if>
+					        </tbody>
+					    </table>
+	                </div>
+                </div>
+                <div id="savedSearchesArea" class="card settingsCard" style="display:none;">
+                    <h1 class="text-center">Saved searches</h1>
+                    <hr class="sep-bar">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-default panel-table">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <h3 class="panel-title title-text">Saved searches</h3></div>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center"> <i class="fa fa-gear"></i></th>
+                                                    <th>Name </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center">
+                                                        <a href="#" class="btn btn-danger"> <i class="fa fa-trash"></i></a>
+                                                    </td>
+                                                    <td>Red wines under Â£10</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">
+                                                        <a href="#" class="btn btn-danger"> <i class="fa fa-trash"></i></a>
+                                                    </td>
+                                                    <td>Expensive champagne</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 				<!--  
                    <div id="regionSettingsArea" class="card settingsCard" style="display:none;">
                        <h1 class="text-center">Region settings</h1>
@@ -680,25 +759,139 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="editReviewModal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title">Edit review</h4>
+				</div>
+				<div class="modal-body">
+					<form method="POST" action="Profile">
+						<input class="hidden" name="formChosen" type="text"
+							value="editReview"> 
+						<input class="hidden" name="reviewId" id="reviewId" type="text">
+						<input class="hidden" name="reviewWineId" id="reviewWineId" type="text"> 
+						<input
+							class="form-control" name="review" type="text"
+							placeholder="Review">
+						<div class="form-group"></div>
+						<button type="submit" class="btn btn-primary redButton">Save
+							changes</button>
+						<button type="button" class="btn btn-secondary"
+							style="float: right" data-dismiss="modal">Close</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="editRatingModal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title">Edit rating</h4>
+				</div>
+				<div class="modal-body">
+					<h3 class="text-center">Edit rating</h3>
+	                <hr class="sep-bar">
+					<form method="POST" action="Profile">
+						<h1 class="text-center">
+		                	<span id="formStars">
+		                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar1" class="glyphicon glyphicon-star"></i>
+		                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar2" class="glyphicon glyphicon-star"></i>
+		                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar3" class="glyphicon glyphicon-star"></i>
+		                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar4" class="glyphicon glyphicon-star"></i>
+		                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar5" class="glyphicon glyphicon-star"></i>
+		                	</span>
+				        </h1>
+						<input class="hidden" name="formChosen" type="text" value="editRating"> 
+						<input class="hidden" name="ratingId" id="ratingId" type="text">
+						<input class="hidden" name="ratingWineId" id="ratingWineId" type="text">
+						<input id="ratingValue" name="ratingValue" type="hidden">
+						<div class="form-group"></div>
+						<button type="submit" class="btn btn-primary redButton">Save changes</button>
+						<button type="button" class="btn btn-secondary" style="float: right" data-dismiss="modal">Close</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 	<c:import url="../templates/footer.jsp" />
 	<script src="assets/js/jquery.min.js"></script>
 	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
 	<script src="assets/js/userPage.js"></script>
 	<script>
+    	
+    	/*
+    		This function controls the colouring of the rating stars on hover.
+    		It gets the star that's hovered over and illuminates up to it.
+    	*/
+    	
+    	var defaultName;
+    	var elemId;
+    	
+    	function illuminateStars(elem)
+    	{
+   			defaultName = elem.getAttribute('id').slice(0, -1);
+   			elemId = elem.getAttribute('id').slice(-1)
+   			
+   			var i = 0;
+    		for(i = 1; i <= 5; i++)
+   			{
+    			var star = document.getElementById(defaultName + i);
+    			if(i > elemId) { star.setAttribute("style", "color: #bdc3c7"); } 
+    			else { star.setAttribute("style", "color: #f1c40f"); }
+   			}
+    	}
+    
+    	/*
+	   		This function is used for populating the hidden inputs
+	   		of the rating value. It populates both hidden inputs 
+	   		on both forms, since it can be called from either set of stars.
+	   		It also blocks the appropiate colour of the stars so they don't
+	   		change colour on mouse hover.
+		*/
+	
+		function populateRating(elem)
+	   	{
+   			defaultName = elem.getAttribute('id').slice(0, -1);
+   			elemId = elem.getAttribute('id').slice(-1)
+   			var i = 0;
+    		for(i = 1; i <= 5; i++)
+   			{
+    			var star = document.getElementById(defaultName + i);
+    			star.removeAttribute("onmouseover");
+    			/* if(i > elemId) { star.setAttribute("style", "color: #bdc3c7 !important;"); } 
+    			else { star.setAttribute("style", "color: #f1c40f !important;"); } */
+   			}
+    		
+    		document.getElementById("ratingValue").value = elemId;
+	   	}
+    	
+    </script>
+	<script>
 		var user            = document.getElementById('userSettingsArea').style;
 		var contact         = document.getElementById('contactDetailsArea').style;
 		var favouriteWines  = document.getElementById('favouriteWinesArea').style;
+		var wineReviews     = document.getElementById('wineReviewsArea').style;
+		var savedSearches   = document.getElementById('savedSearchesArea').style;
 		/*var newsletter      = document.getElementById('newsletterSettingsArea').style;
 		var notifications   = document.getElementById('notificationSettingsArea').style;
 		var devices         = document.getElementById('devicesSettingsArea').style;
-		var wineReviews     = document.getElementById('wineReviewsArea').style;
-		var savedSearches   = document.getElementById('savedSearchesArea').style;
 		var regionSettings  = document.getElementById('regionSettingsArea').style;
 		var accountSettings = document.getElementById('accountSettingsArea').style;*/
 	
 		<c:if test="${sessionScope.sectionToBeDisplayed.equals(\"user\")}"> var active = user; </c:if>
 		<c:if test="${sessionScope.sectionToBeDisplayed.equals(\"contact\")}"> var active = contact; </c:if>
 		<c:if test="${sessionScope.sectionToBeDisplayed.equals(\"favouriteWines\")}"> var active = favouriteWines; </c:if>
+		<c:if test="${sessionScope.sectionToBeDisplayed.equals(\"wineReviews\")}"> var active = wineReviews; </c:if>
 		
 		function showUser()
 		{
@@ -759,7 +952,7 @@
 		        active = favouriteWines;
 		    }
 		}
-	/*
+	
 		function showWineReviews()
 		{
 		    if(wineReviews.display != '' || wineReviews.display != 'none')
@@ -779,7 +972,7 @@
 		        active = savedSearches;
 		    }
 		}
-	
+	/*
 		function showRegionSettings()
 		{
 		    if(regionSettings.display != '' || regionSettings.display != 'none')
@@ -822,6 +1015,16 @@
 		{
 			var id = ele.getAttribute('data-id');
 			document.getElementById('emailId').value = id;
+		}
+		
+		function populateRatingEdition(ele)
+		{
+			var id = ele.getAttribute('data-id');
+			alert('DATA ID: ' + id);
+			var wineId = ele.getAttribute('data-wineId');
+			alert('DATA WID: ' + wineId);
+			document.getElementById('ratingId').value = id;
+			document.getElementById('ratingWineId').value = wineId;
 		}
 		
 	</script>

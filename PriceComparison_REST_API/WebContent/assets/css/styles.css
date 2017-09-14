@@ -874,3 +874,8 @@ input:checked + .slider:before {
     from {bottom: 30px; opacity: 1;}
     to {bottom: 0; opacity: 0;}
 }
+
+.opacityDiv:hover {
+	opacity: 0.5;
+    filter: alpha(opacity=50);
+}

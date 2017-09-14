@@ -28,7 +28,7 @@ public class UserEmailAddressesService {
 	
 	RequestsCreator requestCreator = new RequestsCreator();
 	
-	public List<userEmails> loadEmailAddresses() throws IOException 
+	public List<userEmails> loadEmailAddresses() throws IOException
 	{
 		relUrl = "userEmails?action=getUserEmailAddressesForUser";
 		String response = requestCreator.createPostRequest(urlPath, relUrl, userId.toString());
@@ -65,6 +65,7 @@ public class UserEmailAddressesService {
 		if (response.equalsIgnoreCase("true")) { return true; }
 		return false;
 	}
+	
 	public Boolean editEmailAddress(String emailAddress, String addressId) throws IOException
 	{
 		relUrl = "userEmails?action=updateUserEmail";
