@@ -24,12 +24,9 @@ public class Login extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	LoginService loginService = new LoginService();
-	
 	ValidationService validationService = new ValidationService();
 	
-    public Login() {
-        super();
-    }
+    public Login() { super(); }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		

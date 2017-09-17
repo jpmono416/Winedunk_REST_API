@@ -76,56 +76,54 @@
 						<c:if test="${!sessionScope.sectionToBeDisplayed.equals(\"user\")}">style="display: none;"</c:if>>
 						<h1 class="text-center">Personal details</h1>
 						<hr class="sep-bar">
-						<form>
+						<form action="Profile" method="POST">
+						<input type="hidden" name="formChosen" value="editDetails">
 							<div class="row">
-								<div class="col-sm-6 col-xs-6">
+								<div class="col-sm-4 col-xs-12">
 									<h4>Name:</h4>
-									<span class="label label-default" style="background: #800000;">Current:
-										<c:out value="${requestScope.userForDetails.getName()}" />
-									</span>
 								</div>
-								<div class="col-sm-6 col-xs-6">
-									<input class="form-control regionInput hidden" type="text"
-										placeholder="New name">
+								<div class="col-sm-8 col-xs-12">
+								<h4 id="wellName"><c:out value="${requestScope.userForDetails.getName()}"/>
+									<span class="badge" style="background: #800000;">  <span class="glyphicon glyphicon-pencil redText"></span></span>
+								</h4>
+									<input id="inputName" name="userName" class="form-control" type="text"
+										placeholder="New name" style="display:none">
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-sm-6 col-xs-6">
+								<div class="col-sm-4 col-xs-12">
 									<h4>Preferred email:</h4>
-									<span class="label label-default" style="background: #800000;">Current:
-										<c:out
-											value="${requestScope.userForDetails.getPreferredEmail()}" />
-									</span>
 								</div>
-								<div class="col-sm-6 col-xs-6">
-									<input class="form-control regionInput hidden" type="text"
-										placeholder="New email">
+								<div class="col-sm-8 col-xs-12">
+								<h4 id="wellEmail"><c:out value="${requestScope.userForDetails.getPreferredEmail()}" />
+									<span class="badge" style="background: #800000;">  <span class="glyphicon glyphicon-pencil redText"></span></span>
+								</h4>
+									<input id="inputEmail" name="preferredEmail" class="form-control" type="text"
+										placeholder="New email" style="display:none">
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-sm-6 col-xs-6">
+								<div class="col-sm-4 col-xs-12">
 									<h4>Preferred email to recover password:</h4>
-									<span class="label label-default" style="background: #800000;">Current:
-										<c:out
-											value="${requestScope.userForDetails.getRecoveringPassEmail()}" />
-									</span>
 								</div>
-								<div class="col-sm-6 col-xs-6">
-									<input class="form-control regionInput hidden" type="text"
-										placeholder="New recovery email">
+								<div class="col-sm-8 col-xs-12">
+								<h4 id="wellRecoveringEmail"><c:out value="${requestScope.userForDetails.getRecoveringPassEmail()}" />
+									<span class="badge" style="background: #800000;">  <span class="glyphicon glyphicon-pencil redText"></span></span>
+								</h4>
+									<input id="inputRecoveringEmail" name="recoveringEmail" class="form-control" type="text"
+										placeholder="New recovery email" style="display:none">
 								</div>
 							</div>
 							<div class="row hidden">
-								<div class="col-sm-6 col-xs-6">
+								<div class="col-sm-4 col-xs-12">
 									<h4>Preferred phone number:</h4>
-									<span class="label label-default" style="background: #800000;">Current:
-										<c:out
-											value="${requestScope.userForDetails.getPreferredPhoneNumber()}" />
-									</span>
 								</div>
-								<div class="col-sm-6 col-xs-6">
-									<input class="form-control regionInput hidden" type="text"
-										placeholder="New phone number">
+								<div class="col-sm-8 col-xs-12">
+								<h4 id="wellPhoneNumber"><c:out value="${requestScope.userForDetails.getPreferredPhoneNumber()}" />
+									<span class="badge" style="background: #800000;">  <span class="glyphicon glyphicon-pencil redText"></span></span>
+								</h4>
+									<input id="inputPhoneNumber" class="form-control regionInput hidden" type="text"
+										placeholder="New phone number" style="display:none">
 								</div>
 							</div>
 							<div class="row">
@@ -1045,6 +1043,27 @@
 	       	   		location.reload();
 	       	   }});
 	   	}
+	</script>
+	<script>
+		$('#wellName').click(function(){
+			$('#wellName').fadeOut();
+			$('#inputName').delay(1000).fadeIn();
+		});
+		
+		$('#wellEmail').click(function(){
+			$('#wellEmail').fadeOut();
+			$('#inputEmail').delay(1000).fadeIn();
+		});
+		
+		$('#wellRecoveringEmail').click(function(){
+			$('#wellRecoveringEmail').fadeOut();
+			$('#inputRecoveringEmail').delay(1000).fadeIn();
+		});
+		
+		$('#wellPhoneNumber').click(function(){
+			$('#wellPhoneNumber').fadeOut();
+			$('#inputPhoneNumber').delay(1000).fadeIn();
+		});
 	</script>
 	<c:import url="../templates/enableTooltips.jsp"/>
 </body>

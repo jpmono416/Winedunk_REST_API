@@ -1,8 +1,5 @@
 package priceComparison.models;
 
-import java.util.Date;
-
-
 public class tblUsers {
 
    
@@ -10,8 +7,6 @@ public class tblUsers {
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
-
-    
     private String name;
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -24,9 +19,9 @@ public class tblUsers {
     public String getPreferredPhoneNumber() { return preferredPhoneNumber; }
 	public void setPreferredPhoneNumber(String preferredPhoneNumber) { this.preferredPhoneNumber = preferredPhoneNumber; }
 
-    private Date DoB;
-    public Date getDoB() { return DoB; }
-    public void setDoB(Date doB) { DoB = doB; }
+    private String DoB;
+    public String getDoB() { return DoB; }
+    public void setDoB(String DoB) { this.DoB = DoB; }
 
     private String loginEmail;
     public String getLoginEmail() { return loginEmail; }
@@ -56,6 +51,22 @@ public class tblUsers {
     public Boolean isDeleted() {return deleted;}
     public void setDeleted(Boolean deleted) {this.deleted = deleted;}
 
+	private Integer numericCountryId;
+	public Integer getNumericCountryId() { return numericCountryId; }
+	public void setNumericCountryId(Integer numericCountryId) { this.numericCountryId = numericCountryId; }
+	
+	private Integer numericCurrencyId;
+	public Integer getNumericCurrencyId() { return numericCurrencyId; }
+	public void setNumericCurrencyId(Integer numericCurrencyId) { this.numericCurrencyId = numericCurrencyId; }
+	
+	private Integer numericTimeZoneId;
+	public Integer getNumericTimeZoneId() { return numericTimeZoneId; }
+	public void setNumericTimeZoneId(Integer numericTimeZoneId) { this.numericTimeZoneId = numericTimeZoneId; }
+	
+	private Integer numericLanguageId;
+	public Integer getNumericLanguageId() { return numericLanguageId; }
+	public void setNumericLanguageId(Integer numericLanguageId) { this.numericLanguageId = numericLanguageId; }
+	
     public tblUsers()
     {
         this.id = null;
@@ -70,16 +81,21 @@ public class tblUsers {
         this.loginPassword = null;
         this.loginToken = null;
         this.recoveringPassToken = null;
+        this.numericCountryId = null;
+        this.numericCurrencyId = null;
+        this.numericLanguageId = null;
+        this.numericTimeZoneId = null;
     }
     public tblUsers(Integer id) { this.id = id; }
-	
-    @Override
+	@Override
 	public String toString() {
-		return "tblUsers { \"id\" : \"" + id + "\" , name\" : \"" + name + "\" , preferredEmail\" : \"" + preferredEmail
-				+ "\" , preferredPhoneNumber\" : \"" + preferredPhoneNumber + "\" , DoB\" : \"" + DoB
-				+ "\" , loginEmail\" : \"" + loginEmail + "\" , loginPassword\" : \"" + loginPassword
-				+ "\" , loginToken\" : \"" + loginToken + "\" , recoveringPassEmail\" : \"" + recoveringPassEmail
-				+ "\" , recoveringPassToken\" : \"" + recoveringPassToken + "\" , isAdmin\" : \"" + isAdmin
-				+ "\" , deleted\" : \"" + deleted + " }";
+		return "{ \"id\" : \"" + id + "\" , \"name\" : \"" + name + "\" , \"preferredEmail\" : \"" + preferredEmail
+				+ "\" , \"preferredPhoneNumber\" : \"" + preferredPhoneNumber + "\" , \"doB\" : \"" + DoB
+				+ "\" , \"loginEmail\" : \"" + loginEmail + "\" , \"loginPassword\" : \"" + loginPassword
+				+ "\" , \"loginToken\" : \"" + loginToken + "\" , \"recoveringPassEmail\" : \"" + recoveringPassEmail
+				+ "\" , \"recoveringPassToken\" : \"" + recoveringPassToken + "\" , \"isAdmin\" : \"" + isAdmin
+				+ "\" , \"deleted\" : \"" + deleted + "\" , \"numericCountryId\" : \"" + numericCountryId
+				+ "\" , \"numericCurrencyId\" : \"" + numericCurrencyId + "\" , \"numericTimeZoneId\" : \""
+				+ numericTimeZoneId + "\" , \"numericLanguageId\" : \"" + numericLanguageId + "\" }";
 	}
 }

@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -177,6 +180,25 @@ public class ProfileService {
 		hashed = md.digest(bytesPassword);
 		previousPassword = generalService.bytesToHex(hashed);
 		
+		return true;
+	}
+	
+	public Boolean validateEmail(String email) throws AddressException
+	{
+		// Declare email address for validation
+		InternetAddress emailAddress = new InternetAddress(email);
+		
+		try { emailAddress.validate(); return true; } 
+		catch (AddressException e) { e.printStackTrace(); }
+		return false;
+	}
+	
+	public Boolean updateUser(tblUsers user) throws IOException
+	{
+		relUrl = "users?action=updateUserDetails";
+		String content = user.toString();
+		String responseString = requestCreator.createPostRequest(urlPath, relUrl, content);
+		if(!responseString.equalsIgnoreCase("true")) { return false; }
 		return true;
 	}
 }

@@ -162,7 +162,7 @@ public class LoginService {
 		isOverAged();
 
 		//Checking everything is fine
-		if(!registerErrors.isEmpty()) { System.out.println("Will return false"); return false; }
+		if(!registerErrors.isEmpty()) { return false; }
 		//Converting to bytes and encrypting password
 		String encryptedPassword = encryptPassword();
 		
@@ -227,8 +227,8 @@ public class LoginService {
 		InternetAddress emailAddress = new InternetAddress(email);
 		
 		try { emailAddress.validate(); } 
-		catch (AddressException e) { System.out.println("Email wrong format"); registerErrors.add("wrongEmailFormat"); }
-		if(!email.equals(repeatEmail)) { System.out.println("Emails don't match"); registerErrors.add("emailsDontMatch"); }
+		catch (AddressException e) { registerErrors.add("wrongEmailFormat"); }
+		if(!email.equals(repeatEmail)) { registerErrors.add("emailsDontMatch"); }
 	}
 	
 	private void passwordsOK()
@@ -241,8 +241,8 @@ public class LoginService {
 		pattern = Pattern.compile(passwordPattern);
 		matcher = pattern.matcher(password);
 		
-		if(!matcher.matches()) { System.out.println("PWs not good"); registerErrors.add("passwordWrongFormatted"); }
-		if(!password.equals(repeatPassword)) { System.out.println("PWs dont match"); registerErrors.add("passwordsDontMatch"); }
+		if(!matcher.matches()) { registerErrors.add("passwordWrongFormatted"); }
+		if(!password.equals(repeatPassword)) { registerErrors.add("passwordsDontMatch"); }
 	}
 	
 	private void isOverAged()
@@ -256,8 +256,8 @@ public class LoginService {
 			LocalDate lDate = LocalDate.parse(date);
 			LocalDate now = LocalDate.now();
 			long yearsPassed = ChronoUnit.YEARS.between(lDate, now);
-			if(yearsPassed < 18) { System.out.println("Not old enough"); registerErrors.add("notOldEnough"); }
-		} catch (DateTimeParseException parseEx) { System.out.println("Bad date"); registerErrors.add("invalidDate"); } 
+			if(yearsPassed < 18) { registerErrors.add("notOldEnough"); }
+		} catch (DateTimeParseException parseEx) { registerErrors.add("invalidDate"); } 
 	}
 	
 	private String createJson(String hashedPassword, String loginToken)

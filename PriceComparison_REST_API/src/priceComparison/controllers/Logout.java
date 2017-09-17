@@ -49,6 +49,7 @@ public class Logout extends HttpServlet {
 		
 		//Delete user validation token cookie
 		Cookie[] cookies = request.getCookies();
+		if(cookies != null)
 		for (Cookie cookie : cookies) 
 		{
 			if (cookie.getName().equals("uvt")) { cookie.setMaxAge(0); }

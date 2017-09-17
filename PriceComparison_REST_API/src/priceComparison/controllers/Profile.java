@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import priceComparison.models.tblUserWinesRatings;
 import priceComparison.models.tblUsers;
 import priceComparison.models.userEmails;
 import priceComparison.models.userPhoneNumbers;
@@ -152,7 +151,7 @@ public class Profile extends HttpServlet {
 		if(user == null) { response.getWriter().write("False"); return; }
 		Integer userId = user.getId();
 		
-		if(!userId.equals("")) { profileService.setUserId(userId); }
+		if(userId > 0 ) { profileService.setUserId(userId); }
 		else { return; }
 		
 		
@@ -240,6 +239,7 @@ public class Profile extends HttpServlet {
 					String emailId = request.getParameter("emailId");
 					
 					if(editEmailAddress.equals("")) { break; }
+					if(!profileService.validateEmail(editEmailAddress)) { session.setAttribute("error", true); break; }
 					if(!emailAddressService.editEmailAddress(editEmailAddress, emailId))
 					{
 						request.setAttribute("error", true); 
@@ -341,12 +341,48 @@ public class Profile extends HttpServlet {
 					}
 					
 					session.setAttribute("successful", true); 
-					session.setAttribute("sectionToBeDisplayed", "contact");
+					session.setAttribute("sectionToBeDisplayed", "user");
 					
 					break;
 					
-					//TODO CODE ALL OF THIS - PERSONAL DETAILS OF THE USER
 				case "editDetails" : 
+					
+					tblUsers userToEdit = new tblUsers();
+					String name = request.getParameter("userName");
+					String preferredEmail = request.getParameter("preferredEmail");
+					String recoveringEmail = request.getParameter("recoveringEmail");
+					
+					userToEdit.setId(userId);
+					if(name != null && !name.equals("") ) { userToEdit.setName(name); }
+					
+					if(preferredEmail != null && !preferredEmail.equals("")) 
+					{ 
+						if(!profileService.validateEmail(preferredEmail)) 
+						{ 
+							session.setAttribute("error", true); 
+							break; 
+						}
+						userToEdit.setPreferredEmail(preferredEmail); 
+					}
+					
+					if(recoveringEmail != null && !recoveringEmail.equals("")) 
+					{ 
+						if(!profileService.validateEmail(recoveringEmail)) 
+						{ 
+							session.setAttribute("error", true); 
+							break; 
+						}
+						userToEdit.setRecoveringPassEmail(recoveringEmail); 
+					}
+					if(!profileService.updateUser(userToEdit))
+					{
+						request.setAttribute("error", true); 
+						break;
+					}
+
+					session.setAttribute("successful", true); 
+					session.setAttribute("sectionToBeDisplayed", "user");
+					
 					break;
 					
 				case "addFavouriteWine" :

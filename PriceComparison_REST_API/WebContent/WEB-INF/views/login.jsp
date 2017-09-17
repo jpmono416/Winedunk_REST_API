@@ -25,9 +25,9 @@
                     <div id="recover-password-form" class="login-card" style="padding-top:30px;margin-top:20px;">
                         <h3 class="text-center">Recover your password</h3>
                         <hr class="sep-bar">
-                        <form class="form-signin">
+                        <form class="form-signin" method="POST" action="Home">
                         	<input class="hidden" name="formChosen" value="recoverPasswordForm">
-                            <input class="form-control" type="email" required="" placeholder="Email address" id="recoverInputEmail">
+                            <input class="form-control" type="email" required="" placeholder="Email address" id="recoverInputEmail" name="emailAddress">
                             <button class="btn btn-primary btn-block btn-lg btn-signin" type="submit" id="btnRecoverPassword">Recover your password</button>
                         </form>
                     </div>
@@ -42,6 +42,9 @@
                 <h3 class="text-center">Login </h3>
                 <hr class="sep-bar">
                 
+                <c:if test="${ requestScope.passedRecovery == true }">
+                	<p class="text-center text-success">The password was resetted successfully</p>
+                </c:if>
 	            <c:if test="${sessionScope.isLoggedIn == false}">
 	            	<p class="text-center text-danger">The details you entered seem to be wrong, please check them</p>
 	            </c:if>

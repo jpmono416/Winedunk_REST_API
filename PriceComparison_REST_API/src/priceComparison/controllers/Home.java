@@ -15,18 +15,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import priceComparison.models.tblWineTypes;
 import priceComparison.models.viewBestOffersbyCountries;
 import priceComparison.models.viewBestOffersbyMerchants;
 import priceComparison.models.viewBestOffersbyWineTypes;
 import priceComparison.models.viewCountriesWithBestOffers;
-import priceComparison.models.viewMerchants;
 import priceComparison.models.viewMerchantsWithBestOffers;
 import priceComparison.models.viewRecommendedWines;
 import priceComparison.models.viewWineTypesWithBestOffers;
 import priceComparison.services.GeneralService;
 import priceComparison.services.HomeService;
 import priceComparison.services.LoginService;
+import priceComparison.services.RecoveringPasswordService;
 import priceComparison.services.RequestsCreator;
 import priceComparison.services.ResultsService;
 import priceComparison.services.ValidationService;
@@ -45,6 +44,7 @@ public class Home extends HttpServlet {
 	ValidationService validationService = new ValidationService();
 	GeneralService generalService = new GeneralService();
 	RequestsCreator requestsCreator = new RequestsCreator();
+	RecoveringPasswordService recoveringPassword = new RecoveringPasswordService(); 
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
@@ -174,7 +174,15 @@ public class Home extends HttpServlet {
 					return; //Avoid the form trying to be accessed by anything else other than the page
 					
 				case "recoverPasswordForm":
-					break; //Still to be done
+					System.out.println("Entered case"); // TODO DELETE
+					recoveringPassword.setCrudURL(serviceProperties.getProperty("crud.url"));
+					recoveringPassword.setUserEmail(request.getParameter("emailAddress"));
+					System.out.println("Param:" + request.getParameter("emailAddress")); // TODO DELETE
+					if(recoveringPassword.recoverPassword())
+					{
+						System.out.println("Done"); //TODO WHAT HERE?
+					} else { System.out.println("NOT Done"); } //TODO WHAT HERE? 
+				break;
 					
 				case "loginForm":
 					
