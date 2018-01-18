@@ -29,7 +29,6 @@ public class ResultsService {
     	{
     		String url = action.toLowerCase() + "?action=get" + action;
     		String responseString = requestCreator.createGetRequest(urlPath, url);
-    		
     		try
     		{
     			JsonNode responseJson = new ObjectMapper().readTree(responseString);
@@ -64,10 +63,12 @@ public class ResultsService {
     					
     				default :
     					String value = responseJson.get(i).get("name").asText();
-    					if(value.length() > 20)
+    					/*TRIMMING FUNCTIONALITY SO THE TEXT DOESN'T GET OUT OF THE BOX - REMOVED SO THE "VIEW MORE" CARDS WORK
+    					 * 
+    					 * if(value.length() > 20)
     					{
     						value = value.substring(0, Math.min(responseJson.get(i).get("name").asText().length(), 20)) + "...";	
-    					}
+    					}*/
     					resultsMap.put(responseJson.get(i).get("id").asInt(), value);
     					break;
     				}    				

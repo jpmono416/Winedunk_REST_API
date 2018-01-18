@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import priceComparison.models.tblUserFavouriteWines;
+import priceComparison.models.tblUserSavedSearches;
 import priceComparison.models.tblUsers;
 import priceComparison.models.viewWines;
 

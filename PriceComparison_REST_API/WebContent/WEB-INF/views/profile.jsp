@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 
@@ -70,10 +71,9 @@
 						</c:if>
 					</div>
 				</c:if>
-				<div id="userSettingsArea">
+				<div id="userSettingsArea" <c:if test="${!sessionScope.sectionToBeDisplayed.equals(\"user\")}">style="display: none;"</c:if>>
 					<div
-						class="card settingsCard <c:if test="${sessionScope.sectionToBeDisplayed.equals(\"user\")}"> default</c:if>"
-						<c:if test="${!sessionScope.sectionToBeDisplayed.equals(\"user\")}">style="display: none;"</c:if>>
+						class="card settingsCard <c:if test="${sessionScope.sectionToBeDisplayed.equals(\"user\")}"> default</c:if>">
 						<h1 class="text-center">Personal details</h1>
 						<hr class="sep-bar">
 						<form action="Profile" method="POST">
@@ -534,7 +534,7 @@
 					    </table>
 	                </div>
                 </div>
-                <div id="savedSearchesArea" class="card settingsCard" style="display:none;">
+                <div id="savedSearchesArea" class="card settingsCard <c:if test="${sessionScope.sectionToBeDisplayed.equals(\"savedSearches\")}"> default </c:if>" <c:if test="${!sessionScope.sectionToBeDisplayed.equals(\"savedSearches\")}"> style="display: none" </c:if>>
                     <h1 class="text-center">Saved searches</h1>
                     <hr class="sep-bar">
                     <div class="row">
@@ -553,21 +553,29 @@
                                                 <tr>
                                                     <th class="text-center"> <i class="fa fa-gear"></i></th>
                                                     <th>Name </th>
+                                                    <th>Creation date</th>
+                                                    <th>Replicate</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td class="text-center">
-                                                        <a href="#" class="btn btn-danger"> <i class="fa fa-trash"></i></a>
-                                                    </td>
-                                                    <td>Red wines under Â£10</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-center">
-                                                        <a href="#" class="btn btn-danger"> <i class="fa fa-trash"></i></a>
-                                                    </td>
-                                                    <td>Expensive champagne</td>
-                                                </tr>
+                                            	<c:if test="${ requestScope.noSearches != true }">
+	                                            	<c:forEach items="${ requestScope.savedSearches }" var="search">
+		                                            	<tr>
+		                                                    <td class="text-center">
+		                                                    	<form action="Profile" method="POST">
+		                                                    		<button class="btn btn-danger" type="submit"><i class="fa fa-trash"></i></button>
+		                                                    		<input type="hidden" name="formChosen" value="deleteSavedSearch">
+		                                                    		<input type="hidden" name="searchId" value="${ search.getId() }">
+		                                                    	</form>
+		                                                    </td>
+		                                                    <td><c:out value="${ search.getName() }"/></td>
+		                                                    <td><c:out value = "${ search.getCreated() }"/></td>
+		                                                    <td class="text-center">
+		                                                    	<a href="winedunk.com/share<c:out value="${ search.getUrlString() }"/>" class="btn btn-danger redButton">Go!</a>
+		                                                   	</td>
+		                                                </tr>
+		                                            </c:forEach>
+                                            	</c:if>
                                             </tbody>
                                         </table>
                                     </div>
@@ -890,6 +898,7 @@
 		<c:if test="${sessionScope.sectionToBeDisplayed.equals(\"contact\")}"> var active = contact; </c:if>
 		<c:if test="${sessionScope.sectionToBeDisplayed.equals(\"favouriteWines\")}"> var active = favouriteWines; </c:if>
 		<c:if test="${sessionScope.sectionToBeDisplayed.equals(\"wineReviews\")}"> var active = wineReviews; </c:if>
+		<c:if test="${sessionScope.sectionToBeDisplayed.equals(\"savedSearches\")}"> var active = savedSearches; </c:if>
 		
 		function showUser()
 		{

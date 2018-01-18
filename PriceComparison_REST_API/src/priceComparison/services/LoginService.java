@@ -119,7 +119,9 @@ public class LoginService {
 		
 		//Send request to CRUD
 		String relURL = "users?action=getUserByEmail";
+		System.out.println("PATH: " + urlPath + ", REL: " + relURL); // TODO DELETE
 		String wholeResult = requestCreator.createPostRequest(urlPath, relURL, email);
+		
 		
 		//Convert the result to a list of fields
 		if(wholeResult == null) { return false; }
@@ -181,6 +183,7 @@ public class LoginService {
 		//Check if user was created and add the email to the table of user emails
 		if(responseUserId <= 0) { registerErrors.add("userNotCreated"); return false; }
 		userEmailsService.setUrlPath(urlPath);
+		userEmailsService.setUserId(responseUserId);
 		if(!userEmailsService.addEmailAddress(email)) {registerErrors.add("userNotCreated"); return false; }
 		
 		cookieString = userJsonString;
@@ -265,7 +268,7 @@ public class LoginService {
 		// TODO change this, use a userObject and set values with native methods
 		String userJsonString = 
 			"{"
-			+ "\"countryId\": 484,"
+			+ "\"countryId\": 238,"
 			+ "\"preferredCurrencyId\": 58,"
 			+ "\"preferredTimeZoneId\": 1,"
 			+ "\"preferredLanguageId\": 1,"

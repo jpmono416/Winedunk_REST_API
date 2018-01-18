@@ -8,7 +8,7 @@
 			<li class="settingsElement"><a href="AdvertiseWithUs">Advertise with us</a></li>
 			<li class="settingsElement"><a href="TermsOfService">Terms of service</a></li>
 			<li class="settingsElement"><a href="PrivacyPolicy">Privacy policy</a></li>
-			<li class="settingsElement"><a href="RegisterWithUs">Register with us</a></li>
+			<li class="settingsElement"><a href="RegisterWithUs">Sign up</a></li>
 		</ul>
 	</div>
 </div>

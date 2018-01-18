@@ -2,6 +2,9 @@ package priceComparison.controllers;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -15,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import priceComparison.models.tblUserBasket;
 import priceComparison.models.tblUserWineReviews;
 import priceComparison.models.tblUserWinesRatings;
 import priceComparison.models.viewUsers;
@@ -190,15 +194,33 @@ public class Product extends HttpServlet {
 					}
 					
 					viewWinesMinimumPrice currentWine = productService.getWine(request.getParameter("wineId"));
+					Integer merchantId = Integer.parseInt(request.getParameter("merchantId"));
+					String destinationURL = request.getParameter("destinationURL");
+					Float productPrice = Float.valueOf(request.getParameter("productPrice"));
 					
-					List<viewWinesMinimumPrice> wines = new ArrayList<viewWinesMinimumPrice>();
 					
-					if(session.getAttribute("basketList") != null) { wines = (List<viewWinesMinimumPrice>) session.getAttribute("basketList"); }
+					List<tblUserBasket> products = new ArrayList<tblUserBasket>();
+					tblUserBasket currentProduct = new tblUserBasket();
 					
-					wines.add(currentWine);
-					session.setAttribute("basketList", wines);
-					session.setAttribute("amountOfItemsInBasket", wines.size());
-					response.getWriter().write(wines.size());
+					if(session.getAttribute("basketList") != null) { products = (List<tblUserBasket>) session.getAttribute("basketList"); }
+					
+					DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			    	Date date = new Date();
+			    	
+			    	String dateString = dateFormat.format(date);
+					
+					currentProduct.setNumericWineId(currentWine.getWineId());
+					currentProduct.setNumericShopId(merchantId);
+					currentProduct.setDestinationURL(destinationURL);
+					currentProduct.setProductPrice(productPrice);
+					currentProduct.setDate(dateString);
+					currentProduct.setTimestamp(date);
+					
+					products.add(currentProduct);
+					
+					session.setAttribute("basketList", products);
+					session.setAttribute("amountOfItemsInBasket", products.size());
+					response.getWriter().write(products.size());
 					
 				break;
 					

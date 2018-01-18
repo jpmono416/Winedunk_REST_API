@@ -75,9 +75,7 @@ public class Home extends HttpServlet {
 		
 		try 
 		{ 
-			generalService.loadRecommendedWines();
-			List<viewRecommendedWines> recommendedWines = generalService.getRecommendedWines();
-			session.setAttribute("recommendedWines", recommendedWines);
+			generalService.checkRecommended(request);
 		} catch (Exception e) { e.printStackTrace(); }
 		
 		
@@ -192,6 +190,7 @@ public class Home extends HttpServlet {
 					 * Then, execute the login process and, if the result is successful, redirect the user
 					 * If not, user comes back to login, where error messages will appear accordingly to the data entered 
 					 */
+					System.out.println("Entered"); // TODO DEL
 					loginService.clearVariables(request);
 					loginService.setEmail(request.getParameter("loginInputEmail"));
 					loginService.setPassword(request.getParameter("loginInputPassword"));

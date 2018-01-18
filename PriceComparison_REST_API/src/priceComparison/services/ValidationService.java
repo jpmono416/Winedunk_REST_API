@@ -35,6 +35,7 @@ public class ValidationService {
 		viewUsers userLoggedIn = (viewUsers) request.getSession().getAttribute("userLoggedIn");
 		Cookie[] cookies = request.getCookies();
 		Cookie ourCookie;
+		
 		//Check session
 		if(userLoggedIn != null && userLoggedIn.getId() <= 0) { return false; }
 		

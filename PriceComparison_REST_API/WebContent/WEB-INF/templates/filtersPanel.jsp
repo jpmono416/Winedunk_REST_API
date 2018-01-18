@@ -66,10 +66,6 @@
 			</div>
 			<div class="form-group"></div>
 			<input class="form-control" autocomplete="off" type="text" placeholder="Winery" id="winery" name="winery">
-			<!--  
-			<input class="hidden" name="currentPage" value="${ sessionScope.currentPage }">
-			<input class="hidden" name="lastSearch" value="${ sessionScope.lastSearch }">
-			-->
 			<div class="form-group"></div>
 			<div class="row">
 				<div class="col-xs-6">
@@ -89,8 +85,20 @@
 				</div>
 			</div>
 			<div class="form-group"></div>
-			<hr class="sep-bar">
+				<h2 class="text-center red-text">Rating</h2>
+				<hr class="sep-bar"/>
+				<h2 class="text-center">
+                	<span id="formStars">
+                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar1" class="glyphicon glyphicon-star"></i>
+                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar2" class="glyphicon glyphicon-star"></i>
+                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar3" class="glyphicon glyphicon-star"></i>
+                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar4" class="glyphicon glyphicon-star"></i>
+                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar5" class="glyphicon glyphicon-star"></i>
+                	</span>
+		        </h2>
+		        <input id="ratingValue" name="ratingValue" type="hidden">
 			<div class="form-group"></div>
+			<hr class="sep-bar">
 			<div class="row" style="text-align:center;">
 				<div class="col-md-12">
 					<button class="btn btn-primary btn-lg redButton" type="submit" id="advanced-search"><i class="glyphicon glyphicon-search"></i> Find wines</button>

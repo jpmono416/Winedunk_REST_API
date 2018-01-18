@@ -33,6 +33,7 @@
 										                <th>Product details</th>
 										                <th class="text-center">Price </th>
 										                <th class="text-center">Shop </th>
+										                <th class="text-center">Go to shop </th>
 										            </tr>
 										        </thead>
 										        <tbody>
@@ -56,16 +57,13 @@
 											                </td>
 											                <td><strong><fmt:formatNumber type="currency" value="${wine.getMinimumPrice()}"/></strong> </td>
 											                <td style="min-width:90px;"><c:out value="${wine.getMinimumPriceShopName()}"/></td>
+											                <td><button class="btn redButton"><a href="<c:out value="${wine.getMinimumPriceDestinationURL()}"/>">Go</a></button> </td>
 											            </tr>
 											        </c:forEach>
 										        </tbody>
 										    </table>
 										    <hr class="sep-bar">
 										    <div class="col-md-10 col-md-offset-1 text-center">
-											    <button onclick="buyAll()"class="btn btn-primary redButton" data-toggle="tooltip" 
-											    title="Please note you may need to disable popup blocking for this page">Buy all</button>
-											    <button onclick="buyWines()"class="btn btn-primary redButton" data-toggle="tooltip" 
-											    title="Please note you may need to disable popup blocking for this page if you selected more than one">Buy selected</button>
 											    <button onclick="removeWines()"class="btn btn-primary redButton">Remove selected</button>
 											    <button onclick="removeAll()"class="btn btn-primary redButton">Remove all</button>
 										    </div>

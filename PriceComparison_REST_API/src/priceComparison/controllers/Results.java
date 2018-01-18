@@ -16,8 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import priceComparison.models.viewRecommendedWines;
+import priceComparison.models.viewUsers;
 import priceComparison.services.GeneralService;
 import priceComparison.services.ResultsService;
+import priceComparison.services.SavedSearchesService;
 import priceComparison.services.ValidationService;
 
 
@@ -28,6 +30,7 @@ public class Results extends HttpServlet {
 	ResultsService resultsService = new ResultsService();	
 	GeneralService generalService = new GeneralService();
 	ValidationService validationService = new ValidationService();
+	SavedSearchesService searchesService = new SavedSearchesService();
 
     public Results() { super(); }
     
@@ -73,8 +76,8 @@ public class Results extends HttpServlet {
 		//Set URL path of CRUD API and load filters
 		generalService.setCrudURL(serviceProperties.getProperty("crud.url"));
 		resultsService.setUrlPath(serviceProperties.getProperty("crud.url"));
-		resultsService.loadFilters(request);
 		validationService.setUrlPath(serviceProperties.getProperty("crud.url"));
+		resultsService.loadFilters(request);
 		validationService.validateUser(request, response);
 		
 		//Avoid the "there are no results" card if there are results
@@ -87,19 +90,16 @@ public class Results extends HttpServlet {
 			{
 				amountOfPages = (Integer) resultsService.getCountOfPages("&currentPage=" + currentPage);
 				session.setAttribute("amountOfpages", amountOfPages);
-				session.setAttribute("amountOfpages", amountOfPages);
 				request.setAttribute("resultsList", resultsService.getWines("&currentPage=" + currentPage));
-			}	
+			}
 		} else { request.setAttribute("resultsList", session.getAttribute("sessionResults")); }
 		
-		if(amountOfPages.equals("")) { amountOfPages = 0; } //TODO CHECK
+		if(amountOfPages <= 0) { amountOfPages = 0; } //TODO CHECK
 		
 		//Get recommended wines
 		try 
 		{ 
-			generalService.loadRecommendedWines();
-			List<viewRecommendedWines> recommendedWines = generalService.getRecommendedWines();
-			session.setAttribute("recommendedWines", recommendedWines);
+			generalService.checkRecommended(request);
 		} catch (Exception e) { e.printStackTrace(); }
 		
 		
@@ -121,12 +121,6 @@ public class Results extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		/*
-		 * This part of the code is accessed when there is a click on either the "next" or the "previous" page button
-		 * This will identify whether it needs to go to the next or previous page and change the session variable 
-		 * that states in which page we are, then reload the page. It will not persist a new search.
-		 */
-		
 		HttpSession session = request.getSession();
 		if (request.getParameter("JSESSIONID") != null) {
 		    Cookie userCookie = new Cookie("JSESSIONID", request.getParameter("JSESSIONID"));
@@ -136,6 +130,7 @@ public class Results extends HttpServlet {
 		    Cookie userCookie = new Cookie("JSESSIONID", sessionId);
 		    response.addCookie(userCookie);
 		}
+		
 		
 		final String webInfPath = getServletContext().getRealPath("/WEB-INF/");
 		//system's path separator
@@ -147,6 +142,7 @@ public class Results extends HttpServlet {
 		//Set URL path of CRUD API
 		resultsService.setUrlPath(serviceProperties.getProperty("crud.url"));
 		generalService.setCrudURL(serviceProperties.getProperty("crud.url"));
+		searchesService.setUrlPath(serviceProperties.getProperty("crud.url"));
 		
 		Integer currentPage = 0,
 				amountOfPages = 0;
@@ -172,6 +168,11 @@ public class Results extends HttpServlet {
 		{
 			switch (formChosen)  
 			{
+				/*
+				 * This part of the code is accessed when the current pagination of results changes - change page
+				 * This will identify whether it needs to go to the next or previous page and change the session variable 
+				 * that states in which page we are, then reload the page. It will not persist a new search.
+				 */
 				case "next" : 
 					currentPage++;
 					break;
@@ -228,6 +229,24 @@ public class Results extends HttpServlet {
 				case "number" :
 					String value = request.getParameter("value");
 					currentPage = Integer.parseInt(value);
+				break;
+				
+				case "addSavedSearch" :
+					viewUsers userLoggedIn = (viewUsers) request.getSession().getAttribute("userLoggedIn");
+					if(userLoggedIn == null || (userLoggedIn != null && userLoggedIn.getId() <= 0 )) 
+					{ 
+						request.setAttribute("userNotRegistered", true);
+						break; 
+					}
+					
+					searchesService.setUserId(userLoggedIn.getId());
+					searchesService.setSearchUrl(request.getParameter("searchUrl"));
+					searchesService.setSearchName(request.getParameter("savedSearchName"));
+					
+					if(searchesService.addSavedSearch())
+					{
+						request.setAttribute("searchSaved", true);
+					}
 				break;
 			}
 

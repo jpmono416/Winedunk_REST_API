@@ -2,7 +2,9 @@ package priceComparison.controllers;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Properties;
 
 import javax.servlet.RequestDispatcher;
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import priceComparison.models.tblUserSavedSearches;
 import priceComparison.models.tblUsers;
 import priceComparison.models.userEmails;
 import priceComparison.models.userPhoneNumbers;
@@ -23,6 +26,7 @@ import priceComparison.models.viewUsersWinesReviews;
 import priceComparison.models.viewWines;
 import priceComparison.services.FavouriteWinesService;
 import priceComparison.services.ProfileService;
+import priceComparison.services.SavedSearchesService;
 import priceComparison.services.UserEmailAddressesService;
 import priceComparison.services.UserPhoneNumbersService;
 import priceComparison.services.UserRatingsService;
@@ -43,6 +47,7 @@ public class Profile extends HttpServlet {
 	UserEmailAddressesService emailAddressService = new UserEmailAddressesService();
 	UserReviewsService reviewsService = new UserReviewsService(); 
 	UserRatingsService ratingsService = new UserRatingsService();
+	SavedSearchesService searchesService = new SavedSearchesService();
 	
     public Profile() { super(); }
     
@@ -77,6 +82,7 @@ public class Profile extends HttpServlet {
 		reviewsService.setUrlPath(crudURL);
 		ratingsService.setUrlPath(crudURL);
 		validationService.setUrlPath(crudURL);
+		searchesService.setUrlPath(crudURL);
 		validationService.validateUser(request, response);
 		
 		//Load various user lists
@@ -111,6 +117,26 @@ public class Profile extends HttpServlet {
 			else { request.setAttribute("noRatings", true); }
 		} catch(Exception e) { e.printStackTrace(); }
 		
+		try {
+			searchesService.setUserId(userId);
+			List<tblUserSavedSearches> searches = searchesService.getSavedSearchesForUser();
+			if(searches != null) 
+			{ 
+				for(ListIterator<tblUserSavedSearches> i = (ListIterator<tblUserSavedSearches>) searches.listIterator(); i.hasNext();)
+				{
+					tblUserSavedSearches search = i.next();
+					Long date = Long.parseLong(search.getCreated());
+					
+					SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+					String dateString = sdf.format(date);
+					
+					search.setCreated(dateString);
+				}
+				request.setAttribute("savedSearches", searches); 
+			}
+			else { request.setAttribute("noSearches", true); }
+		} catch(Exception e) { e.printStackTrace(); }
+
 		tblUsers userToBeLoaded = profileService.loadUserDetails();
 		request.setAttribute("userForDetails", userToBeLoaded);
 		
@@ -328,6 +354,7 @@ public class Profile extends HttpServlet {
 					session.setAttribute("successful", true);
 					session.setAttribute("sectionToBeDisplayed", "wineReviews");
 				break;
+				
 				case "changePassword" :
 					if(request.getParameter("previousPassword").equals("") || request.getParameter("newPassword").equals("")) { break; }
 					
@@ -411,7 +438,20 @@ public class Profile extends HttpServlet {
 					session.setAttribute("successful", true); 
 					session.setAttribute("sectionToBeDisplayed", "favouriteWines");
 					
-					return;
+				break;
+					
+				case "deleteSavedSearch" :
+					Integer searchId = Integer.parseInt(request.getParameter("searchId"));
+					
+					if(!searchesService.deleteSavedSearch(searchId))
+					{
+						session.setAttribute("error", true); 
+						return;
+					}
+					
+					session.setAttribute("successful", true); 
+					session.setAttribute("sectionToBeDisplayed", "savedSearches");
+				break;
 			}
 		} catch (Exception e) { e.printStackTrace(); session.setAttribute("error", true); }
 		doGet(request, response);

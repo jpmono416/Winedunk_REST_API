@@ -27,50 +27,160 @@
                 <div class="col-sm-9">
                     <div class="row">
                     	<c:if test="${ requestScope.searchByMerchant == true }">
-                    		<c:if test="${ requestScope.noOffers != true }">
-	                    		<div class="col-xs-12">
-									<div class="card settingsCard">
-										<h1 class="text-center"><c:out value="${ requestScope.merchantChosen.getName() }"/></h1>
-			                        	<hr class="sep-bar">
-			                        	<h3 class="text-muted text-center">Best offers</h3>
+                    		<c:if test="${ requestScope.noMerchant != true }">
+	                    		<c:if test="${ requestScope.noMerchantOffers != true }">
+		                    		<div class="col-xs-12">
+										<div class="card settingsCard">
+											<h1 class="text-center"><c:out value="${ requestScope.merchantChosen.getName() }"/></h1>
+				                        	<hr class="sep-bar">
+				                        	<h3 class="text-muted text-center">Best offers</h3>
+										</div>
 									</div>
-								</div>
-								<div class="col-xs-12">
-								<div class="row articles">
-									<c:forEach items="${ requestScope.bestOffers }" var="i">
-										<div class="col-xs-12 col-sm-6 col-md-4 item">
-											<div class="card item">
-												<a href="Product?id=<c:out value="${ i.getWineId() }" />">
-													<div style="width:100%;height:170px;background:url(<c:out value = "${i.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
-												</a>
-												<div class="text-wrapper">
-													<a style="text-decoration: none;" href="Product?id=<c:out value="${ i.getWineId() }" />"><h3 style="color:#800000;" class="name"><c:out value="${i.getWineName()}"/></h3></a>
-													<p class="description"><c:out value="${i.getWineShortDescription()}"/>
-														<c:if test="${i.getWineShortDescription().length() == 169}">
-															<a href="Product?id=<c:out value="${ i.getWineId() }" />"> See more</a>
-														</c:if>
-													</p>
-													<div class="row" style="margin-top:15px; bottom:0px;">
-													<a style="text-decoration:none;" href="Product?id=<c:out value="${ i.getWineId() }" />" class="action">
-														<i class="glyphicon glyphicon-circle-arrow-right"></i>
-													</a>
+									<div class="col-xs-12">
+										<div class="row articles">
+											<c:forEach items="${ requestScope.bestMerchantOffers }" var="i">
+												<div class="col-xs-12 col-sm-6 col-md-4 item">
+													<div class="card item">
+														<a href="Product?id=<c:out value="${ i.getWineId() }" />">
+															<div style="width:100%;height:170px;background:url(<c:out value = "${i.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
+														</a>
+														<div class="text-wrapper">
+															<a style="text-decoration: none;" href="Product?id=<c:out value="${ i.getWineId() }" />"><h3 style="color:#800000;" class="name"><c:out value="${i.getWineName()}"/></h3></a>
+															<p class="description"><c:out value="${i.getWineShortDescription()}"/>
+																<c:if test="${i.getWineShortDescription().length() == 169}">
+																	<a href="Product?id=<c:out value="${ i.getWineId() }" />"> See more</a>
+																</c:if>
+															</p>
+															<div class="row" style="margin-top:15px; bottom:0px;">
+															<a style="text-decoration:none;" href="Product?id=<c:out value="${ i.getWineId() }" />" class="action">
+																<i class="glyphicon glyphicon-circle-arrow-right"></i>
+															</a>
+															</div>
+														</div>
 													</div>
 												</div>
-											</div>
+											</c:forEach>
 										</div>
-									</c:forEach>
-								</div>
-							</div>
-                    		</c:if>
-							<div class="col-xs-12">
-								<div class="card settingsCard">
-									<h1 class="text-center"><c:out value="${ requestScope.merchantChosen.getName() }"/></h1>
-		                        	<hr class="sep-bar">
-		                        	<h3 class="text-muted text-center">Wines</h3>
-								</div>
-							</div>
+									</div>
+		                    	</c:if>
+		                    	<c:if test="${ sessionScope.notDisplayTitleCards != true }">
+		                    		<div class="col-xs-12">
+										<div class="card settingsCard">
+											<h1 class="text-center"><c:out value="${ requestScope.merchantChosen.getName() }"/></h1>
+				                        	<hr class="sep-bar">
+				                        	<h3 class="text-muted text-center">Wines<c:out value="${ requesScope.notDisplayTitleCards }" /></h3>
+										</div>
+									</div>
+		                    	</c:if>
+							</c:if>
+                    	</c:if>
+                    	<c:if test="${ requestScope.searchByCountry == true }">
+                    		<c:if test="${ requestScope.noCoutnry != true }">
+	                    		<c:if test="${ requestScope.noCountryOffers != true }">
+		                    		<div class="col-xs-12">
+										<div class="card settingsCard">
+											<h1 class="text-center"><c:out value="${ requestScope.countryChosen.getCountryName() }"/></h1>
+				                        	<hr class="sep-bar">
+				                        	<h3 class="text-muted text-center">Best offers</h3>
+										</div>
+									</div>
+									<div class="col-xs-12">
+										<div class="row articles">
+											<c:forEach items="${ requestScope.bestCountryOffers }" var="i">
+												<div class="col-xs-12 col-sm-6 col-md-4 item">
+													<div class="card item">
+														<a href="Product?id=<c:out value="${ i.getWineId() }" />">
+															<div style="width:100%;height:170px;background:url(<c:out value = "${i.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
+														</a>
+														<div class="text-wrapper">
+															<a style="text-decoration: none;" href="Product?id=<c:out value="${ i.getWineId() }" />"><h3 style="color:#800000;" class="name"><c:out value="${i.getWineName()}"/></h3></a>
+															<p class="description"><c:out value="${i.getWineShortDescription()}"/>
+																<c:if test="${i.getWineShortDescription().length() == 169}">
+																	<a href="Product?id=<c:out value="${ i.getWineId() }" />"> See more</a>
+																</c:if>
+															</p>
+															<div class="row" style="margin-top:15px; bottom:0px;">
+															<a style="text-decoration:none;" href="Product?id=<c:out value="${ i.getWineId() }" />" class="action">
+																<i class="glyphicon glyphicon-circle-arrow-right"></i>
+															</a>
+															</div>
+														</div>
+													</div>
+												</div>
+											</c:forEach>
+										</div>
+									</div>
+	                    		</c:if>
+	                    		<c:if test="${ sessionScope.notDisplayTitleCards != true }">
+	                    			<div class="col-xs-12">
+										<div class="card settingsCard">
+											<h1 class="text-center"><c:out value="${ requestScope.countryChosen.getCountryName() }"/></h1>
+				                        	<hr class="sep-bar">
+				                        	<h3 class="text-muted text-center">Wines<c:out value="${ requesScope.notDisplayTitleCards }" /></h3>
+										</div>
+									</div>
+	                    		</c:if>
+							</c:if>
+                    	</c:if>
+                    	<c:if test="${ requestScope.searchByWineType == true }">
+                    		<c:if test="${ requestScope.noType != true }">
+	                    		<c:if test="${ requestScope.noWineTypeOffers != true }">
+		                    		<div class="col-xs-12">
+										<div class="card settingsCard">
+											<h1 class="text-center"><c:out value="${ requestScope.wineTypeChosen.getWineTypeName() }"/></h1>
+				                        	<hr class="sep-bar">
+				                        	<h3 class="text-muted text-center">Best offers</h3>
+										</div>
+									</div>
+									<div class="col-xs-12">
+										<div class="row articles">
+											<c:forEach items="${ requestScope.bestWineTypeOffers }" var="i">
+												<div class="col-xs-12 col-sm-6 col-md-4 item">
+													<div class="card item">
+														<a href="Product?id=<c:out value="${ i.getWineId() }" />">
+															<div style="width:100%;height:170px;background:url(<c:out value = "${i.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
+														</a>
+														<div class="text-wrapper">
+															<a style="text-decoration: none;" href="Product?id=<c:out value="${ i.getWineId() }" />"><h3 style="color:#800000;" class="name"><c:out value="${i.getWineName()}"/></h3></a>
+															<p class="description"><c:out value="${i.getWineShortDescription()}"/>
+																<c:if test="${i.getWineShortDescription().length() == 169}">
+																	<a href="Product?id=<c:out value="${ i.getWineId() }" />"> See more</a>
+																</c:if>
+															</p>
+															<div class="row" style="margin-top:15px; bottom:0px;">
+															<a style="text-decoration:none;" href="Product?id=<c:out value="${ i.getWineId() }" />" class="action">
+																<i class="glyphicon glyphicon-circle-arrow-right"></i>
+															</a>
+															</div>
+														</div>
+													</div>
+												</div>
+											</c:forEach>
+										</div>
+									</div>
+	                    		</c:if>
+	                    		<c:if test="${ sessionScope.notDisplayTitleCards != true }">
+									<div class="col-xs-12">
+										<div class="card settingsCard">
+											<h1 class="text-center"><c:out value="${ requestScope.wineTypeChosen.getWineTypeName() }"/></h1>
+				                        	<hr class="sep-bar">
+				                        	<h3 class="text-muted text-center">Wines<c:out value="${ requesScope.notDisplayTitleCards }" /></h3>
+										</div>
+									</div>	                    		
+	                    		</c:if>
+							</c:if>	
                     	</c:if>
 						<div class="col-sm-12 result-card">
+							<c:if test="${ requestScope.searchSaved == true }">
+							    <div id="informationArea" class="card settingsCard">
+							    	<div role="alert" class="alert alert-success" style="margin-bottom: 0;"><span><strong>Added to saved searches!</strong></span></div>
+							    </div>
+						    </c:if>
+						    <c:if test="${ requestScope.userNotRegistered == true }">
+								<div id="informationArea" class="card settingsCard">
+									<div role="alert" class="alert alert-danger" style="margin-bottom: 0;"><span><strong>Please <a href="/Login?action=signUp">register</a>!</strong></span></div>
+								</div>						    
+						    </c:if>
 						    <div class="card">
 						        <div class="row">
 						            <div class="col-xs-6" style="padding:10px">
@@ -83,7 +193,8 @@
 										</div>
 						            </div>
 						            <div class="col-xs-6">
-					            		<button id="showURLButton" class="btn btn-primary redButton" type="button" style="width:130px;float:right;margin-right:10px;margin-top:10px;">Share search </button>
+						            	<button id="addSavedSearchButton" data-toggle="modal" data-target="#saveSearchModal" class="btn btn-primary redButton" type="button" style="width:130px;float:right;margin-right:10px;margin-top:10px;">Save this search</button>
+					            		<button id="showURLButton" class="btn btn-primary secondaryButton" type="button" style="width:130px;float:right;margin-right:10px;margin-top:10px;">Share search</button>
 					            		<input id="urlText" class="form-control text-center" style="float:right;display:none;margin-right:10px;margin-top:10px;" value="winedunk.com/Share<c:out value="${requestScope.sharingURL}"/>">
 						            </div>
 						        </div>
@@ -235,6 +346,31 @@
             </div>
         </div>
     </section>
+    <div class="modal fade" id="saveSearchModal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title">Add search</h4>
+				</div>
+				<div class="modal-body">
+					<h3 class="text-center">Save search</h3>
+	                <hr class="sep-bar">
+					<form method="POST" action="Results">
+						<input class="hidden" name="formChosen" type="text" value="addSavedSearch"> 
+						<input id="savedSearchName" name="savedSearchName" class="form-control text-center" placeholder="Give it a name">
+						<input id="searchForSaving" name="searchUrl" type="hidden" value="<c:out value="${requestScope.sharingURL}"/>">
+						<div class="form-group"></div>
+						<button type="submit" class="btn btn-primary redButton">Save</button>
+						<button type="button" class="btn btn-secondary" style="float: right" data-dismiss="modal">Close</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
     <c:import url="../templates/footer.jsp"/>
     <div class="snackbar" id="sbLinkCopied">Link copied to clipboard!</div>
     <script src="assets/js/jquery.min.js"></script>
@@ -244,9 +380,6 @@
     <script>
 		
     	$('#showURLButton').click(function(){
-			$('#showURLButton').animate({
-				height: 'toggle'
-			}, 'slow');
 			
 			var $input = $('#urlText');
 			var $temp = $("<input>");
@@ -255,12 +388,68 @@
 		    document.execCommand("copy");
 		    
 		    $temp.remove();
-			$input.fadeIn();
 			
 			var snackBarCopied = document.getElementById("sbLinkCopied")
      	    snackBarCopied.className = "snackbar show";
-     	    setTimeout(function(){ snackBarCopied.className = snackBarCopied.className.replace("show", ""); }, 3000);
+     	    setTimeout(function(){ snackBarCopied.className = snackBarCopied.className.replace("show", ""); }, 5000);
    		});
+    </script>
+    <script>
+    	
+    	/*
+    		This function controls the colouring of the rating stars on hover.
+    		It gets the star that's hovered over and illuminates up to it.
+    	*/
+    	
+    	var defaultName;
+    	var elemId;
+    	
+    	function illuminateStars(elem)
+    	{
+   			defaultName = elem.getAttribute('id').slice(0, -1);
+   			elemId = elem.getAttribute('id').slice(-1)
+   			
+   			var i = 0;
+    		for(i = 1; i <= 5; i++)
+   			{
+    			var star = document.getElementById(defaultName + i);
+    			if(i > elemId) { star.setAttribute("style", "color: #bdc3c7"); } 
+    			else { star.setAttribute("style", "color: #f1c40f"); }
+   			}
+    	}
+    
+    	/*
+	   		This function is used for populating the hidden inputs
+	   		of the rating value. It populates both hidden inputs 
+	   		on both forms, since it can be called from either set of stars.
+	   		It also blocks the appropiate colour of the stars so they don't
+	   		change colour on mouse hover.
+		*/
+	
+		function populateRating(elem)
+	   	{
+   			defaultName = elem.getAttribute('id').slice(0, -1);
+   			elemId = elem.getAttribute('id').slice(-1)
+   			var i = 0;
+    		for(i = 1; i <= 5; i++)
+   			{
+    			var star = document.getElementById(defaultName + i);
+    			star.removeAttribute("onmouseover");
+    			/* if(i > elemId) { star.setAttribute("style", "color: #bdc3c7 !important;"); } 
+    			else { star.setAttribute("style", "color: #f1c40f !important;"); } */
+   			}
+    		
+    		document.getElementById("ratingValue").value = elemId;
+	   	}
+    	
+		/* Control the "saved successfully/there was an error" messages' fade out*/
+		$(document).ready(function() 
+    	{ 
+    		setTimeout(function() {
+    		    $('#informationArea').fadeOut('slow');
+    		}, 3000);
+    	});
+		
     </script>
     <c:import url="../templates/script.jsp"/>
 </body>

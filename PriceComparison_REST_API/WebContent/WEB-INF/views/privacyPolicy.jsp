@@ -82,7 +82,7 @@
                                     	<p class="text-justify">
                                     		If you would like to: access, correct, amend or delete any personal information we have about you, register a complaint, or simply want more information contact our Privacy Compliance Officer at info@winedunk.com or by mail at Windedunk Ltd<br/><br/>
                                     		[Privacy Compliance Officer]<br/><br/>
-											[24 Colby Road, London, LND, SE19 1HA, United Kingdom]<br/><br/>
+											[36 Yew Tree Close, Shrewsbury, SY1 2US, United Kingdom]<br/><br/>
                                     	</p>
                                     	
                                     </div>

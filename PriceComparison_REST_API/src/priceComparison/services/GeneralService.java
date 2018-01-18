@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-import priceComparison.models.tblWineTypes;
 import priceComparison.models.viewBestOffersbyCountries;
 import priceComparison.models.viewBestOffersbyMerchants;
 import priceComparison.models.viewBestOffersbyWineTypes;
@@ -48,13 +47,12 @@ public class GeneralService {
 	
 	public void checkRecommended(HttpServletRequest request)
 	{
-		if(request.getAttribute("recommendedWines") == null)
+		if(request.getSession().getAttribute("recommendedWines") == null)
 		{
 			try 
 			{ 
 				loadRecommendedWines();
-				request.setAttribute("recommendedWines", recommendedWines);
-				
+				request.getSession().setAttribute("recommendedWines", recommendedWines);
 			}	catch (Exception e) { e.printStackTrace(); }	
 		}
 	}
@@ -108,27 +106,28 @@ public class GeneralService {
 		
 		resultsService.setUrlPath(crudUrl);
 		resultsService.loadFilters(request);
+		ObjectMapper mapper = new ObjectMapper();
 		
 		try
 		{
 			Map<Integer, String> generalMap = new HashMap<Integer, String>();
 			String urlParameters = "",
-			name = request.getParameter("name"),
-			country = request.getParameter("country"),
-			region = request.getParameter("region"),
-			winery = request.getParameter("winery"),
-			appellation = request.getParameter("appellation"),
-			chosenColour = request.getParameter("chosenColour"),
-			vintageMin = request.getParameter("vintageMin"),
-			vintageMax = request.getParameter("vintageMax"),
-			abvMin = request.getParameter("abvMin"),
-			abvMax = request.getParameter("abvMax"),
-			minPrice = request.getParameter("minPrice"),
-			maxPrice = request.getParameter("maxPrice"),
-			wineType = request.getParameter("chosenType"),
-			grapeVariety = request.getParameter("grapeVariety"),
-			merchant = request.getParameter("chosenShop");
-			
+			name 			= request.getParameter("name"),
+			country 		= request.getParameter("country"),
+			region 			= request.getParameter("region"),
+			winery 			= request.getParameter("winery"),
+			appellation 	= request.getParameter("appellation"),
+			chosenColour 	= request.getParameter("chosenColour"),
+			vintageMin 		= request.getParameter("vintageMin"),
+			vintageMax 		= request.getParameter("vintageMax"),
+			abvMin 			= request.getParameter("abvMin"),
+			abvMax 			= request.getParameter("abvMax"),
+			minPrice 		= request.getParameter("minPrice"),
+			maxPrice 		= request.getParameter("maxPrice"),
+			wineType 		= request.getParameter("chosenType"),
+			grapeVariety 	= request.getParameter("grapeVariety"),
+			merchant 		= request.getParameter("chosenShop"),
+			rating 			= request.getParameter("ratingValue");
 			
 			String[] filtersToGet = new String[] 
 					{ "listOfCountries", "listOfRegions", "listOfWineries", "listOfAppellations", "listOfGrapeVarieties" };
@@ -142,10 +141,10 @@ public class GeneralService {
 			{
 				if(variablesList[currentTurn] != null && !variablesList[currentTurn].equals("")) 
 				{ 
-					System.out.println("Entered if for: " + variablesList[currentTurn]);
+
+					
 					generalMap = (Map<Integer, String>) request.getSession().getAttribute(s);
 					Integer result = MapGetter.getKeyFromValue(generalMap, variablesList[currentTurn]);
-					
 					switch (s)
 					{
 						case "listOfCountries":
@@ -169,7 +168,6 @@ public class GeneralService {
 			}
 			
 			if(name != null && !name.equals("")) 					{ urlParameters += "&name=" + name; 					}
-			if(country != null && !country.equals("")) 				{ urlParameters += "&chosenCountry=" + country; 		}
 			if(region != null && !region.equals("")) 				{ urlParameters += "&chosenRegion=" + region; 			}
 			if(winery != null && !winery.equals("")) 		 		{ urlParameters += "&wineryId=" + winery; 				}
 			if(appellation != null && !appellation.equals(""))		{ urlParameters += "&appellationId=" + appellation;		}
@@ -178,39 +176,86 @@ public class GeneralService {
 			if(vintageMax != null && !vintageMax.equals("")) 		{ urlParameters += "&vintageMax=" + vintageMax; 		}
 			if(abvMin != null && !abvMin.equals("")) 				{ urlParameters += "&abvMin=" + abvMin; 				}
 			if(abvMax != null && !abvMax.equals("")) 				{ urlParameters += "&abvMax=" + abvMax; 				}
-			if(wineType != null && !wineType.equals("")) 			{ urlParameters += "&chosenType=" + wineType; 			}
 			if(grapeVariety != null && !grapeVariety.equals("")) 	{ urlParameters += "&grapeVarietyId=" + grapeVariety; 	}
 			if(minPrice != null && !minPrice.equals(""))			{ urlParameters += "&minPrice=" + minPrice; 			}
 			if(maxPrice != null && !maxPrice.equals("")) 			{ urlParameters += "&maxPrice=" + maxPrice; 			}
+			if(rating != null && !rating.equals(""))				{ urlParameters += "&ratingValue=" + rating;			}
 			if(merchant != null && !merchant.equals("0"))
 			{ 
 				urlParameters +="&merchant=" + merchant;
 				
 				String merchantUrl = "merchantsView?action=getMerchant&id=" + merchant;
-				String responseString = requestCreator.createGetRequest(crudUrl, merchantUrl); //TODO
+				String merchantString = requestCreator.createGetRequest(crudUrl, merchantUrl); 
 				
-		    	ObjectMapper mapper = new ObjectMapper();
-		    	JsonNode responseJson = mapper.readTree(responseString);
-				
-		    	if(responseJson == null) { request.setAttribute("noResults", true); }
-		    	viewMerchants merchantObject = mapper.treeToValue(responseJson, viewMerchants.class);
+		    	JsonNode merchantJson = mapper.readTree(merchantString);
+		    	viewMerchants merchantWithOffersObject = mapper.treeToValue(merchantJson, viewMerchants.class);
+		    	if(merchantWithOffersObject.getId() == null || merchantWithOffersObject.getId() <= 0) 
+		    	{
+		    		// This avoids putting up merchant info if there isn't
+		    		request.setAttribute("noMerchant", true);
+		    	}
 		    	
-		    	//TODO CHECK AND FINISH THIS
-		    	String offersUrl = "bestOffersByMerchantView?action=getOffersForMerchant&id=" + merchant;
 		    	//Get the best offers for the merchant
 		    	List<viewBestOffersbyMerchants> bestOffers = this.getBestOffersByMerchant(Integer.parseInt(merchant));
-		    	if(bestOffers != null) { request.setAttribute("bestOffers", bestOffers); }
-		    	else { request.setAttribute("noOffers", true); }
+		    	if(bestOffers != null) { request.setAttribute("bestMerchantOffers", bestOffers); }
+		    	else { request.setAttribute("noMerchantOffers", true); }
 		    	
-		    	//Set a couple of required variables
+		    	// Set a couple of required variables to display dynamic information on Results page
 		    	request.setAttribute("searchByMerchant", true);
-		    	request.setAttribute("merchantChosen", merchantObject);
+		    	request.setAttribute("merchantChosen", merchantWithOffersObject);
 		    	
-		    	//This checks the length of the search, 12 includes a merchant between 1 and 99 and nothing else
+		    	// Check the length of the search, 12 includes a merchant between 1 and 99 and no more params
 		    	if(urlParameters.length() > 12) { request.setAttribute("severalAttributes", true); }
 			}
+			if(country != null && !country.equals("")) 				
+			{ 
+				System.out.println("Came into country"); // TODO DELETE
+				
+				urlParameters += "&chosenCountry=" + country;
+				
+				String countriesUrl = "countriesWithBestOffersView?action=getCountryWithBestOffers&id=" + country;
+				String countryString = requestCreator.createGetRequest(crudUrl, countriesUrl);
+				JsonNode countryJson = mapper.readTree(countryString);
+				
+				if(countryJson == null) { request.setAttribute("noResults", true); }
+				viewCountriesWithBestOffers countryWithOffersObject = mapper.treeToValue(countryJson, viewCountriesWithBestOffers.class);
+				if(countryWithOffersObject.getId() == null || countryWithOffersObject.getId() <= 0)
+				{
+					request.setAttribute("noCountry", true);
+				}
+				
+				List<viewBestOffersbyCountries> bestOffers = this.getBestOffersByCountry(Integer.parseInt(country));
+				if(bestOffers != null) { request.setAttribute("bestCountryOffers", bestOffers); }
+				else { request.setAttribute("noCountryOffers", true); }
+				
+				// Set a couple of variables
+				request.setAttribute("searchByCountry", true);
+				request.setAttribute("countryChosen", countryWithOffersObject);
+			}
+			if(wineType != null && !wineType.equals(""))
+			{ 
+				urlParameters += "&chosenType=" + wineType;
+				
+				String typesUrl = "wineTypesWithBestOffersView?action=getWineTypeWithBestOffers&id=" + wineType;
+				String typeString = requestCreator.createGetRequest(crudUrl, typesUrl);
+				JsonNode typeJson = mapper.readTree(typeString);
+				
+				if(typeJson == null) { request.setAttribute("noResults", true); }
+				viewWineTypesWithBestOffers typeWithOffersObject = mapper.treeToValue(typeJson, viewWineTypesWithBestOffers.class);
+				if(typeWithOffersObject.getId() == null || typeWithOffersObject.getId() <= 0)
+				{
+					request.setAttribute("noType", true);
+				}
+				List<viewBestOffersbyWineTypes> bestOffers = this.getBestOffersByWineType(Integer.parseInt(wineType));
+				if(bestOffers != null) { request.setAttribute("bestWineTypeOffers", bestOffers); }
+				else { request.setAttribute("noWineTypeOffers", true); }
+				
+				// Set a couple of variables
+				request.setAttribute("searchByWineType", true);
+				request.setAttribute("wineTypeChosen", typeWithOffersObject);
+			}
 			
-			//Set the sharing URL in a correct format (remove the first & character)
+			//Set the sharing URL in a correct format (change the first & character into a ?)
 			request.setAttribute("sharingURL", ("?" + urlParameters).replace("?&", "?"));
 			
 			// Security checks and default values
@@ -243,8 +288,18 @@ public class GeneralService {
 			
 			request.getSession().setAttribute("currentPage", 1);
 			request.getSession().removeAttribute("sessionResults"); //Delete results if a previous "sort" was made
-			
 			request.getSession().setAttribute("amountOfPages", amountOfPages);
+			
+			// Check if more than 1 "best offers" filters are selected to make changes on Results
+			Boolean moreThanOne = urlParameters.contains("&merchant=") ? 
+					(urlParameters.contains("&chosenCountry=") || urlParameters.contains("&chosenType=")) :
+					(urlParameters.contains("&chosenCountry=") && urlParameters.contains("&chosenType="));
+					
+			if(moreThanOne) 
+			{
+				request.getSession().setAttribute("notDisplayTitleCards", true);
+			}
+			
 			if(!results.isEmpty()) { request.setAttribute("resultsList", results); }
 			else { request.setAttribute("noResults", true); }
 			
