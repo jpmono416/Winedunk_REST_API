@@ -13,7 +13,7 @@
 	<nav class="navbar navbar-default navbar-fixed-top" id="generalNav" style="background-color:#F5F5F5;">
 		<div class="container">
 			<div class="navbar-header">
-				<a href="Home" class="navbar-brand navbar-link"> <img src="assets/img/Logo_GrisRojo.jpg" height="100%" style="padding:0;" /></a>
+				<a href="Home" class="navbar-brand navbar-link"> <img src="http://uat.static.winedunk.com/img/REST/Logo_GrisRojo.jpg" height="100%" style="padding:0;" /></a>
 			</div>
 		</div>
 	</nav>

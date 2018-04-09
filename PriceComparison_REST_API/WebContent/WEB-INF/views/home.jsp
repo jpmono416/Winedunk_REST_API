@@ -10,7 +10,7 @@
 </head>
 
 <body style="background-color: #e7e7e7;">
-	<img class="hidden" src="assets/img/+.jpg">
+	<img class="hidden" src="http://uat.static.winedunk.com/img/REST/+.jpg">
     <c:import url="../templates/navbar.jsp"/>
     <c:import url="../templates/google_analytics.jsp"/>
     <div class="modal fade" role="dialog" tabindex="-1" id="modal-register">

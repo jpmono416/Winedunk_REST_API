@@ -59,6 +59,9 @@ public class GeneralService {
 	
 	public void loadRecommendedWines() throws IOException
 	{
+		
+		recommendedWines.clear();
+		
 		String relURL = "recommendedWinesView?action=getRecommendedWines";
 		String responseString = requestCreator.createGetRequest(crudURL, relURL);
 		
