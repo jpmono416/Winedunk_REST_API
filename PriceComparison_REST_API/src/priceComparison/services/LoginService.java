@@ -119,7 +119,6 @@ public class LoginService {
 		
 		//Send request to CRUD
 		String relURL = "users?action=getUserByEmail";
-		System.out.println("PATH: " + urlPath + ", REL: " + relURL); // TODO DELETE
 		String wholeResult = requestCreator.createPostRequest(urlPath, relURL, email);
 		
 		

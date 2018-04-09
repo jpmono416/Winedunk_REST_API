@@ -128,7 +128,7 @@ public class GeneralService {
 			grapeVariety 	= request.getParameter("grapeVariety"),
 			merchant 		= request.getParameter("chosenShop"),
 			rating 			= request.getParameter("ratingValue");
-			
+			System.out.println("Rating: " + rating); // TODO DELETE
 			String[] filtersToGet = new String[] 
 					{ "listOfCountries", "listOfRegions", "listOfWineries", "listOfAppellations", "listOfGrapeVarieties" };
 			
@@ -180,6 +180,7 @@ public class GeneralService {
 			if(minPrice != null && !minPrice.equals(""))			{ urlParameters += "&minPrice=" + minPrice; 			}
 			if(maxPrice != null && !maxPrice.equals("")) 			{ urlParameters += "&maxPrice=" + maxPrice; 			}
 			if(rating != null && !rating.equals(""))				{ urlParameters += "&ratingValue=" + rating;			}
+			System.out.println("URL PARAMS: " +urlParameters); // TODO DLETE
 			if(merchant != null && !merchant.equals("0"))
 			{ 
 				urlParameters +="&merchant=" + merchant;
@@ -209,8 +210,6 @@ public class GeneralService {
 			}
 			if(country != null && !country.equals("")) 				
 			{ 
-				System.out.println("Came into country"); // TODO DELETE
-				
 				urlParameters += "&chosenCountry=" + country;
 				
 				String countriesUrl = "countriesWithBestOffersView?action=getCountryWithBestOffers&id=" + country;
@@ -232,6 +231,7 @@ public class GeneralService {
 				request.setAttribute("searchByCountry", true);
 				request.setAttribute("countryChosen", countryWithOffersObject);
 			}
+			
 			if(wineType != null && !wineType.equals(""))
 			{ 
 				urlParameters += "&chosenType=" + wineType;
@@ -313,7 +313,7 @@ public class GeneralService {
 		String to = email;
 	
 		// Sender's email ID needs to be mentioned
-	    String from = "no-reply@winedunk.com";
+	    String from = "noreply@winedunk.com";
 	
 	    // Assuming you are sending email from localhost
 	    String host = "localhost";
@@ -339,7 +339,7 @@ public class GeneralService {
 	        message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
 
 	        // Set Subject: header field
-	        message.setSubject("Thank you for registering!");
+	        message.setSubject("Password changed successfully.");
 
 	        // Send the actual HTML message, as big as you like
 	        message.setContent(content, "text/html");

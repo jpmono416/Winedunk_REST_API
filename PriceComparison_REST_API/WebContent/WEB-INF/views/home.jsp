@@ -32,6 +32,33 @@
             </div>
         </div>
     </div>
+    <c:if test="${ sessionScope.passwordRecoverySuccessful != null }" >
+    	<div class="modal fade" role="dialog" tabindex="-1" id="modal-recovery">
+	        <div class="modal-dialog" role="document">
+	            <div class="modal-content">
+	                <div class="modal-header" style="background:#f7f7f7;">
+	                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+	                </div>
+	                <div class="modal-body" style="background:#f7f7f7;">
+		                <div class="row">
+		                	<div class="col-xs-12">
+			                	<h3 class="text-center">Password recovery</h3>
+				                <hr class="sep-bar">
+				                <p>Your request to recover your password has been 
+				                	<c:if test="${ sessionScope.passwordRecoverySuccessful == true }"> 
+				                		successful. <br/><b>Please remember to check your spam inbox if you don't see the email.</b>
+				                	</c:if>
+				                	<c:if test="${ sessionScope.passwordRecoverySuccessful == false }">
+				                		unsuccessful. Please try again and check the email address. If there is a technical issue we will fix it as soon as possible. 
+				                	</c:if>
+				                </p>
+		                	</div>
+		                </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+    </c:if>
     <section id="top-section" style="padding-top:100px;">
         <div class="container">
             <div class="row">
@@ -275,9 +302,15 @@
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/navbar-appear.js"></script>
     <script>
-    	<c:if test="${requestScope.displayMessage == true}">
+    	<c:if test="${ sessionScope.displayMessage == true }">
     		setTimeout(showRegisterModal, 3000);
     		function showRegisterModal() { $("#modal-register").modal('show'); }
+    	</c:if>
+    	
+    	<c:if test="${ sessionScope.passwordRecoverySuccessful != null }">
+    		setTimeout(showRecoveryModal, 1500);
+    		function showRecoveryModal() { $("#modal-recovery").modal('show'); }
+    		<c:remove var="passwordRecoverySuccessful" scope="session"/>
     	</c:if>
     </script>
 </body>

@@ -28,53 +28,51 @@ public class ResultsService {
     	try
     	{
     		String url = action.toLowerCase() + "?action=get" + action;
+    		System.out.println("URL on class: " + url);
     		String responseString = requestCreator.createGetRequest(urlPath, url);
-    		try
-    		{
-    			JsonNode responseJson = new ObjectMapper().readTree(responseString);
-    			Map<Integer, String> resultsMap = new HashMap<Integer, String>();
-    			for (Integer i = 0; i < responseJson.size(); i++)
-    			{
-    				switch(responseJson.get(i).get("name").asText().toLowerCase()) {
-    				case "" : 
-    					break;
-    				case " " :
-    					break;
-    				case "no region" :
-    					break;
-    					
-    				case "11502" :
-    					break;
-    					
-    				case "no colour" :
-    					break;
-    					
-    				case "no winery" :
-    					break;
-    					
-    				case "no appellation" : 
-    					break;
-    					
-    				case "no country" :
-    					break;
-    					
-    				case "no variety" :
-    					break;
-    					
-    				default :
-    					String value = responseJson.get(i).get("name").asText();
-    					/*TRIMMING FUNCTIONALITY SO THE TEXT DOESN'T GET OUT OF THE BOX - REMOVED SO THE "VIEW MORE" CARDS WORK
-    					 * 
-    					 * if(value.length() > 20)
-    					{
-    						value = value.substring(0, Math.min(responseJson.get(i).get("name").asText().length(), 20)) + "...";	
-    					}*/
-    					resultsMap.put(responseJson.get(i).get("id").asInt(), value);
-    					break;
-    				}    				
-    			}
-    			return resultsMap;
-    		} catch(Exception e) { e.printStackTrace(); return null; }
+			JsonNode responseJson = new ObjectMapper().readTree(responseString);
+			Map<Integer, String> resultsMap = new HashMap<Integer, String>();
+			for (Integer i = 0; i < responseJson.size(); i++)
+			{
+				switch(responseJson.get(i).get("name").asText().toLowerCase()) {
+				case "" : 
+					break;
+				case " " :
+					break;
+				case "no region" :
+					break;
+					
+				case "11502" :
+					break;
+					
+				case "no colour" :
+					break;
+					
+				case "no winery" :
+					break;
+					
+				case "no appellation" : 
+					break;
+					
+				case "no country" :
+					break;
+					
+				case "no variety" :
+					break;
+					
+				default :
+					String value = responseJson.get(i).get("name").asText();
+					/*TRIMMING FUNCTIONALITY SO THE TEXT DOESN'T GET OUT OF THE BOX - REMOVED SO THE "VIEW MORE" CARDS WORK
+					 * 
+					 * if(value.length() > 20)
+					{
+						value = value.substring(0, Math.min(responseJson.get(i).get("name").asText().length(), 20)) + "...";	
+					}*/
+					resultsMap.put(responseJson.get(i).get("id").asInt(), value);
+					break;
+				}    				
+			}
+			return resultsMap;
     		
     	} catch (Exception e) { e.printStackTrace(); return null; }
     }
@@ -115,7 +113,7 @@ public class ResultsService {
     public void loadFilters(HttpServletRequest request)
  	{
  		String[] filtersToGet = new String[]
- 				{"Regions", "WineTypes", "Colours", "Wineries", "Appellations", "Countries", "GrapeVarieties", "Shops"};
+ 				{"Regions", "WineTypes", "Colours", "Wineries", "Appellations", "Countries", "GrapeVarieties", "ShopsView"};
  		try 
  		{ 
  			for(String urlParam : filtersToGet) 

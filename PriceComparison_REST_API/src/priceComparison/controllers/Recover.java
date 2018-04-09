@@ -127,15 +127,11 @@ public class Recover extends HttpServlet {
 		try 
 		{ 
 			String encryptedNewPassword = recoveringService.encryptPassword(password1); 
-			tblUsers user = new tblUsers();
 			
 			Integer userId = (Integer) session.getAttribute("recoveryUserId");
 			String recoveryToken = (String) session.getAttribute("recoveryToken");
 			
-			user.setId(userId);
-			user.setRecoveringPassToken(recoveryToken);
-			user.setLoginPassword(encryptedNewPassword);
-			if(!recoveringService.removeTokenAndSaveUser(user))
+			if(!recoveringService.removeTokenAndSaveUser(userId, recoveryToken, encryptedNewPassword))
 			{
 				request.setAttribute("passedRecovery", false);
 				RequestDispatcher recoverPasswordPage = request.getRequestDispatcher("WEB-INF/views/recoverPassword.jsp");
@@ -151,6 +147,6 @@ public class Recover extends HttpServlet {
 			RequestDispatcher loginPage = request.getRequestDispatcher("WEB-INF/views/login.jsp");
 			loginPage.forward(request, response);
 		} 
-		catch (Exception e) { e.printStackTrace(); return; }
+		catch (Exception e) { e.printStackTrace(); }
 	}
 }

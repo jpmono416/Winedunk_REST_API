@@ -57,7 +57,7 @@
 				<button id="shopsDropdown"class="btn btn-default btn-block dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button">Shop <span class="caret"></span></button>
 				<ul class="dropdown-menu" role="menu">
 					<li style="cursor:pointer" role="presentation" onclick="changeShop(this)" value="0"><a>All shops</a></li>	                        	
-					<c:forEach var = "i" items = "${sessionScope.listOfShops.entrySet()}">
+					<c:forEach var = "i" items = "${sessionScope.listOfShopsView.entrySet()}">
 						<li style="cursor:pointer" role="presentation" onclick="changeShop(this)" value = <c:out value ="${ i.getKey() }"/>>
 							<a><c:out value="${ i.getValue() }"></c:out></a>
 						</li>

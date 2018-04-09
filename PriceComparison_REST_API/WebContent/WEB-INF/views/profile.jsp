@@ -38,8 +38,8 @@
                        -->
 					<ul class="list-unstyled" style="margin-bottom: 0;">
 						<li class="settingsElement" onclick="showFavouriteWines()"><a href="#"><i class="fa fa-heart linkIcon"></i>Favourite wines</a></li>
-                        <li class="settingsElement" onclick="showWineReviews()"><a href="#"><i class="fa fa-commenting linkIcon"></i>Wine reviews</a></li>
-                        <li class="settingsElement" onclick="showSavedSearches()"><a href="#"><i class="fa fa-search linkIcon"></i>Saved searches</a></li>
+                        <li class="settingsElement" onclick="showWineReviews()"><a href="#"><i class="fa fa-commenting linkIcon"></i>My wine reviews and ratings</a></li>
+                        <li class="settingsElement" onclick="showSavedSearches()"><a href="#"><i class="fa fa-search linkIcon"></i>My saved searches</a></li>
 					</ul>
 					<!--
 					<hr class="sep-bar" style="margin-bottom: 0;">
