@@ -16,7 +16,7 @@ body {
   margin-top: 50px;
   width:100%;
   z-index:-1;
-  background-image:url(http://uat.static.winedunk.com/img/REST/home.jpg);
+  background-image:url("http://uat.static.winedunk.com/img/REST/home.jpg");
   background-size: cover;
   padding-bottom:35px; 
 }
@@ -251,7 +251,8 @@ ul.dropdown-menu {
   top:0;
   left:0;
   width:100% !important;
-  background-image:url(http://uat.static.winedunk.com/img/REST/background.jpg);
+  background-image:url("http://uat.static.winedunk.com/img/REST/background.jpg");
+  background-image:url(../../assets/img/background.jpg);
   background-size: cover;
   /*opacity:0.5;*/
   z-index:-1;
