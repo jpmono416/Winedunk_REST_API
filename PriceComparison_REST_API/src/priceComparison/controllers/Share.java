@@ -2,7 +2,6 @@ package priceComparison.controllers;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -39,13 +38,10 @@ public class Share extends HttpServlet {
 		//load winedunk configuration
 		final Properties serviceProperties = new Properties();
 		serviceProperties.load(new FileInputStream(webInfPath+sep+"winedunk.properties"));
-		
-		//Set URL path of CRUD API
-		resultsService.setUrlPath(serviceProperties.getProperty("crud.url"));
-		resultsService.loadFilters(request);
-		
-		//Make search
-		generalService.makeSearch(request, serviceProperties.getProperty("crud.url"));
+
+		//Set URL path of CRUD API and Make search
+		generalService.setCrudURL(serviceProperties.getProperty("crud.url"));
+		generalService.makeSearch(request);
 		
 		/*
 		 * All of the code below is required to load the results page properly
@@ -71,9 +67,7 @@ public class Share extends HttpServlet {
 		resultsService.setUrlPath(serviceProperties.getProperty("crud.url"));
 
 		validationService.setUrlPath(serviceProperties.getProperty("crud.url"));
-		validationService.validateUser(request, response);
-		
-		resultsService.loadFilters(request);
+		validationService.validateUser(request, response);		
 		
 		if(request.getAttribute("noResults") == null) { request.setAttribute("noResults", false); }
 		

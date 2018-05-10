@@ -96,7 +96,7 @@ public class GeneralService {
 	    return new String(hexChars);
 	}
 	
-	public void makeSearch(HttpServletRequest request, String crudUrl)
+	public void makeSearch(HttpServletRequest request)
 	{
 		ResultsService resultsService = new ResultsService();
 		
@@ -114,7 +114,7 @@ public class GeneralService {
 		 * Finally, I set the new set of results and forward the user to result page.
 		 */
 		
-		resultsService.setUrlPath(crudUrl);
+		resultsService.setUrlPath(crudURL);
 		resultsService.loadFilters(request);
 		ObjectMapper mapper = new ObjectMapper();
 		
@@ -410,7 +410,7 @@ public class GeneralService {
 				if (merchantInt > 0) {
 					// looking for merchant object based on merchantInt
 					String merchantUrl = "merchantsView?action=getMerchant&id=" + merchant;
-					String merchantString = requestCreator.createGetRequest(crudUrl, merchantUrl); 
+					String merchantString = requestCreator.createGetRequest(crudURL, merchantUrl); 
 					JsonNode merchantJson = mapper.readTree(merchantString);
 					if (merchantJson != null) {
 						viewMerchants viewMerchant = mapper.treeToValue(merchantJson, viewMerchants.class);
@@ -446,7 +446,7 @@ public class GeneralService {
 				if (countryInt > 0) {
 					// looking for country object based on countryInt
 					String countriesUrl = "countries?action=getCountryBasicDataById&id=" + countryInt;
-					String countryString = requestCreator.createGetRequest(crudUrl, countriesUrl);
+					String countryString = requestCreator.createGetRequest(crudURL, countriesUrl);
 					JsonNode countryJson = mapper.readTree(countryString);
 					if (countryJson != null) {
 						tblCountryBasicData tblcountry= mapper.treeToValue(countryJson, tblCountryBasicData.class);
@@ -481,7 +481,7 @@ public class GeneralService {
 				if (wineTypeInt > 0) {
 					// looking for wine type object based on wineTypeInt
 					String typesUrl = "winetypes?action=getWineType&id=" + wineTypeInt;
-					String typeString = requestCreator.createGetRequest(crudUrl, typesUrl);
+					String typeString = requestCreator.createGetRequest(crudURL, typesUrl);
 					JsonNode typeJson = mapper.readTree(typeString);
 					if (typeJson != null) {
 						tblWineTypes tblwineType= mapper.treeToValue(typeJson, tblWineTypes.class);

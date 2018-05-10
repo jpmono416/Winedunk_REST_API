@@ -279,8 +279,12 @@ public class Results extends HttpServlet {
 		 * I access a general method that gets the parameters of the applied filters and make a search
 		 */
 		
+		resultsService.setUrlPath(serviceProperties.getProperty("crud.url"));
 		resultsService.loadFilters(request);
-		generalService.makeSearch(request, serviceProperties.getProperty("crud.url"));
+		
+		generalService.setCrudURL(serviceProperties.getProperty("crud.url"));
+		generalService.makeSearch(request);
+		
 		doGet(request, response);
 	}
 }

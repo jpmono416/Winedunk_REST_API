@@ -28,7 +28,6 @@ public class ResultsService {
     	try
     	{
     		String url = action.toLowerCase() + "?action=get" + action;
-    		System.out.println("URL on class: " + url);
     		String responseString = requestCreator.createGetRequest(urlPath, url);
 			JsonNode responseJson = new ObjectMapper().readTree(responseString);
 			Map<Integer, String> resultsMap = new HashMap<Integer, String>();
