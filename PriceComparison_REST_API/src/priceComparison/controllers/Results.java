@@ -2,8 +2,6 @@ package priceComparison.controllers;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.RequestDispatcher;
@@ -15,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import priceComparison.models.viewRecommendedWines;
 import priceComparison.models.viewUsers;
 import priceComparison.services.GeneralService;
 import priceComparison.services.ResultsService;
@@ -90,31 +87,22 @@ public class Results extends HttpServlet {
 			{
 				amountOfPages = (Integer) resultsService.getCountOfPages("&currentPage=" + currentPage);
 				session.setAttribute("amountOfpages", amountOfPages);
-				request.setAttribute("resultsList", resultsService.getWines("&currentPage=" + currentPage));
+				request.setAttribute("resultsList", resultsService.getWines("&currentPage=" + currentPage + "&order=" + session.getAttribute("orderBy")));
 			}
 		} else { request.setAttribute("resultsList", session.getAttribute("sessionResults")); }
 		
-		if(amountOfPages <= 0) { amountOfPages = 0; } //TODO CHECK
+		if(amountOfPages < 0) { amountOfPages = 0; } //TODO CHECK
 		
 		//Get recommended wines
 		try 
 		{ 
 			generalService.checkRecommended(request);
 		} catch (Exception e) { e.printStackTrace(); }
-		
-		
-		//Load pagination numbers
-		List<Integer> paginationNumbersList = new ArrayList<Integer>();
-		Integer counter = currentPage - 2;
-		
-		if(counter < 1 ) { counter = 1; }
-		if(counter + 4 > amountOfPages) { counter = amountOfPages - 4; }
-		for(int i = counter; i <= counter +4 || i == amountOfPages; i++) { if(i >= 1) { paginationNumbersList.add(i); } }
 
 		//Check there is no variable left for setting
 		if(session.getAttribute("currentPage") == null) { session.setAttribute("currentPage", currentPage); }
 		if(session.getAttribute("amountOfPages") == null) { session.setAttribute("amountOfPages", amountOfPages); }
-		if(session.getAttribute("paginationList") == null) { session.setAttribute("paginationList", paginationNumbersList); }
+		
 		if(request.getAttribute("sharingURL") == null) { request.setAttribute("sharingURL", "?filters=default");}
 		resultsPage.forward(request, response);
 	}
@@ -148,14 +136,15 @@ public class Results extends HttpServlet {
 				amountOfPages = 0;
 		String lastSearch 	= "",
 				orderBy		= "",
+				sortingDropdownText = "",
 				formChosen 	= "";
 
 		
 		// Get session attributes if they're not null, to use the values later
 		if(session.getAttribute("currentPage") !=null) 		{ currentPage = (Integer) session.getAttribute("currentPage"); }
+		if(session.getAttribute("amountOfPages") != null) 	{ amountOfPages = (Integer) session.getAttribute("amountOfPages"); }
 		if(session.getAttribute("orderBy") != null) 		{ orderBy = session.getAttribute("orderBy").toString(); }
 		if(session.getAttribute("lastSearch") != null) 		{ lastSearch = session.getAttribute("lastSearch").toString(); }
-		if(session.getAttribute("amountOfPages") != null) 	{ amountOfPages = (Integer) session.getAttribute("amountOfPages"); }
 		
 		// Avoid an error in pagination if currentPage has a weird rogue value
 		if(currentPage < 1) { currentPage = 1; } 
@@ -163,6 +152,8 @@ public class Results extends HttpServlet {
 		
 		if(request.getParameter("formChosen") != null 
 				&& !request.getParameter("formChosen").equals("")) { formChosen = request.getParameter("formChosen"); } 
+		
+		session.setAttribute("sortingDropdownText", "");
 		
 		if(!formChosen.equals(""))
 		{
@@ -174,10 +165,18 @@ public class Results extends HttpServlet {
 				 * that states in which page we are, then reload the page. It will not persist a new search.
 				 */
 				case "next" : 
-					currentPage++;
+					if (currentPage < amountOfPages) {
+						currentPage++;
+					} else {
+						currentPage = amountOfPages;
+					}
 					break;
 				case "previous" : 
-					if(currentPage > 1) { currentPage--; }
+					if (currentPage > 1) {
+						currentPage--; 
+					} else {
+						currentPage = 1;
+					}
 					break;
 				case "last" :
 					currentPage = amountOfPages;
@@ -186,50 +185,60 @@ public class Results extends HttpServlet {
 					currentPage = 1;
 					break;
 				case "sort" : 
-					String sortingMethod = "";
-					
-					switch(request.getParameter("sortingMethod"))
+					switch(request.getParameter("orderBy"))
 					{
 						case "1" :
-							sortingMethod = "ASC";
+							orderBy = "`winePercentageOff` DESC";
+							sortingDropdownText = "Sorted by percentage off";
 							break;
 							
 						case "2" :
-							sortingMethod = "DESC";
+							orderBy = "`wineMoneySaving` DESC";
+							sortingDropdownText = "Sorted by money saving";
+							break;
+							
+						case "3" :
+							orderBy = "`wineMinimumPrice` ASC";
+							sortingDropdownText = "Sorted by Price (Low to high)";
+							break;
+							
+						case "4" :
+							orderBy = "`wineMinimumPrice` DESC";
+							sortingDropdownText = "Sorted by Price (High to low)";
+							break;
+							
+						case "5" :
+							orderBy = "`wineName` ASC";
+							sortingDropdownText = "Sorted by Name (A-Z)";
+							break;
+							
+						case "6" :
+							orderBy = "`wineName` DESC";
+							sortingDropdownText = "Sorted by Name (Z-A)";
 							break;
 							
 						default : 
+							orderBy = "`winePercentageOff` DESC";
+							sortingDropdownText = "Sorted by percentage off";
 							break;
 					}
-					if(!sortingMethod.equals(""))
-					{
-						currentPage = 1;
-						
-						lastSearch += "&order=" + sortingMethod;
-						lastSearch += "&currentPage=" + currentPage;
-						
-						List<Integer> paginationNumbersList = new ArrayList<Integer>();
-						Integer counter = currentPage - 2;
-						
-						if(counter < 1 ) { counter = 1; }
-						if(counter + 4 > amountOfPages) { counter = amountOfPages - 4; }
-						for(int i = counter; i <= counter +4 || i == amountOfPages; i++) { if(i >= 1) { paginationNumbersList.add(i); } }
-						
-						session.setAttribute("sessionResults", resultsService.getWines(lastSearch));
-						session.setAttribute("currentPage", currentPage);
-						session.setAttribute("amountOfPages", amountOfPages);
-						session.setAttribute("paginationList", paginationNumbersList);
-						session.setAttribute("orderBy", sortingMethod);
-						response.getWriter().write("passed");
-						return;
-					}
+					currentPage = 1;
 					
-					break;
+					lastSearch += "&order=" + orderBy;
+					lastSearch += "&currentPage=" + currentPage;
 					
-				case "number" :
-					String value = request.getParameter("value");
-					currentPage = Integer.parseInt(value);
-				break;
+					session.setAttribute("sessionResults", resultsService.getWines(lastSearch));
+					session.setAttribute("currentPage", currentPage);
+					session.setAttribute("amountOfPages", amountOfPages);
+					session.setAttribute("orderBy", orderBy);
+					session.setAttribute("sortingDropdownText", sortingDropdownText);
+					response.getWriter().write("passed");
+					
+					return;
+					
+				case "number" :					
+					String pageNumber = request.getParameter("pageNumber");
+					currentPage = Integer.parseInt(pageNumber);
 				
 				case "addSavedSearch" :
 					viewUsers userLoggedIn = (viewUsers) request.getSession().getAttribute("userLoggedIn");
@@ -250,23 +259,14 @@ public class Results extends HttpServlet {
 				break;
 			}
 
-			lastSearch += "&currentPage=" + currentPage;
-			if(!orderBy.equals("")) { lastSearch += "&order=" + orderBy; }
-			
-			List<Integer> paginationNumbersList = new ArrayList<Integer>();
-			Integer counter = currentPage - 2;
-			
-			if(counter < 1 ) { counter = 1; }
-			if(counter + 4 > amountOfPages) { counter = amountOfPages - 4; }
-			for(int i = counter; i <= counter + 4 || i == amountOfPages; i++) { if(i >= 1) { paginationNumbersList.add(i); } }
+			lastSearch += "&currentPage=" + currentPage + "&order=" + orderBy;
 			
 			request.setAttribute("resultsList", resultsService.getWines(lastSearch));
 			if(request.getAttribute("resultsList") == null) { request.setAttribute("emptyList", true); }
 			
 			session.removeAttribute("sessionResults"); //Delete results if a previous "sort" was made
-			session.setAttribute("amountOfPages", amountOfPages);
-			session.setAttribute("paginationList", paginationNumbersList);
 			session.setAttribute("currentPage", currentPage);
+			
 			RequestDispatcher resultsPage = request.getRequestDispatcher("WEB-INF/views/results.jsp");
 			resultsPage.forward(request, response);
 			return;

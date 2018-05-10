@@ -90,6 +90,22 @@ public class viewWines {
 	public Float getWineMinimumPrice() { return wineMinimumPrice; }
 	public void setWineMinimumPrice(Float wineMinimumPrice) { this.wineMinimumPrice = wineMinimumPrice; }
 	
+	private Float winePreviousMaxPrice;
+	public Float getWinePreviousMaxPrice() { return winePreviousMaxPrice; }
+	public void setWinePreviousMaxPrice(Float winePreviousMaxPrice) { this.winePreviousMaxPrice = winePreviousMaxPrice; }
+	
+	private Float wineMoneySaving;
+	public Float getWineMoneySaving() { return wineMoneySaving; }
+	public void setWineMoneySaving(Float wineMoneySaving) { this.wineMoneySaving = wineMoneySaving; }
+	
+	private Integer winePercentageOff;
+	public Integer getWinePercentageOff() { return winePercentageOff; }
+	public void setWinePercentageOff(Integer winePercentageOff) { this.winePercentageOff = winePercentageOff; }
+	
+	private String wineMinimumPriceClicktag;
+	public String getWineMinimumPriceClicktag() { return wineMinimumPriceClicktag; }
+	public void setWineMinimumPriceClicktag(String wineMinimumPriceClicktag) { this.wineMinimumPriceClicktag = wineMinimumPriceClicktag; }
+	
     private Boolean wineDeleted;
 	public Boolean getWineDeleted() { return wineDeleted; }
 	public void setWineDeleted(Boolean wineDeleted) { this.wineDeleted = wineDeleted; }
@@ -123,6 +139,10 @@ public class viewWines {
         this.wineClosureName = null;
         this.wineGtin = null;
         this.wineMinimumPrice = null;
+        this.winePreviousMaxPrice = null;
+        this.wineMoneySaving = null;
+        this.winePercentageOff = null;    
+        this.wineMinimumPriceClicktag = null;        
         this.wineDeleted = false;
         this.avgRating = null;
     }
@@ -139,7 +159,12 @@ public class viewWines {
 				+ wineDefaultDescription + "\" , \"wineBottleSize\" : \"" + wineBottleSize + "\" , \"wineAbv\" : \""
 				+ wineAbv + "\" , \"wineImageURL\" : \"" + wineImageURL + "\" , \"wineClosureId\" : \"" + wineClosureId
 				+ "\" , \"wineClosureName\" : \"" + wineClosureName + "\" , \"wineGtin\" : \"" + wineGtin
-				+ "\" , \"wineMinimumPrice\" : \"" + wineMinimumPrice + "\" , \"wineDeleted\" : \"" + wineDeleted
+				+ "\" , \"wineMinimumPrice\" : \"" + wineMinimumPrice
+				+ "\", winePreviousMaxPrice\" : \"" + winePreviousMaxPrice
+				+ "\", wineMoneySaving\" : \"" + wineMoneySaving
+				+ "\", winePercentageOff\" : \"" + winePercentageOff
+				+ "\", wineMinimumPriceClicktag\" : \"" + wineMinimumPriceClicktag
+				+ "\" , \"wineDeleted\" : \"" + wineDeleted
 				+ "\" , \"avgRating\" : \"" + avgRating + "\" }";
 	}
 }

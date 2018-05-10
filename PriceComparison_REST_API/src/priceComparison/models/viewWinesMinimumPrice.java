@@ -83,6 +83,22 @@ public class viewWinesMinimumPrice extends Object {
 	public Float getMinimumPrice() { return minimumPrice; }
 	public void setMinimumPrice(Float minimumPrice) { this.minimumPrice = minimumPrice; }
 	
+	private Float previousMaxPrice;
+	public Float getPreviousMaxPrice() { return previousMaxPrice; }
+	public void setPreviousMaxPrice(Float previousMaxPrice) { this.previousMaxPrice = previousMaxPrice; }
+	
+	private Float moneySaving;
+	public Float getMoneySaving() { return moneySaving; }
+	public void setMoneySaving(Float moneySaving) { this.moneySaving = moneySaving; }
+	
+	private Integer percentageOff;
+	public Integer getPercentageOff() { return percentageOff; }
+	public void setPercentageOff(Integer percentageOff) { this.percentageOff = percentageOff; }
+	
+	private String  minimumPriceClicktag;
+	public String  getMinimumPriceClicktag() { return minimumPriceClicktag; }
+	public void setMinimumPriceClicktag(String minimumPriceClicktag) { this.minimumPriceClicktag = minimumPriceClicktag; }
+	
 	private String minimumPriceShopName;
 	public String getMinimumPriceShopName() { return minimumPriceShopName; }
 	public void setMinimumPriceShopName(String minimumPriceShopName) { this.minimumPriceShopName = minimumPriceShopName; }
@@ -127,6 +143,10 @@ public class viewWinesMinimumPrice extends Object {
 		this.partnerProductId = null;
 		this.partnerMerchantProductId = null;
 		this.minimumPrice = null;
+		this.previousMaxPrice = null;
+		this.moneySaving = null;
+		this.percentageOff = null;
+		this.minimumPriceClicktag = null;
 		this.minimumPriceShopName = null;
 		this.minimumPriceShopImgURL = null;
 		this.minimumPriceDestinationURL = null;
@@ -145,7 +165,12 @@ public class viewWinesMinimumPrice extends Object {
 				+ "\", gtin\" : \"" + gtin + "\", wineTypeName\" : \"" + wineTypeName + "\", grapeVarietyName\" : \""
 				+ grapeVarietyName + "\", partnerProductId\" : \"" + partnerProductId + "\", partnerMerchantId\" : \""
 				+ partnerMerchantId + "\", partnerMerchantProductId\" : \"" + partnerMerchantProductId
-				+ "\", minimumPrice\" : \"" + minimumPrice + "\", minimumPriceShopName\" : \"" + minimumPriceShopName
+				+ "\", minimumPrice\" : \"" + minimumPrice
+				+ "\", previousMaxPrice\" : \"" + previousMaxPrice
+				+ "\", moneySaving\" : \"" + moneySaving 
+				+ "\", percentageOff\" : \"" + percentageOff
+				+ "\", minimumPriceClicktag\" : \"" + minimumPriceClicktag
+				+ "\", minimumPriceShopName\" : \"" + minimumPriceShopName
 				+ "\", minimumPriceShopImgURL\" : \"" + minimumPriceShopImgURL + "\", minimumPriceDestinationURL\" : \""
 				+ minimumPriceDestinationURL + "\", deleted\" : \"" + deleted + " }";
 	}

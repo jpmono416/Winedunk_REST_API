@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import priceComparison.models.tblUserWineReviews;
 import priceComparison.models.viewUsersWinesReviews;
 
-public class UserReviewsService {
+public class UserReviewsService {  
 
 	RequestsCreator requestCreator = new RequestsCreator();
 	
@@ -126,10 +126,15 @@ public class UserReviewsService {
 	
 	public Integer getCountForWine(Integer wineId) throws IOException
 	{
-		String relURL = "usersWinesReviewsView?action=getAmountOfReviewsForWine&id=" + wineId;
-		String response = requestCreator.createGetRequest(urlPath, relURL);
+		try {
+			String relURL = "usersWinesReviewsView?action=getAmountOfReviewsForWine&id=" + wineId;
+			String response = requestCreator.createGetRequest(urlPath, relURL);
+			
+			return Integer.parseInt(response);
+		} catch (Exception e) {
+			return 0;
+		}
 		
-		return Integer.parseInt(response);
 	}
 	
 	public Boolean editReview(String reviewComment, String reviewId, String wineId) throws IOException

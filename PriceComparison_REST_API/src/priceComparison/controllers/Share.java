@@ -96,17 +96,8 @@ public class Share extends HttpServlet {
 			request.getSession().setAttribute("recommendedWines", recommendedWines);
 		} catch (Exception e) { e.printStackTrace(); }
 		
-		//Load pagination numbers
-		List<Integer> paginationNumbersList = new ArrayList<Integer>();
-		Integer counter = currentPage - 2;
-		
-		if(counter < 1 ) { counter = 1; }
-		if(counter + 4 > Integer.parseInt(amountOfPages)) { counter = Integer.parseInt(amountOfPages) - 4; }
-		for(int i = counter; i <= counter +4 || i == Integer.parseInt(amountOfPages); i++) { if(i >= 1) { paginationNumbersList.add(i); } }
-		
 		if(request.getAttribute("currentPage") == null) { request.setAttribute("currentPage", currentPage); }
 		if(request.getAttribute("amountOfPages") == null) { request.setAttribute("amountOfPages", amountOfPages); }
-		request.setAttribute("paginationList", paginationNumbersList);
 		
 		resultsPage.forward(request, response);
 	}

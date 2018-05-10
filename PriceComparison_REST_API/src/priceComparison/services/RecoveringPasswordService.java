@@ -2,11 +2,16 @@ package priceComparison.services;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.servlet.ServletContext;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +40,10 @@ public class RecoveringPasswordService {
 	public String getRelUrl() { return relUrl; }
 	public void setRelUrl(String relUrl) { this.relUrl = relUrl; }
 	
+	private ServletContext servletContext;
+	public ServletContext getServletContext() { return servletContext; }
+	public void setServletContext(ServletContext servletContext) { this.servletContext = servletContext; }
+	
 	private String crudURL;
 	public String getCrudURL() { return crudURL; }
 	public void setCrudURL(String crudURL) { this.crudURL = crudURL; }
@@ -48,8 +57,9 @@ public class RecoveringPasswordService {
 	RequestsCreator requestCreator = new RequestsCreator();
 	GeneralService generalService = new GeneralService();
 	
-	public Boolean recoverPassword() 
+	public Boolean recoverPassword(ServletContext servletContext) 
 	{
+		setServletContext(servletContext);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		try 
 		{
@@ -63,21 +73,40 @@ public class RecoveringPasswordService {
 			// Update on DB
 			if(!updateUser()) { return false;}
 			
-			// Build and send email
-			String composedEmail = composeEmailWithToken();
+			// loading email content from external HTML template
+			String htmlContent = this.getRecoverPasswordHTMLEmailTemplate();
+			
+			// replacing dinamyc data
+			htmlContent = htmlContent.replace("[[NAME-OF-USER]]", user.getName())
+									 .replace("[[USER-TOKEN]]", userToken)
+									 .replace("[[USER-ID]]", user.getId().toString());
 			
 			// sending "recover password" email
 			EmailSender emailSender = new EmailSender();
 
 			// emailSender.set
 			emailSender.setReceiverEmailAddress(user.getLoginEmail());
-			emailSender.setEmailSubject("Winedunk password recovery");
+			emailSender.setEmailSubject("Reset your winedunk password");
 
-			emailSender.setEmailText(composedEmail);
+			emailSender.setEmailText(htmlContent);
 			emailSender.send();
 			return true;
 		} catch (Exception e) { e.printStackTrace(); }
 		return false;
+	}
+	
+	private String getRecoverPasswordHTMLEmailTemplate() {
+
+		String templateFile = servletContext.getRealPath("/WEB-INF/HTML-Email-Templates/Recover-password.html");
+		Charset encoding = Charset.defaultCharset();
+		byte[] encodedByteArray;
+		try {
+			encodedByteArray = Files.readAllBytes(Paths.get(templateFile));
+			return new String(encodedByteArray, encoding);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "";
+		}
 	}
 	
 	public tblUsers getUserByEmail() throws IOException
@@ -139,15 +168,6 @@ public class RecoveringPasswordService {
 			return true;
 		} catch(Exception e) { e.printStackTrace(); }
 		return false;
-	}
-	
-	private String composeEmailWithToken()
-	{
-		String email = "<p> Dear " + user.getName() + ", <br/> "
-				+ "You are receiving this email because you marked to recover your password on <a href=\"http://winedunk.com\">Winedunk</a><br/>"
-				+ "Please click <a href=\"http://uat.winedunk.com/Recover?token=" + userToken + "&uid=" + user.getId() + "\">here</a> to recover your password</p>";
-		
-		return email;
 	}
 	
 	public String composeEmailWithConfirmation()

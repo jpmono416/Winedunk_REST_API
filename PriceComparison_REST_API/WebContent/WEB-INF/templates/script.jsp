@@ -42,7 +42,7 @@
                data: 
                { 
             	   formChosen : 'sort',
-            	   sortingMethod: sortingValue
+            	   orderBy: sortingValue
                },
                success : function(data)
                { 

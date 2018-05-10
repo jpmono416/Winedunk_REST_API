@@ -2,9 +2,19 @@ package priceComparison.models;
 
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
+@Entity
+@Table(name = "tblWineTypes")
 public class tblWineTypes {
 
+    @Transient
+    private static final long serialVersionUID = 1L;
+    
+    @Id
     private Integer id;
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }

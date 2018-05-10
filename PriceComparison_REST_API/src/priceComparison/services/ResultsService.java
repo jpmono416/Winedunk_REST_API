@@ -80,6 +80,7 @@ public class ResultsService {
     
      public List<viewWines> getWines(String urlParameters) throws IOException
     {
+    	 
     	 String relURL = "winesView?action=getWinesWithQuery" + urlParameters;
     	 String responseString = requestCreator.createGetRequest(urlPath, relURL);
     	 ObjectMapper mapper = new ObjectMapper();
@@ -103,11 +104,18 @@ public class ResultsService {
     public Integer getCountOfPages(String urlParameters) throws IOException
     {
     	String relURL = "winesView?action=getCountWithQuery" + urlParameters;
-    	Integer amountOfPages = Integer.parseInt(requestCreator.createGetRequest(urlPath, relURL));
-    	
-    	if(amountOfPages == null || amountOfPages < 0) { return null; }
-    	
-    	return amountOfPages;
+    	Integer amountOfPages = 0;
+    	try {
+    		amountOfPages = Integer.parseInt(requestCreator.createGetRequest(urlPath, relURL));
+    	} catch (Exception e) {
+    		amountOfPages = 0;
+    	}
+
+		if ( (amountOfPages == null) || (amountOfPages < 0) ) { 
+			return null; 
+		} else {
+			return amountOfPages;
+		}
     } 
     
     public void loadFilters(HttpServletRequest request)

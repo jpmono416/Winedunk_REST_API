@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 
@@ -10,9 +11,12 @@
 </head>
 
 <body style="background-color: #e7e7e7;">
+    <fmt:setLocale value="en_GB"/>
 	<img class="hidden" src="http://uat.static.winedunk.com/img/REST/+.jpg">
     <c:import url="../templates/navbar.jsp"/>
     <c:import url="../templates/google_analytics.jsp"/>
+    
+    <%-- Call to action to register Modal Form --%>
     <div class="modal fade" role="dialog" tabindex="-1" id="modal-register">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -32,6 +36,8 @@
             </div>
         </div>
     </div>
+    
+    <%-- Password recovery Modal Form --%>
     <c:if test="${ sessionScope.passwordRecoverySuccessful != null }" >
     	<div class="modal fade" role="dialog" tabindex="-1" id="modal-recovery">
 	        <div class="modal-dialog" role="document">
@@ -59,6 +65,8 @@
 	        </div>
 	    </div>
     </c:if>
+    
+    <%-- Search bar section --%>
     <section id="top-section" style="padding-top:100px;">
         <div class="container">
             <div class="row">
@@ -94,7 +102,8 @@
         </div>
     </section>
 
-	<section>
+	<%-- Recommended wines section --%>
+	<section id="recommended-wines-section" style="background-color: #f8f5f5;">
 	    <h1 class="text-center" id="best-offers">Recommended Wines</h1>
 	    <hr class="sep-bar">
 	    <div class="container pictures-container">
@@ -102,9 +111,37 @@
 	        	<c:forEach items= "${sessionScope.recommendedWines}" var="i">
 					<div class="col-xs-12 col-sm-6 col-md-4 item">
 						<div class="card item">
-							<a href="Product?id=<c:out value="${ i.getId() }" />">
-								<div style="width:100%;height:170px;background:url(<c:out value = "${i.getImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
-							</a>
+						
+							<div>
+						        <div class="row">
+						            <div class="col-md-7">
+							            <a href="Product?id=<c:out value="${ i.getId() }" />">
+											<div style="width:100%;height:170px;background:url(<c:out value = "${i.getImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
+										</a>
+						            </div>
+						            <div class="col-md-5" align="center">
+						            
+							            <%-- Making sure both % off and was are displayed only if saving --%>
+						                <c:choose>
+											<c:when test="${i.getSaving() > 0}">
+								                <div class="row"> <span class="label label-default">Save <fmt:formatNumber type="currency" value="${i.getSaving()}"/> ( -<c:out value="${i.getPercentageOff()}"/>% )</span> </div>
+								                <div class="row"> <h5 class="text-center" style="text-decoration: line-through;">Was: <fmt:formatNumber type="currency" value="${i.getPreviousMaxPrice()}"/></h5> </div>
+								                <div class="row"> <h4 class="text-center red-text" style="margin-top:0;">Now: <fmt:formatNumber type="currency" value="${i.getMinimumPrice()}"/></h4> </div>
+											</c:when>
+											<c:otherwise>
+											    <div class="row"> <h3 class="text-center red-text" style="margin-top:0;"><fmt:formatNumber type="currency" value="${i.getMinimumPrice()}"/></h3> </div>
+											</c:otherwise>
+										</c:choose>
+								                
+						                <div class="row">
+						                	<a class="btn btn-primary redButton" target="_blank" style="text-decoration: none;" href="<c:out value = "${i.getMinimumPriceClicktag()}"/>">Buy now</a>
+						                	<a class="btn btn-primary secondaryButton" target="_blank" style="text-decoration: none;" href="Product?id=<c:out value="${ i.getId() }" />">Compare</a>
+						                </div>
+								                
+						            </div>
+						        </div>
+							</div>
+						
 							<div class="text-wrapper">
 								<a style="text-decoration: none;" href="Product?id=<c:out value="${ i.getId() }" />"><h3 style="color:#800000;" class="name"><c:out value="${i.getName()}"/></h3></a>
 								<p class="description"><c:out value="${i.getShortDescription()}"/>
@@ -125,178 +162,274 @@
 	    </div>
 	</section>
 	
-	<c:if test="${ sessionScope.merchantsWithOffers != null }">
-		<c:forEach items="${ sessionScope.merchantsWithOffers }" var="merchant">
-			<section id="mid-section">
-				<h1 class="text-center"><c:out value="${merchant.getName() }"/> - Best offers</h1>
-			    <hr class="sep-bar">
-			    <div class="container pictures-container">
-			    	<div class="row articles">
-				    	<c:forEach items= "${merchant.bestOffers}" var="offer">
-							<div class="col-xs-12 col-sm-6 col-md-4 item">
-								<div class="card item">
-									<a href="Product?id=<c:out value="${ offer.getWineId() }"/>">
-										<div style="width:100%;height:170px;background:url(<c:out value = "${offer.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
-									</a>
-									<div class="text-wrapper">
-										<a style="text-decoration: none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>">
-											<h3 style="color:#800000;" class="name"><c:out value="${offer.getWineName()}"/></h3>
-										</a>
-										<p class="description"><c:out value="${offer.getWineShortDescription()}"/>
-											<c:if test="${offer.getWineShortDescription().length() == 169}">
-												<a href="Product?id=<c:out value="${ offer.getWineId() }"/>"> See more</a>
-											</c:if>
-										</p>
-										<div class="row" style="margin-top:15px; bottom:0px;">
-											<a style="text-decoration:none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>" class="action">
-												<i class="glyphicon glyphicon-circle-arrow-right"></i>
+	<%-- Best Offers by Merchant section --%>	
+	<section id="best-offers-by-merchant-section" style="background-color: #e7e7e7;">
+		<c:if test="${ sessionScope.merchantsWithOffers != null }">
+			<c:forEach items="${ sessionScope.merchantsWithOffers }" var="merchant">
+				<section id="mid-section">
+					<h1 class="text-center">Best offers from <c:out value="${merchant.getName() }"/></h1>
+				    <hr class="sep-bar">
+				    <div class="container pictures-container">
+				    	<div class="row articles">
+					    	
+					    	<c:forEach items= "${merchant.bestOffers}" var="offer">
+								<div class="col-xs-12 col-sm-6 col-md-4 item">
+									<div class="card item">
+							
+										<div>
+									        <div class="row">
+									            <div class="col-md-7">
+													<a href="Product?id=<c:out value="${ offer.getWineId() }"/>">
+														<div style="width:100%;height:170px;background:url(<c:out value = "${offer.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
+													</a>
+									            </div>
+									            <div class="col-md-5" align="center">
+									            
+										            <%-- Making sure both % off and was are displayed only if saving --%>
+									                <c:choose>
+														<c:when test="${offer.getWineMoneySaving() > 0}">
+											                <div class="row"> <span class="label label-default">Save <fmt:formatNumber type="currency" value="${offer.getWineMoneySaving()}"/> ( -<c:out value="${offer.getWinePercentageOff()}"/>% )</span> </div>
+											                <div class="row"> <h5 class="text-center" style="text-decoration: line-through;">Was: <fmt:formatNumber type="currency" value="${offer.getWinePreviousMaxPrice()}"/></h5> </div>
+											                <div class="row"> <h4 class="text-center red-text" style="margin-top:0;">Now: <fmt:formatNumber type="currency" value="${offer.getWineMinimumPrice()}"/></h4> </div>
+														</c:when>
+														<c:otherwise>
+														    <div class="row"> <h3 class="text-center red-text" style="margin-top:0;"><fmt:formatNumber type="currency" value="${offer.getWineMinimumPrice()}"/></h3> </div>
+														</c:otherwise>
+													</c:choose>
+													
+									                <div class="row">
+									                	<a class="btn btn-primary redButton" target="_blank" style="text-decoration: none;" href="<c:out value = "${offer.getWineMinimumPriceClicktag()}"/>">Buy now</a>
+									                	<a class="btn btn-primary secondaryButton" target="_blank" style="text-decoration: none;" href="Product?id=<c:out value="${ offer.getId() }" />">Compare</a>
+									                </div>
+									                
+									            </div>
+									        </div>
+										</div>
+	
+										<div class="text-wrapper">
+											<a style="text-decoration: none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>">
+												<h3 style="color:#800000;" class="name"><c:out value="${offer.getWineName()}"/></h3>
 											</a>
+											<p class="description"><c:out value="${offer.getWineShortDescription()}"/>
+												<c:if test="${offer.getWineShortDescription().length() == 169}">
+													<a href="Product?id=<c:out value="${ offer.getWineId() }"/>"> See more</a>
+												</c:if>
+											</p>
+											<div class="row" style="margin-top:15px; bottom:0px;">
+												<a style="text-decoration:none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>" class="action">
+													<i class="glyphicon glyphicon-circle-arrow-right"></i>
+												</a>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-						</c:forEach>
-						<div class="col-xs-12 col-sm-6 col-md-4 item">
-							<div class="card item">
-								<form class="nopadding" id="merchant<c:out value="${ merchant.getId() }"/>Form" action="Results" method="POST">
-									<input type="hidden" id="chosenShop" name="chosenShop" value="<c:out value="${ merchant.getId() }"/>">
-									<a onclick="document.getElementById('merchant<c:out value="${ merchant.getId() }"/>Form').submit();">
-										<div class="opacityDiv" style="width:100%;height:170px;background:url(https://tqbezw.dm2304.livefilestore.com/y4m7ImibB8RghV-NvoPSEWTgE7iHpyoKD8g7ubiIuhCkdJb16QKVw6cWSuio5dbn52nNCCOCGyGfoUAuUDi-VhM8Rau4ITh2Qw5GmbWfIT6qI104pntVSZWEqoGx6RE1KhCKM_9jCN-fPKBeUJ5KEwSsWc4BhNiWLS5E1cc3lKsuUJJKLo78B_v7OPu3NwLVfag?width=454&height=255&cropmode=none) no-repeat center center;background-size:contain;"></div>
-									</a>
-									<div class="text-wrapper">
-										<a style="text-decoration: none;" onclick="document.getElementById('merchant<c:out value="${ merchant.getId() }"/>Form').submit();">
-											<h3 style="color:#800000;" class="name">View more</h3>
-										</a>
-										<p class="description">Offers from ${ merchant.getName() }</p>
-										<div class="row" style="margin-top:15px; bottom:0px;">
-											<a style="text-decoration:none;" onclick="document.getElementById('merchant<c:out value="${ merchant.getId() }"/>Form').submit();" class="action">
-												<i class="glyphicon glyphicon-circle-arrow-right"></i>
-											</a>
-										</div>
-									</div>
-								</form>
-							</div>
-						</div>
-			    	</div>
-				</div>
-		    </section>
-	    </c:forEach>
-	</c:if>
-	<c:if test="${ sessionScope.typesWithOffers != null }">
-		<c:forEach items="${ sessionScope.typesWithOffers }" var="type">
-			<section id="mid-section">
-				<h1 class="text-center"><c:out value="${type.getWineTypeName() }"/> - Best offers</h1>
-			    <hr class="sep-bar">
-			    <div class="container pictures-container">
-			    	<div class="row articles">
-				    	<c:forEach items= "${type.bestOffers}" var="offer">
+							</c:forEach>
+							
 							<div class="col-xs-12 col-sm-6 col-md-4 item">
 								<div class="card item">
-									<a href="Product?id=<c:out value="${ offer.getWineId() }"/>">
-										<div style="width:100%;height:170px;background:url(<c:out value = "${offer.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
-									</a>
-									<div class="text-wrapper">
-										<a style="text-decoration: none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>">
-											<h3 style="color:#800000;" class="name"><c:out value="${offer.getWineName()}"/></h3>
+									<form class="nopadding" id="merchant<c:out value="${ merchant.getId() }"/>Form" action="Results" method="POST">
+										<input type="hidden" id="chosenShop" name="chosenShop" value="<c:out value="${ merchant.getId() }"/>">
+										<a onclick="document.getElementById('merchant<c:out value="${ merchant.getId() }"/>Form').submit();">
+											<div class="opacityDiv" style="width:100%;height:170px;background:url(https://tqbezw.dm2304.livefilestore.com/y4m7ImibB8RghV-NvoPSEWTgE7iHpyoKD8g7ubiIuhCkdJb16QKVw6cWSuio5dbn52nNCCOCGyGfoUAuUDi-VhM8Rau4ITh2Qw5GmbWfIT6qI104pntVSZWEqoGx6RE1KhCKM_9jCN-fPKBeUJ5KEwSsWc4BhNiWLS5E1cc3lKsuUJJKLo78B_v7OPu3NwLVfag?width=454&height=255&cropmode=none) no-repeat center center;background-size:contain;"></div>
 										</a>
-										<p class="description"><c:out value="${offer.getWineShortDescription()}"/>
-											<c:if test="${offer.getWineShortDescription().length() == 169}">
-												<a href="Product?id=<c:out value="${ offer.getWineId() }"/>"> See more</a>
-											</c:if>
-										</p>
-										<div class="row" style="margin-top:15px; bottom:0px;">
-											<a style="text-decoration:none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>" class="action">
-												<i class="glyphicon glyphicon-circle-arrow-right"></i>
+										<div class="text-wrapper">
+											<a style="text-decoration: none;" onclick="document.getElementById('merchant<c:out value="${ merchant.getId() }"/>Form').submit();">
+												<h3 style="color:#800000;" class="name">View more</h3>
 											</a>
+											<p class="description">Offers from ${ merchant.getName() }</p>
+											<div class="row" style="margin-top:15px; bottom:0px;">
+												<a style="text-decoration:none;" onclick="document.getElementById('merchant<c:out value="${ merchant.getId() }"/>Form').submit();" class="action">
+													<i class="glyphicon glyphicon-circle-arrow-right"></i>
+												</a>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+				    	</div>
+					</div>
+			    </section>
+		    </c:forEach>
+		</c:if>
+    </section>
+	
+	<%-- Best Offers by Wine Type section --%>
+	<section id="best-offers-by-wine-type-section" style="background-color: #f8f5f5;">
+		<c:if test="${ sessionScope.typesWithOffers != null }">
+			<c:forEach items="${ sessionScope.typesWithOffers }" var="type">
+				<section id="mid-section">
+					<h1 class="text-center">Best offers, category: <c:out value="${type.getWineTypeName() }"/></h1>
+				    <hr class="sep-bar">
+				    <div class="container pictures-container">
+				    	<div class="row articles">
+					    	<c:forEach items= "${type.bestOffers}" var="offer">
+								<div class="col-xs-12 col-sm-6 col-md-4 item">
+									<div class="card item">
+	
+										<div>
+									        <div class="row">
+									            <div class="col-md-7">
+													<a href="Product?id=<c:out value="${ offer.getWineId() }"/>">
+														<div style="width:100%;height:170px;background:url(<c:out value = "${offer.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
+													</a>
+									            </div>
+									            <div class="col-md-5" align="center">
+									            	<%-- Making sure both % off and was are displayed only if saving --%>
+									                <c:choose>
+														<c:when test="${offer.getWineMoneySaving() > 0}">
+											                <div class="row"> <span class="label label-default">Save <fmt:formatNumber type="currency" value="${offer.getWineMoneySaving()}"/> ( -<c:out value="${offer.getWinePercentageOff()}"/>% )</span> </div>
+											                <div class="row"> <h5 class="text-center" style="text-decoration: line-through;">Was: <fmt:formatNumber type="currency" value="${offer.getWinePreviousMaxPrice()}"/></h5> </div>
+											                <div class="row"> <h4 class="text-center red-text" style="margin-top:0;">Now: <fmt:formatNumber type="currency" value="${offer.getWineMinimumPrice()}"/></h4> </div>
+														</c:when>
+														<c:otherwise>
+														    <div class="row"> <h3 class="text-center red-text" style="margin-top:0;"><fmt:formatNumber type="currency" value="${offer.getWineMinimumPrice()}"/></h3> </div>
+														</c:otherwise>
+													</c:choose>
+													
+													<div class="row">
+									                	<a class="btn btn-primary redButton" target="_blank" style="text-decoration: none;" href="<c:out value = "${offer.getWineMinimumPriceClicktag()}"/>">Buy now</a>
+									                	<a class="btn btn-primary secondaryButton" target="_blank" style="text-decoration: none;" href="Product?id=<c:out value="${ offer.getId() }" />">Compare</a>
+									                </div>
+									                
+									            </div>
+									        </div>
+										</div>
+	
+										<div class="text-wrapper">
+											<a style="text-decoration: none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>">
+												<h3 style="color:#800000;" class="name"><c:out value="${offer.getWineName()}"/></h3>
+											</a>
+											<p class="description"><c:out value="${offer.getWineShortDescription()}"/>
+												<c:if test="${offer.getWineShortDescription().length() == 169}">
+													<a href="Product?id=<c:out value="${ offer.getWineId() }"/>"> See more</a>
+												</c:if>
+											</p>
+											<div class="row" style="margin-top:15px; bottom:0px;">
+												<a style="text-decoration:none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>" class="action">
+													<i class="glyphicon glyphicon-circle-arrow-right"></i>
+												</a>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-						</c:forEach>
-						<div class="col-xs-12 col-sm-6 col-md-4 item">
-							<div class="card item">
-								<form class="nopadding" id="type<c:out value="${ type.getId() }"/>Form" action="Results" method="POST">
-									<input type="hidden" id="chosenType" name="chosenType" value="<c:out value="${ type.getId() }"/>">
-									<a onclick="document.getElementById('type<c:out value="${ type.getId() }"/>Form').submit();">
-										<div class="opacityDiv" style="width:100%;height:170px;background:url(https://tqbezw.dm2304.livefilestore.com/y4m7ImibB8RghV-NvoPSEWTgE7iHpyoKD8g7ubiIuhCkdJb16QKVw6cWSuio5dbn52nNCCOCGyGfoUAuUDi-VhM8Rau4ITh2Qw5GmbWfIT6qI104pntVSZWEqoGx6RE1KhCKM_9jCN-fPKBeUJ5KEwSsWc4BhNiWLS5E1cc3lKsuUJJKLo78B_v7OPu3NwLVfag?width=454&height=255&cropmode=none) no-repeat center center;background-size:contain;"></div>
-									</a>
-									<div class="text-wrapper">
-										<a style="text-decoration: none;" onclick="document.getElementById('type<c:out value="${ type.getId() }"/>Form').submit();">
-											<h3 style="color:#800000;" class="name">View more</h3>
-										</a>
-										<p class="description">Offers from ${ type.getWineTypeName() }</p>
-										<div class="row" style="margin-top:15px; bottom:0px;">
-											<a style="text-decoration:none;" onclick="document.getElementById('type<c:out value="${ type.getId() }"/>Form').submit();" class="action">
-												<i class="glyphicon glyphicon-circle-arrow-right"></i>
-											</a>
-										</div>
-									</div>
-								</form>
-							</div>
-						</div>
-			    	</div>
-				</div>
-		    </section>
-	    </c:forEach>
-	</c:if>
-	<c:if test="${ sessionScope.countriesWithOffers != null }">
-		<c:forEach items="${ sessionScope.countriesWithOffers }" var="country">
-			<section id="mid-section">
-				<h1 class="text-center" id="best-offers"><c:out value="${country.getCountryName() }"/> - Best offers</h1>
-			    <hr class="sep-bar">
-			    <div class="container pictures-container">
-			    	<div class="row articles">
-				    	<c:forEach items= "${country.bestOffers}" var="offer">
+							</c:forEach>
 							<div class="col-xs-12 col-sm-6 col-md-4 item">
 								<div class="card item">
-									<a href="Product?id=<c:out value="${ offer.getWineId() }"/>">
-										<div style="width:100%;height:170px;background:url(<c:out value = "${offer.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
-									</a>
-									<div class="text-wrapper">
-										<a style="text-decoration: none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>">
-											<h3 style="color:#800000;" class="name"><c:out value="${offer.getWineName()}"/></h3>
+									<form class="nopadding" id="type<c:out value="${ type.getId() }"/>Form" action="Results" method="POST">
+										<input type="hidden" id="chosenType" name="chosenType" value="<c:out value="${ type.getId() }"/>">
+										<a onclick="document.getElementById('type<c:out value="${ type.getId() }"/>Form').submit();">
+											<div class="opacityDiv" style="width:100%;height:170px;background:url(https://tqbezw.dm2304.livefilestore.com/y4m7ImibB8RghV-NvoPSEWTgE7iHpyoKD8g7ubiIuhCkdJb16QKVw6cWSuio5dbn52nNCCOCGyGfoUAuUDi-VhM8Rau4ITh2Qw5GmbWfIT6qI104pntVSZWEqoGx6RE1KhCKM_9jCN-fPKBeUJ5KEwSsWc4BhNiWLS5E1cc3lKsuUJJKLo78B_v7OPu3NwLVfag?width=454&height=255&cropmode=none) no-repeat center center;background-size:contain;"></div>
 										</a>
-										<p class="description"><c:out value="${offer.getWineShortDescription()}"/>
-											<c:if test="${offer.getWineShortDescription().length() == 169}">
-												<a href="Product?id=<c:out value="${ offer.getWineId() }"/>"> See more</a>
-											</c:if>
-										</p>
-										<div class="row" style="margin-top:15px; bottom:0px;">
-											<a style="text-decoration:none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>" class="action">
-												<i class="glyphicon glyphicon-circle-arrow-right"></i>
+										<div class="text-wrapper">
+											<a style="text-decoration: none;" onclick="document.getElementById('type<c:out value="${ type.getId() }"/>Form').submit();">
+												<h3 style="color:#800000;" class="name">View more</h3>
 											</a>
+											<p class="description">Offers from ${ type.getWineTypeName() }</p>
+											<div class="row" style="margin-top:15px; bottom:0px;">
+												<a style="text-decoration:none;" onclick="document.getElementById('type<c:out value="${ type.getId() }"/>Form').submit();" class="action">
+													<i class="glyphicon glyphicon-circle-arrow-right"></i>
+												</a>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+				    	</div>
+					</div>
+			    </section>
+		    </c:forEach>
+		</c:if>
+    </section>
+	
+	<%-- Best Offers by Country section --%>
+	<section id="best-offers-by-country-section" style="background-color: #e7e7e7;">
+		<c:if test="${ sessionScope.countriesWithOffers != null }">
+			<c:forEach items="${ sessionScope.countriesWithOffers }" var="country">
+				<section id="mid-section">
+					<h1 class="text-center" id="best-offers">Best offers, country: <c:out value="${country.getCountryName() }"/></h1>
+				    <hr class="sep-bar">
+				    <div class="container pictures-container">
+				    	<div class="row articles">
+					    	<c:forEach items= "${country.bestOffers}" var="offer">
+								<div class="col-xs-12 col-sm-6 col-md-4 item">
+									<div class="card item">
+							
+										<div>
+									        <div class="row">
+									            <div class="col-md-7">
+													<a href="Product?id=<c:out value="${ offer.getWineId() }"/>">
+														<div style="width:100%;height:170px;background:url(<c:out value = "${offer.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
+													</a>
+									            </div>
+									            <div class="col-md-5" align="center">
+									            
+									            	<%-- Making sure both % off and was are displayed only if saving --%>
+									                <c:choose>
+														<c:when test="${offer.getWineMoneySaving() > 0}">
+											                <div class="row"> <span class="label label-default">Save <fmt:formatNumber type="currency" value="${offer.getWineMoneySaving()}"/> ( -<c:out value="${offer.getWinePercentageOff()}"/>% )</span> </div>
+											                <div class="row"> <h5 class="text-center" style="text-decoration: line-through;">Was: <fmt:formatNumber type="currency" value="${offer.getWinePreviousMaxPrice()}"/></h5> </div>
+											                <div class="row"> <h4 class="text-center red-text" style="margin-top:0;">Now: <fmt:formatNumber type="currency" value="${offer.getWineMinimumPrice()}"/></h4> </div>
+														</c:when>
+														<c:otherwise>
+														    <div class="row"> <h3 class="text-center red-text" style="margin-top:0;"><fmt:formatNumber type="currency" value="${offer.getWineMinimumPrice()}"/></h3> </div>
+														</c:otherwise>
+													</c:choose>
+													
+													<div class="row">
+									                	<a class="btn btn-primary redButton" target="_blank" style="text-decoration: none;" href="<c:out value = "${offer.getWineMinimumPriceClicktag()}"/>">Buy now</a>
+									                	<a class="btn btn-primary secondaryButton" target="_blank" style="text-decoration: none;" href="Product?id=<c:out value="${ offer.getId() }" />">Compare</a>
+									                </div>
+	
+									            </div>
+									        </div>
+										</div>
+										
+										<div class="text-wrapper">
+											<a style="text-decoration: none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>">
+												<h3 style="color:#800000;" class="name"><c:out value="${offer.getWineName()}"/></h3>
+											</a>
+											<p class="description"><c:out value="${offer.getWineShortDescription()}"/>
+												<c:if test="${offer.getWineShortDescription().length() == 169}">
+													<a href="Product?id=<c:out value="${ offer.getWineId() }"/>"> See more</a>
+												</c:if>
+											</p>
+											<div class="row" style="margin-top:15px; bottom:0px;">
+												<a style="text-decoration:none;" href="Product?id=<c:out value="${ offer.getWineId() }"/>" class="action">
+													<i class="glyphicon glyphicon-circle-arrow-right"></i>
+												</a>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-						</c:forEach>
-						<div class="col-xs-12 col-sm-6 col-md-4 item">
-							<div class="card item">
-								<form class="nopadding" id="country<c:out value="${ country.getId() }"/>Form" action="Results" method="POST">
-									<input type="hidden" name="country" value="<c:out value="${ country.getCountryName() }"/>">
-									<a onclick="document.getElementById('country<c:out value="${ country.getId() }"/>Form').submit();">
-										<div class="opacityDiv" style="width:100%;height:170px;background:url(https://tqbezw.dm2304.livefilestore.com/y4m7ImibB8RghV-NvoPSEWTgE7iHpyoKD8g7ubiIuhCkdJb16QKVw6cWSuio5dbn52nNCCOCGyGfoUAuUDi-VhM8Rau4ITh2Qw5GmbWfIT6qI104pntVSZWEqoGx6RE1KhCKM_9jCN-fPKBeUJ5KEwSsWc4BhNiWLS5E1cc3lKsuUJJKLo78B_v7OPu3NwLVfag?width=454&height=255&cropmode=none) no-repeat center center;background-size:contain;"></div>
-									</a>
-									<div class="text-wrapper">
-										<a style="text-decoration: none;" onclick="document.getElementById('country<c:out value="${ country.getId() }"/>Form').submit();">
-											<h3 style="color:#800000;" class="name">View more</h3>
+							</c:forEach>
+							<div class="col-xs-12 col-sm-6 col-md-4 item">
+								<div class="card item">
+									<form class="nopadding" id="country<c:out value="${ country.getId() }"/>Form" action="Results" method="POST">
+										<input type="hidden" name="country" value="<c:out value="${ country.getCountryName() }"/>">
+										<a onclick="document.getElementById('country<c:out value="${ country.getId() }"/>Form').submit();">
+											<div class="opacityDiv" style="width:100%;height:170px;background:url(https://tqbezw.dm2304.livefilestore.com/y4m7ImibB8RghV-NvoPSEWTgE7iHpyoKD8g7ubiIuhCkdJb16QKVw6cWSuio5dbn52nNCCOCGyGfoUAuUDi-VhM8Rau4ITh2Qw5GmbWfIT6qI104pntVSZWEqoGx6RE1KhCKM_9jCN-fPKBeUJ5KEwSsWc4BhNiWLS5E1cc3lKsuUJJKLo78B_v7OPu3NwLVfag?width=454&height=255&cropmode=none) no-repeat center center;background-size:contain;"></div>
 										</a>
-										<p class="description">Offers from ${ country.getCountryName() }</p>
-										<div class="row" style="margin-top:15px; bottom:0px;">
-											<a style="text-decoration:none;" onclick="document.getElementById('country<c:out value="${ country.getId() }"/>Form').submit();" class="action">
-												<i class="glyphicon glyphicon-circle-arrow-right"></i>
+										<div class="text-wrapper">
+											<a style="text-decoration: none;" onclick="document.getElementById('country<c:out value="${ country.getId() }"/>Form').submit();">
+												<h3 style="color:#800000;" class="name">View more</h3>
 											</a>
+											<p class="description">Offers from ${ country.getCountryName() }</p>
+											<div class="row" style="margin-top:15px; bottom:0px;">
+												<a style="text-decoration:none;" onclick="document.getElementById('country<c:out value="${ country.getId() }"/>Form').submit();" class="action">
+													<i class="glyphicon glyphicon-circle-arrow-right"></i>
+												</a>
+											</div>
 										</div>
-									</div>
-								</form>
+									</form>
+								</div>
 							</div>
-						</div>
-			    	</div>
-				</div>
-		    </section>
-	    </c:forEach>
-	</c:if>
-    <hr class="sep-bar">
+				    	</div>
+					</div>
+			    </section>
+		    </c:forEach>
+		</c:if>
+    </section>
+	
 	<c:import url="../templates/footer.jsp"/>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>

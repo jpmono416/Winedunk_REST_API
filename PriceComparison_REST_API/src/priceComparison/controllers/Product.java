@@ -105,7 +105,6 @@ public class Product extends HttpServlet {
 		catch (Exception e) { e.printStackTrace(); }
 		
 		
-		
 		// Load reviews
 		try 
 		{

@@ -39,7 +39,7 @@
                                     		When you provide us with personal information to sign up, we imply that you consent to our collecting it and using it for that specific reason only.<br/><br/>
                                     		If we ask for your personal information for a secondary reason, like marketing, we will either ask you directly for your expressed consent, or provide you with an opportunity to say no.<br/><br/>
                                     		How do I withdraw my consent?<br/><br/>
-                                    		If after you opt-in, you change your mind, you may withdraw your consent for us to contact you, for the continued collection, use or disclosure of your information, at any time, by contacting us at info@winedunk.com or mailing us at: Windedunk Ltd 24 Colby Road, London, LND, SE19 1HA, United Kingdom<br/><br/>
+                                    		If after you opt-in, you change your mind, you may withdraw your consent for us to contact you, for the continued collection, use or disclosure of your information, at any time, by contacting us at info@winedunk.com or mailing us at: Windedunk Ltd, 36 Yew Tree Close, Shrewsbury, SY1 2US, United Kingdom<br/><br/>
                                     	</p>
                                     	
                                     	<h3 class="red-text">Section 3 - Disclosure</h3>

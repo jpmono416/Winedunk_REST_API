@@ -33,6 +33,22 @@
 					</c:forEach>
 				</ul>
 			</div>
+			
+			<input class="form-control" autocomplete="off" type="hidden" id="chosenShop" name="chosenShop" value="0">
+			<div class="form-group"></div>
+			<div class="dropdown">
+				<button id="shopsDropdown"class="btn btn-default btn-block dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button">Merchant <span class="caret"></span></button>
+				<ul class="dropdown-menu" role="menu">
+					<li style="cursor:pointer" role="presentation" onclick="changeShop(this)" value="0"><a>All merchants</a></li>	                        	
+					<c:forEach var = "i" items = "${sessionScope.listOfShopsView.entrySet()}">
+						<li style="cursor:pointer" role="presentation" onclick="changeShop(this)" value = <c:out value ="${ i.getKey() }"/>>
+							<a><c:out value="${ i.getValue() }"></c:out></a>
+						</li>
+					</c:forEach>
+				</ul>
+			</div>
+			
+			
 			<div class="form-group"></div>
 			<div class="row">
 				<div class="col-xs-6">
@@ -51,19 +67,6 @@
 			<input class="form-control" autocomplete="off" type="text" placeholder="Region" name="region" id="region"/>
 			<div class="form-group"></div>
 			<input class="form-control" autocomplete="off" type="text" placeholder="Appellation" id="appellation" name="appellation">
-			<input class="form-control" autocomplete="off" type="hidden" id="chosenShop" name="chosenShop" value="0">
-			<div class="form-group"></div>
-			<div class="dropdown">
-				<button id="shopsDropdown"class="btn btn-default btn-block dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button">Shop <span class="caret"></span></button>
-				<ul class="dropdown-menu" role="menu">
-					<li style="cursor:pointer" role="presentation" onclick="changeShop(this)" value="0"><a>All shops</a></li>	                        	
-					<c:forEach var = "i" items = "${sessionScope.listOfShopsView.entrySet()}">
-						<li style="cursor:pointer" role="presentation" onclick="changeShop(this)" value = <c:out value ="${ i.getKey() }"/>>
-							<a><c:out value="${ i.getValue() }"></c:out></a>
-						</li>
-					</c:forEach>
-				</ul>
-			</div>
 			<div class="form-group"></div>
 			<input class="form-control" autocomplete="off" type="text" placeholder="Winery" id="winery" name="winery">
 			<div class="form-group"></div>
@@ -84,6 +87,9 @@
 					<input class="form-control" type="number" placeholder="Max vintage" step="1" id="vintageMax" name="vintageMax">
 				</div>
 			</div>
+			
+			<%-- Rating (commented till we got some ratings ) --%>
+			<%-- 
 			<div class="form-group"></div>
 				<h2 class="text-center red-text">Rating</h2>
 				<hr class="sep-bar"/>
@@ -97,6 +103,8 @@
                 	</span>
 		        </h2>
 		        <input id="ratingValue" name="ratingValue" type="hidden">
+		    --%>
+		        
 			<div class="form-group"></div>
 			<hr class="sep-bar">
 			<div class="row" style="text-align:center;">

@@ -26,6 +26,22 @@ public class viewRecommendedWines {
 	public Float getMinimumPrice() { return minimumPrice; }
 	public void setMinimumPrice(Float minimumPrice) { this.minimumPrice = minimumPrice; }
 	
+	private Float previousMaxPrice;
+	public Float getPreviousMaxPrice() { return previousMaxPrice; }
+	public void setPreviousMaxPrice(Float previousMaxPrice) { this.previousMaxPrice = previousMaxPrice; }
+	
+	private Float saving;
+	public Float getSaving() { return saving; }
+	public void setSaving(Float saving) { this.saving = saving; }
+	
+	private Integer percentageOff;
+	public Integer getPercentageOff() { return percentageOff; }
+	public void setPercentageOff(Integer percentageOff) { this.percentageOff = percentageOff; }
+	
+	private String  minimumPriceClicktag;
+	public String  getMinimumPriceClicktag() { return minimumPriceClicktag; }
+	public void setMinimumPriceClicktag(String  minimumPriceClicktag) { this.minimumPriceClicktag = minimumPriceClicktag; }
+	
 	private String destinationURL;
 	public String getDestinationURL() { return destinationURL; }
 	public void setDestinationURL(String destinationURL) { this.destinationURL = destinationURL; }
@@ -38,12 +54,20 @@ public class viewRecommendedWines {
         this.defaultDescription = null;
         this.imageURL = null;
         this.minimumPrice = null;
+        this.previousMaxPrice = null;
+        this.saving = null;
+        this.percentageOff = null;
+        this.minimumPriceClicktag = null;
         this.destinationURL = null;
     }
 	@Override
 	public String toString() {
 		return "{ \"id\" : \"" + id + "\", name\" : \"" + name + "\", defaultDescription\" : \"" + defaultDescription
 				+ "\", imageURL\" : \"" + imageURL + "\", minimumPrice\" : \"" + minimumPrice
+				+ "\", previousMaxPrice\" : \"" + previousMaxPrice 
+				+ "\", saving\" : \"" + saving 
+				+ "\", percentageOff\" : \"" + percentageOff 
+				+ "\", minimumPriceClicktag\" : \"" + minimumPriceClicktag 
 				+ "\", destinationURL\" : \"" + destinationURL + "] }";
 	}
 	

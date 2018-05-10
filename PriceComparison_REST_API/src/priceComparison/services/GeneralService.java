@@ -1,11 +1,13 @@
 package priceComparison.services;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -23,6 +25,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
+import priceComparison.models.tblCountryBasicData;
+import priceComparison.models.tblWineTypes;
 import priceComparison.models.viewBestOffersbyCountries;
 import priceComparison.models.viewBestOffersbyMerchants;
 import priceComparison.models.viewBestOffersbyWineTypes;
@@ -95,6 +99,9 @@ public class GeneralService {
 	public void makeSearch(HttpServletRequest request, String crudUrl)
 	{
 		ResultsService resultsService = new ResultsService();
+		
+		ArrayList<String> selectedSearchCriteria = new ArrayList<String>();
+		
 		Integer currentPage = 0,
 				amountOfPages;
 		
@@ -131,7 +138,7 @@ public class GeneralService {
 			grapeVariety 	= request.getParameter("grapeVariety"),
 			merchant 		= request.getParameter("chosenShop"),
 			rating 			= request.getParameter("ratingValue");
-			System.out.println("Rating: " + rating); // TODO DELETE
+
 			String[] filtersToGet = new String[] 
 					{ "listOfCountries", "listOfRegions", "listOfWineries", "listOfAppellations", "listOfGrapeVarieties" };
 			
@@ -170,93 +177,332 @@ public class GeneralService {
 				currentTurn++;
 			}
 			
-			if(name != null && !name.equals("")) 					{ urlParameters += "&name=" + name; 					}
-			if(region != null && !region.equals("")) 				{ urlParameters += "&chosenRegion=" + region; 			}
-			if(winery != null && !winery.equals("")) 		 		{ urlParameters += "&wineryId=" + winery; 				}
-			if(appellation != null && !appellation.equals(""))		{ urlParameters += "&appellationId=" + appellation;		}
-			if(chosenColour != null && !chosenColour.equals("0")) 	{ urlParameters += "&chosenColour=" + chosenColour; 	}		
-			if(vintageMin != null && !vintageMin.equals("")) 		{ urlParameters += "&vintageMin=" + vintageMin; 		}
-			if(vintageMax != null && !vintageMax.equals("")) 		{ urlParameters += "&vintageMax=" + vintageMax; 		}
-			if(abvMin != null && !abvMin.equals("")) 				{ urlParameters += "&abvMin=" + abvMin; 				}
-			if(abvMax != null && !abvMax.equals("")) 				{ urlParameters += "&abvMax=" + abvMax; 				}
-			if(grapeVariety != null && !grapeVariety.equals("")) 	{ urlParameters += "&grapeVarietyId=" + grapeVariety; 	}
-			if(minPrice != null && !minPrice.equals(""))			{ urlParameters += "&minPrice=" + minPrice; 			}
-			if(maxPrice != null && !maxPrice.equals("")) 			{ urlParameters += "&maxPrice=" + maxPrice; 			}
-			if(rating != null && !rating.equals(""))				{ urlParameters += "&ratingValue=" + rating;			}
-			System.out.println("URL PARAMS: " +urlParameters); // TODO DLETE
-			if(merchant != null && !merchant.equals("0"))
-			{ 
-				urlParameters +="&merchant=" + merchant;
+			if (name != null && !name.equals("")) {
+				urlParameters += "&name=" + name;
+				selectedSearchCriteria.add("Name: "+ name);
+			}
+
+			int intValue = 0;
+			int minIntValue = 0;
+			int maxIntValue = 0;
+			float minFloatValue = 0;
+			float maxFloatValue = 0;
+			NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.UK);
+			
+			
+			// Region
+			intValue = 0;
+			if (region != null && !region.equals("")) {
+				try {
+					intValue = Integer.parseInt(region);
+				} catch (Exception e) {
+					intValue = 0;
+					e.printStackTrace();
+				}	
+				if (intValue > 0) { 
+					urlParameters += "&chosenRegion=" + region;
+					selectedSearchCriteria.add("Region: " + getRegionName(intValue));
+				}
+			}
+			
+			// Winery
+			intValue = 0;
+			if (winery != null && !winery.equals("")) {
+				try {
+					intValue = Integer.parseInt(winery);
+				} catch (Exception e) {
+					intValue = 0;
+					e.printStackTrace();
+				}	
+				if (intValue > 0) { 
+					urlParameters += "&wineryId=" + winery;
+					selectedSearchCriteria.add("Winery: " + getWineryName(intValue));
+				}
+			}
+			
+			// Appellation
+			intValue = 0;
+			if (appellation != null && !appellation.equals("")) {
+				try {
+					intValue = Integer.parseInt(appellation);
+				} catch (Exception e) {
+					intValue = 0;
+					e.printStackTrace();
+				}	
+				if (intValue > 0) { 
+					urlParameters += "&appellationId=" + appellation;
+					selectedSearchCriteria.add("Appellation: " + getAppellationName(intValue));
+				}
+			}
+			
+			// Colour
+			intValue = 0;
+			if (chosenColour != null && !chosenColour.equals("0")) {
+				try {
+					intValue = Integer.parseInt(chosenColour);
+				} catch (Exception e) {
+					intValue = 0;
+					e.printStackTrace();
+				}	
+				if (intValue > 0) { 
+					urlParameters += "&chosenColour=" + chosenColour;
+					selectedSearchCriteria.add("Colour: " + getColourName(intValue));
+				}
+			}
+
+			// Vintage
+			minIntValue = 0;
+			maxIntValue = 0;
+			if (vintageMin != null && !vintageMin.equals("")) {
+				try {
+					minIntValue = Integer.parseInt(vintageMin);
+				} catch (Exception e) {
+					minIntValue = 0;
+					e.printStackTrace();
+				}	
+			}
+			
+			if (vintageMax != null && !vintageMax.equals("")) {
+				try {
+					maxIntValue = Integer.parseInt(vintageMax);
+				} catch (Exception e) {
+					maxIntValue = 0;
+					e.printStackTrace();
+				}	
+			}
+			
+			if ( (minIntValue > 0) || ((maxIntValue > 0)) ) {
+			
+				if ( (minIntValue > 0) && ((maxIntValue > 0)) ) {
+					
+					urlParameters += "&vintageMin=" + vintageMin;
+					urlParameters += "&vintageMax=" + vintageMax;
+					selectedSearchCriteria.add("Vintage between " + vintageMin + " and " + vintageMax);
+					
+				} else {
+					if (minIntValue > 0) { 
+						urlParameters += "&vintageMin=" + vintageMin;
+						selectedSearchCriteria.add("Vintage greater than " + vintageMin);
+					} else {
+						urlParameters += "&vintageMax=" + vintageMax;
+						selectedSearchCriteria.add("Vintage less than " + vintageMax);
+					}
+				}
 				
-				String merchantUrl = "merchantsView?action=getMerchant&id=" + merchant;
-				String merchantString = requestCreator.createGetRequest(crudUrl, merchantUrl); 
+			}
+
+			// ABV
+			minFloatValue = 0;
+			maxFloatValue = 0;
+			if (abvMin != null && !abvMin.equals("")) {
+				try {
+					minFloatValue = Float.parseFloat(abvMin);
+				} catch (Exception e) {
+					minFloatValue = 0;
+					e.printStackTrace();
+				}	
+			}
+			
+			if (abvMax != null && !abvMax.equals("")) {
+				try {
+					maxFloatValue = Float.parseFloat(abvMax);
+				} catch (Exception e) {
+					maxFloatValue = 0;
+					e.printStackTrace();
+				}	
+			}
+			
+			if ( (minFloatValue > 0) || ((maxFloatValue > 0)) ) {
+			
+				if ( (minFloatValue > 0) && ((maxFloatValue > 0)) ) {
+					
+					urlParameters += "&abvMin=" + abvMin;
+					urlParameters += "&abvMax=" + abvMax;
+					selectedSearchCriteria.add("ABV between " + abvMin + " and " + abvMax);
+					
+				} else {
+					if (minFloatValue > 0) { 
+						urlParameters += "&abvMin=" + abvMin;
+						selectedSearchCriteria.add("ABV greater than " + abvMin);
+					} else {
+						urlParameters += "&abvMax=" + abvMax;
+						selectedSearchCriteria.add("ABV less than " + abvMax);
+					}
+				}
 				
-		    	JsonNode merchantJson = mapper.readTree(merchantString);
-		    	viewMerchants merchantWithOffersObject = mapper.treeToValue(merchantJson, viewMerchants.class);
-		    	if(merchantWithOffersObject.getId() == null || merchantWithOffersObject.getId() <= 0) 
-		    	{
-		    		// This avoids putting up merchant info if there isn't
-		    		request.setAttribute("noMerchant", true);
-		    	}
-		    	
-		    	//Get the best offers for the merchant
-		    	List<viewBestOffersbyMerchants> bestOffers = this.getBestOffersByMerchant(Integer.parseInt(merchant));
-		    	if(bestOffers != null) { request.setAttribute("bestMerchantOffers", bestOffers); }
-		    	else { request.setAttribute("noMerchantOffers", true); }
-		    	
-		    	// Set a couple of required variables to display dynamic information on Results page
-		    	request.setAttribute("searchByMerchant", true);
-		    	request.setAttribute("merchantChosen", merchantWithOffersObject);
+			}
+			
+			// Grape Variety
+			intValue = 0;
+			if (grapeVariety != null && !grapeVariety.equals("")) {
+
+				try {
+					intValue = Integer.parseInt(grapeVariety);
+				} catch (Exception e) {
+					intValue = 0;
+					e.printStackTrace();
+				}	
+				if (intValue > 0) { 
+					urlParameters += "&grapeVarietyId=" + grapeVariety;
+					selectedSearchCriteria.add("Grape Variety: " + getGrapeVarietyName(intValue));
+				}
+			}
+			
+
+			// price
+			minFloatValue = 0;
+			maxFloatValue = 0;
+			
+			if (minPrice != null && !minPrice.equals("")) {
+				try {
+					minFloatValue = Float.parseFloat(minPrice);
+				} catch (Exception e) {
+					minFloatValue = 0;
+					e.printStackTrace();
+				}	
+			}
+			
+			if (maxPrice != null && !maxPrice.equals("")) {
+				try {
+					maxFloatValue = Float.parseFloat(maxPrice);
+				} catch (Exception e) {
+					maxFloatValue = 0;
+					e.printStackTrace();
+				}	
+			}
+			
+			if ( (minFloatValue > 0) || ((maxFloatValue > 0)) ) {
+				
+				if ( (minFloatValue > 0) && ((maxFloatValue > 0)) ) {
+					
+					urlParameters += "&minPrice=" + minPrice;
+					urlParameters += "&maxPrice=" + maxPrice;
+					selectedSearchCriteria.add("Price between " + formatter.format(minFloatValue) + " and " + formatter.format(maxFloatValue));
+					
+				} else {
+					if (minFloatValue > 0) { 
+						urlParameters += "&minPrice=" + minPrice;
+						selectedSearchCriteria.add("Price greater than " + formatter.format(minFloatValue));
+					} else {
+						urlParameters += "&maxPrice=" + maxPrice;
+						selectedSearchCriteria.add("Price less than " + formatter.format(maxFloatValue));
+					}
+				}
+				
+			}
+			
+			
+			if (rating != null && !rating.equals("")) {
+				urlParameters += "&ratingValue=" + rating;
+				selectedSearchCriteria.add("Rating Value: " + rating);
+			}
+
+			// merchant
+			if(merchant != null && !merchant.equals("0")) { 
+				int merchantInt = 0;
+				try {
+					merchantInt = Integer.parseInt(merchant);
+				} catch (Exception e) {
+					merchantInt = 0;
+					System.out.println("REST / services / GeneralService / makeSearch: Exception parsing merchant = ["+merchant+"] to Int");
+					e.printStackTrace();
+				}
+				if (merchantInt > 0) {
+					// looking for merchant object based on merchantInt
+					String merchantUrl = "merchantsView?action=getMerchant&id=" + merchant;
+					String merchantString = requestCreator.createGetRequest(crudUrl, merchantUrl); 
+					JsonNode merchantJson = mapper.readTree(merchantString);
+					if (merchantJson != null) {
+						viewMerchants viewMerchant = mapper.treeToValue(merchantJson, viewMerchants.class);
+						if ( (viewMerchant != null) && (viewMerchant.getId() > 0) ) {
+							
+							urlParameters +="&merchant=" + viewMerchant.getId();
+							selectedSearchCriteria.add("Merchant: " + viewMerchant.getName());
+							
+							// looking for best offer for current merchant
+					    	List<viewBestOffersbyMerchants> bestOffers = this.getBestOffersByMerchant(viewMerchant.getId());
+					    	request.setAttribute("merchantBestOffers", bestOffers);
+							
+						} else { request.setAttribute("merchantBestOffers", null); }
+					
+					} else { request.setAttribute("merchantBestOffers", null); }
+					
+				} else { request.setAttribute("merchantBestOffers", null); }
 		    	
 		    	// Check the length of the search, 12 includes a merchant between 1 and 99 and no more params
 		    	if(urlParameters.length() > 12) { request.setAttribute("severalAttributes", true); }
 			}
-			if(country != null && !country.equals("")) 				
-			{ 
-				urlParameters += "&chosenCountry=" + country;
-				
-				String countriesUrl = "countriesWithBestOffersView?action=getCountryWithBestOffers&id=" + country;
-				String countryString = requestCreator.createGetRequest(crudUrl, countriesUrl);
-				JsonNode countryJson = mapper.readTree(countryString);
-				
-				if(countryJson == null) { request.setAttribute("noResults", true); }
-				viewCountriesWithBestOffers countryWithOffersObject = mapper.treeToValue(countryJson, viewCountriesWithBestOffers.class);
-				if(countryWithOffersObject.getId() == null || countryWithOffersObject.getId() <= 0)
-				{
-					request.setAttribute("noCountry", true);
+			
+			// country
+			if(country != null && !country.equals("")) { 
+				int countryInt = 0;
+				try {
+					countryInt = Integer.parseInt(country);
+				} catch (Exception e) {
+					countryInt = 0;
+					System.out.println("REST / services / GeneralService / makeSearch: Exception parsing country = ["+country+"] to Int");
+					e.printStackTrace();
 				}
+				if (countryInt > 0) {
+					// looking for country object based on countryInt
+					String countriesUrl = "countries?action=getCountryBasicDataById&id=" + countryInt;
+					String countryString = requestCreator.createGetRequest(crudUrl, countriesUrl);
+					JsonNode countryJson = mapper.readTree(countryString);
+					if (countryJson != null) {
+						tblCountryBasicData tblcountry= mapper.treeToValue(countryJson, tblCountryBasicData.class);
+						if ( (tblcountry != null) && (tblcountry.getId() > 0) ) {
+							
+							urlParameters += "&chosenCountry=" + tblcountry.getId();
+							selectedSearchCriteria.add("Country: " + tblcountry.getName());
+							
+							// looking for best offer for current country
+							List<viewBestOffersbyCountries> bestOffers = this.getBestOffersByCountry(tblcountry.getId());
+							request.setAttribute("countryBestOffers", bestOffers);
+							
+						} else { request.setAttribute("countryBestOffers", null); }
+						
+					} else { request.setAttribute("countryBestOffers", null); }
+					
+				} else { request.setAttribute("countryBestOffers", null); }
 				
-				List<viewBestOffersbyCountries> bestOffers = this.getBestOffersByCountry(Integer.parseInt(country));
-				if(bestOffers != null) { request.setAttribute("bestCountryOffers", bestOffers); }
-				else { request.setAttribute("noCountryOffers", true); }
-				
-				// Set a couple of variables
-				request.setAttribute("searchByCountry", true);
-				request.setAttribute("countryChosen", countryWithOffersObject);
 			}
 			
+			// wine type
 			if(wineType != null && !wineType.equals(""))
 			{ 
-				urlParameters += "&chosenType=" + wineType;
-				
-				String typesUrl = "wineTypesWithBestOffersView?action=getWineTypeWithBestOffers&id=" + wineType;
-				String typeString = requestCreator.createGetRequest(crudUrl, typesUrl);
-				JsonNode typeJson = mapper.readTree(typeString);
-				
-				if(typeJson == null) { request.setAttribute("noResults", true); }
-				viewWineTypesWithBestOffers typeWithOffersObject = mapper.treeToValue(typeJson, viewWineTypesWithBestOffers.class);
-				if(typeWithOffersObject.getId() == null || typeWithOffersObject.getId() <= 0)
-				{
-					request.setAttribute("noType", true);
+				int wineTypeInt = 0;
+				try {
+					wineTypeInt = Integer.parseInt(wineType);
+				} catch (Exception e) {
+					wineTypeInt = 0;
+					System.out.println("REST / services / GeneralService / makeSearch: Exception parsing wineType = ["+wineType+"] to Int");
+					e.printStackTrace();
 				}
-				List<viewBestOffersbyWineTypes> bestOffers = this.getBestOffersByWineType(Integer.parseInt(wineType));
-				if(bestOffers != null) { request.setAttribute("bestWineTypeOffers", bestOffers); }
-				else { request.setAttribute("noWineTypeOffers", true); }
-				
-				// Set a couple of variables
-				request.setAttribute("searchByWineType", true);
-				request.setAttribute("wineTypeChosen", typeWithOffersObject);
+				if (wineTypeInt > 0) {
+					// looking for wine type object based on wineTypeInt
+					String typesUrl = "winetypes?action=getWineType&id=" + wineTypeInt;
+					String typeString = requestCreator.createGetRequest(crudUrl, typesUrl);
+					JsonNode typeJson = mapper.readTree(typeString);
+					if (typeJson != null) {
+						tblWineTypes tblwineType= mapper.treeToValue(typeJson, tblWineTypes.class);
+						if ( (tblwineType != null) && (tblwineType.getId() > 0) ) {
+							
+							urlParameters += "&chosenType=" + tblwineType.getId();
+							selectedSearchCriteria.add("Product type: " + tblwineType.getName());
+							
+							// looking for best offer for current wine type
+							List<viewBestOffersbyWineTypes> bestOffers = this.getBestOffersByWineType(tblwineType.getId());
+							request.setAttribute("winetypeBestOffers", bestOffers);
+							
+						} else { request.setAttribute("winetypeBestOffers", null); }
+						
+					} else { request.setAttribute("winetypeBestOffers", null); }
+					
+				} else { request.setAttribute("winetypeBestOffers", null); }
 			}
+			
+			// saving selectedSearchCriteria into a session variable 
+			request.getSession().setAttribute("selectedSearchCriteria", selectedSearchCriteria);
 			
 			//Set the sharing URL in a correct format (change the first & character into a ?)
 			request.setAttribute("sharingURL", ("?" + urlParameters).replace("?&", "?"));
@@ -287,6 +533,8 @@ public class GeneralService {
 			
 			urlParameters += "&currentPage=1";
 			amountOfPages = resultsService.getCountOfPages(urlParameters);
+			
+			// getting wine search result
 			List<viewWines> results = resultsService.getWines(urlParameters);
 			
 			request.getSession().setAttribute("currentPage", 1);
@@ -307,6 +555,67 @@ public class GeneralService {
 			else { request.setAttribute("noResults", true); }
 			
 		} catch (Exception e) { e.printStackTrace(); }
+	}
+
+
+	private String getGrapeVarietyName(int id) {
+		if (id > 0 ) {
+			try {
+				String relURL = "grapevarieties?action=getGrapeVarietyNameById&id="+id;
+				return requestCreator.createGetRequest(crudURL, relURL);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return "";
+			}	
+		} else { return ""; }
+	}
+	
+	private String getColourName(int id) {
+		if (id > 0 ) {
+			try {
+				String relURL = "colours?action=getColourNameById&id="+id;
+				return requestCreator.createGetRequest(crudURL, relURL);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return "";
+			}	
+		} else { return ""; }
+	}
+	
+	private String getAppellationName(int id) {
+		if (id > 0 ) {
+			try {
+				String relURL = "appellations?action=getAppellationNameById&id="+id;
+				return requestCreator.createGetRequest(crudURL, relURL);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return "";
+			}	
+		} else { return ""; }
+	}
+	
+	private String getWineryName(int id) {
+		if (id > 0 ) {
+			try {
+				String relURL = "wineries?action=getWineryNameById&id="+id;
+				return requestCreator.createGetRequest(crudURL, relURL);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return "";
+			}	
+		} else { return ""; }
+	}
+	
+	private String getRegionName(int id) {
+		if (id > 0 ) {
+			try {
+				String relURL = "regions?action=getRegionNameById&id="+id;
+				return requestCreator.createGetRequest(crudURL, relURL);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return "";
+			}	
+		} else { return ""; }
 	}
 	
 	public Boolean sendEmail(String content, String email)
