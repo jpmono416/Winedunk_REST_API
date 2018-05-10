@@ -62,7 +62,7 @@
 			<input name="chosenColour" id="chosenColour" type="hidden" value="0"/>
 			<input class="form-control" autocomplete="off" type="text" placeholder="Grape variety" id="grapeVariety" name="grapeVariety">
 			<div class="form-group"></div>
-			<input class="form-control" autocomplete="off" type="text" placeholder="Country" name="country" id = "country"/>
+			<input class="form-control" autocomplete="off" type="text" onchange="countryChanged(this)" placeholder="Country" name="country" id = "country"/>
 			<div class="form-group"></div>
 			<input class="form-control" autocomplete="off" type="text" placeholder="Region" name="region" id="region"/>
 			<div class="form-group"></div>

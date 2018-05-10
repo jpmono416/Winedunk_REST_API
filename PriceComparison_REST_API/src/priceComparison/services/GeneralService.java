@@ -148,29 +148,33 @@ public class GeneralService {
 			Integer currentTurn = 0;
 			
 			for( String s : filtersToGet )
-			{
+			{	
 				if(variablesList[currentTurn] != null && !variablesList[currentTurn].equals("")) 
 				{ 
-
+					generalMap = (Map<Integer, String>) request.getSession().getAttribute(s);  // list of country (map saved into listOfCountries
+					Integer result;
+					try {
+						result = MapGetter.getKeyFromValue(generalMap, variablesList[currentTurn]);
+					} catch (Exception e) {
+						result = null;
+					}
 					
-					generalMap = (Map<Integer, String>) request.getSession().getAttribute(s);
-					Integer result = MapGetter.getKeyFromValue(generalMap, variablesList[currentTurn]);
 					switch (s)
 					{
 						case "listOfCountries":
-							country = result.toString();
+							if (result != null) { country = result.toString(); } else { country = null;}
 							break;
 						case "listOfRegions":
-							region = result.toString();
+							if (result != null) { region = result.toString(); } else { region = null;}
 							break;
 						case "listOfWineries":
-							winery = result.toString();
+							if (result != null) { winery = result.toString(); } else { winery = null;}
 							break;
 						case "listOfAppellations":
-							 appellation = result.toString();
+							if (result != null) { appellation = result.toString(); } else { appellation = null;}
 							break;
 						case "listOfGrapeVarieties":
-							grapeVariety = result.toString();
+							if (result != null) { grapeVariety = result.toString(); } else { grapeVariety = null;}
 							break;
 					}
 				}

@@ -29,6 +29,11 @@
 	    	$('#shopsDropdown').html(shopText + '<span class="caret"></span>');
 	    }
 	    
+	    function countryChanged(selectedElement)
+	    {
+	    	alert("XXXX");
+	    }
+	    
 	    function changeSorting(ele)
 	    {
 	    	var sortingValue = ele.value;
@@ -50,8 +55,8 @@
             	  
                }
              });
-	    	
 	    }
+	    
     </script>
     <script>
     $( function() {
