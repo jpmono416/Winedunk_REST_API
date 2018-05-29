@@ -167,7 +167,7 @@ public class Profile extends HttpServlet {
 		} catch (Exception e) {
 			section = "";
 		}
-		if (section.equals("")) {
+		if ( (section == null) || (section.equals("")) ) {
 			section = "user";
 		}
 		session.setAttribute("sectionToBeDisplayed", section);  

@@ -37,7 +37,7 @@
                        <hr class="sep-bar" style="margin-bottom:0;">
                        -->
 					<ul class="list-unstyled" style="margin-bottom: 0;">
-						<li class="settingsElement" onclick="showFavouriteWines()"><a href="#"><i class="fa fa-heart linkIcon"></i>Favourite wines</a></li>
+						<li class="settingsElement" onclick="showFavouriteWines()"><a href="#"><i class="fa fa-heart linkIcon"></i>My favourite wines</a></li>
                         <li class="settingsElement" onclick="showWineReviews()"><a href="#"><i class="fa fa-commenting linkIcon"></i>My wine reviews and ratings</a></li>
                         <li class="settingsElement" onclick="showSavedSearches()"><a href="#"><i class="fa fa-search linkIcon"></i>My saved searches</a></li>
 					</ul>
@@ -353,10 +353,13 @@
                        </div>
                    </div>
                    -->
+                   
+                   
+                <!-- Favourite wines section -->
 				<div id="favouriteWinesArea" <c:if test="${!sessionScope.sectionToBeDisplayed.equals(\"favouriteWines\")}">style="display: none;"</c:if>>
 					<div class="card settingsCard <c:if test="${sessionScope.sectionToBeDisplayed.equals(\"favouriteWines\")}"> default </c:if>"
 					>
-						<h1 class="text-center">Favourite wines</h1>
+						<h1 class="text-center"><i class="fa fa-heart linkIcon"></i> My favourite wines</h1>
 						<hr class="sep-bar">
 					</div>
 					<div>
@@ -406,13 +409,13 @@
 					</div>
 				</div>
 				
-				<!-- Wine reviews and ratings -->
+				<!-- Wine reviews and ratings section -->
                 <div id="wineReviewsArea" <c:if test="${!sessionScope.sectionToBeDisplayed.equals(\"wineReviews\")}"> style="display: none" </c:if>>
 	                
 	                <!-- header -->
 	                <div class="card settingsCard 
 	               	<c:if test="${sessionScope.sectionToBeDisplayed.equals(\"wineReviews\")}"> default </c:if>">
-	                    <h1 class="text-center">My wine reviews and ratings</h1>
+	                    <h1 class="text-center"><i class="fa fa-commenting linkIcon"></i> My wine reviews and ratings</h1>
 	                    <hr class="sep-bar">
 	                </div>
 	                
@@ -517,7 +520,7 @@
                 
                 
                 <div id="savedSearchesArea" class="card settingsCard <c:if test="${sessionScope.sectionToBeDisplayed.equals(\"savedSearches\")}"> default </c:if>" <c:if test="${!sessionScope.sectionToBeDisplayed.equals(\"savedSearches\")}"> style="display: none" </c:if>>
-                    <h1 class="text-center">Saved searches</h1>
+                    <h1 class="text-center"><i class="fa fa-search linkIcon"></i> My saved searches</h1>
                     <hr class="sep-bar">
                     <div class="row">
                         <div class="col-md-12">
@@ -525,7 +528,7 @@
                                 <div class="panel-heading">
                                     <div class="row">
                                         <div class="col-xs-12">
-                                            <h3 class="panel-title title-text">Saved searches</h3></div>
+                                            <h3 class="panel-title title-text">My saved searches</h3></div>
                                     </div>
                                 </div>
                                 <div class="panel-body">
@@ -879,7 +882,7 @@
 	    	        })
 			).then( function () {
 				
-				window.location.reload();
+				window.location.replace("../Profile?section=wineReviews");
 	        });	
 	        
 	    });
@@ -917,8 +920,8 @@
 	    	            }
 	    	        })
 			).then( function () {
-				
-				window.location.reload();
+
+				window.location.replace("../Profile?section=wineReviews");
 	        });	
 	        
 	    });

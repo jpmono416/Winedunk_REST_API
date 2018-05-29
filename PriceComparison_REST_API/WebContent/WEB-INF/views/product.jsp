@@ -48,7 +48,9 @@
 							<a class="btn btn-primary btn-block redButton" target="_blank" style="text-decoration: none;" href="<c:out value="${requestScope.wine.getMinimumPriceDestinationURL() }"/>">Buy now</a>
 							<div id="successfulMessage" role="alert" class="alert alert-success" style="margin-top:10px; margin-bottom: 0; display:none;"><span><strong>Added to basket!</strong></span></div>
 							<div id="errorMessage" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0; display:none;"><span><strong>We encountered a problem</strong></span></div>
-							<div id="successfulFavMessage" role="alert" class="alert alert-success" style="margin-top:10px; margin-bottom: 0; display:none;"><span><strong>Added to favourites!</strong></span></div>
+							
+							<div id="successfulFavMessage" role="alert" class="alert alert-success text-center" style="margin-top:10px; margin-bottom: 0; display:none;" data-toggle="tooltip" title="To review your favourite wines please refer to your profile page."><a href="Profile?section=favouriteWines">Added to favourites! <i class="fa fa-thumbs-o-up red-text" style="font-size: 20px;"></i></a></div>
+							
 						</div>
 					</div>
 					
