@@ -29,9 +29,189 @@
 	    	$('#shopsDropdown').html(shopText + '<span class="caret"></span>');
 	    }
 	    
-	    function countryChanged(selectedElement)
-	    {
-	    	alert("XXXX");
+	    function validateCountry(selectedElement) {
+	    	$.ajaxSetup({ cache: false });
+	    	$.ajax({
+	            // dataType: 'json',
+	            type: "POST", 
+	            url: "FiltersValidation", 
+	            data: { entity : "country",
+			    		action: "validateCountryByNameAndReturnRegionsAutocompleteLists",
+			    		countryName: $(selectedElement).val()
+			   	},
+	            success: function(response) {
+	            	
+	            	if (!$.trim(response)){   
+	            		$(selectedElement).val("");
+	            	}
+	            	else{   
+	            		var jsonResponse = $.parseJSON(response);
+		            	
+		            	$.each(jsonResponse.country, function(key, value){
+		            		$(selectedElement).val(value);
+		            	});
+		            	
+		            	var countryTextInput = document.getElementById("country");
+		            	var regionTextInput = document.getElementById("region");
+		            	var appellationTextInput = document.getElementById("appellation");
+		            	var wineryTextInput = document.getElementById("winery");
+		            	
+		            	regionTextInput.disabled = countryTextInput.val == "";
+		            	if (regionTextInput.disabled) {
+		            		regionTextInput.placeholder = "Region (select country first)";
+		            	} else {
+		            		regionTextInput.placeholder = "Region";
+		            	}
+
+		            	appellationTextInput.disabled = true;
+		            	appellationTextInput.placeholder = "Appellation (select region first)";
+
+		            	wineryTextInput.disabled = true;
+		            	wineryTextInput.placeholder = "Winery (select appellation first)";
+		            	
+		            	$.each(jsonResponse.regions, function(key, value){
+		            		$( "#region" ).autocomplete({
+			                    source: value,
+			                    select: function (e, ui) {
+			                    	$("#region").val(ui.item.label);
+			                    	validateRegion(document.getElementById("region"));
+			                    }
+			                });
+		            	});
+		            	
+		            	regionTextInput.focus();
+	            	}
+	            	
+	            }
+    		});
+	    }
+	    
+	    function validateRegion(selectedElement) {
+	    	$.ajaxSetup({ cache: false });
+	    	$.ajax({
+	            // dataType: 'json',
+	            type: "POST", 
+	            url: "FiltersValidation", 
+	            data: { entity : "region",
+			    		action: "validateRegionByNameAndReturnAppellationsAutocompleteLists",
+			    		regionName: $(selectedElement).val()
+			   	},
+	            success: function(response) {
+	            	
+	            	if (!$.trim(response)){   
+	            		$(selectedElement).val("");
+	            	}
+	            	else{   
+	            		var jsonResponse = $.parseJSON(response);
+		            	
+		            	$.each(jsonResponse.region, function(key, value){
+		            		$(selectedElement).val(value);
+		            	});
+		            	
+		            	var regionTextInput = document.getElementById("region");
+		            	var appellationTextInput = document.getElementById("appellation");
+		            	var wineryTextInput = document.getElementById("winery");
+		            	
+		            	appellationTextInput.disabled = regionTextInput.val == "";
+		            	if (appellationTextInput.disabled) {
+		            		appellationTextInput.placeholder = "Appellation (select region first)";
+		            	} else {
+		            		appellationTextInput.placeholder = "Appellation";
+		            	}
+		            	
+		            	$.each(jsonResponse.appellations, function(key, value){
+		            		$( "#appellation" ).autocomplete({
+			                    source: value,
+			                    select: function (e, ui) {
+			                    	$("#appellation").val(ui.item.label);
+			                    	validateAppellation(document.getElementById("appellation"));
+			                    }
+			                });
+		            	});
+
+		            	wineryTextInput.disabled = true;
+		            	wineryTextInput.placeholder = "Winery (select appellation first)";
+		            	
+		            	appellationTextInput.focus();
+	            	}
+	            }	
+    		});
+	    }
+	    
+	    function validateAppellation(selectedElement) {
+	    	$.ajaxSetup({ cache: false });
+	    	$.ajax({
+	            // dataType: 'json',
+	            type: "POST", 
+	            url: "FiltersValidation", 
+	            data: { entity : "appellation",
+			    		action: "validateAppellationByNameAndReturnWineriesAutocompleteLists",
+			    		appellationName: $(selectedElement).val()
+			   	},
+	            success: function(response) {
+	            	
+	            	if (!$.trim(response)){   
+	            		$(selectedElement).val("");
+	            	}
+	            	else{  
+	            		var jsonResponse = $.parseJSON(response);
+		            	
+		            	$.each(jsonResponse.appellation, function(key, value){
+		            		$(selectedElement).val(value);
+		            	});
+		            	
+		            	var appellationTextInput = document.getElementById("appellation");
+		            	var wineryTextInput = document.getElementById("winery");
+		            	
+		            	wineryTextInput.disabled = appellationTextInput.val == "";
+		            	if (wineryTextInput.disabled) {
+		            		wineryTextInput.placeholder = "Winery (select appellation first)";
+		            	} else {
+		            		wineryTextInput.placeholder = "Winery";
+		            	}
+		            	
+		            	$.each(jsonResponse.wineries, function(key, value){
+		            		$( "#winery" ).autocomplete({
+			                    source: value,
+			                    select: function (e, ui) {
+			                    	$("#winery").val(ui.item.label);
+			                    	validateWinery(document.getElementById("winery"));
+			                    }
+			                });
+		            	});
+		            	
+		            	wineryTextInput.focus();
+	            	}
+	            }	
+    		});
+	    }
+	    
+	    function validateWinery(selectedElement) {
+	    	$.ajaxSetup({ cache: false });
+	    	$.ajax({
+	            // dataType: 'json',
+	            type: "POST", 
+	            url: "FiltersValidation", 
+	            data: { entity : "winery",
+			    		action: "validateWineryByName",
+			    		wineryName: $(selectedElement).val()
+			   	},
+	            success: function(response) {
+	            	
+	            	if (!$.trim(response)){   
+	            		$(selectedElement).val("");
+	            	}
+	            	else{  
+
+		            	var jsonResponse = $.parseJSON(response);
+		            	
+		            	$.each(jsonResponse.winery, function(key, value){
+		            		$(selectedElement).val(value);
+		            	});
+		            	
+	            	}
+	            }	
+    		});
 	    }
 	    
 	    function changeSorting(ele)
@@ -60,34 +240,16 @@
     </script>
     <script>
     $( function() {
-    	
-    	var availableWineries = [
-    		<c:forEach var="p" items="${sessionScope.listOfWineries.entrySet()}">
-    			"<c:out value="${p.getValue()}"/>",
-			</c:forEach>
-    	];
         
     	var availableTypes = [
     		<c:forEach var="t" items="${sessionScope.listOfWineTypes.entrySet()}">
     			"<c:out value="${t.getValue()}"/>",
     		</c:forEach>
     	];
-    	
-    	var availableAppellations = [
-    		<c:forEach var="a" items="${sessionScope.listOfAppellations.entrySet()}">
-				"<c:out value="${a.getValue()}"/>",
-			</c:forEach>
-    	];
         
         var availableCountries = [
         	<c:forEach var="c" items="${sessionScope.listOfCountries.entrySet()}">
 				"<c:out value="${c.getValue()}"/>",
-			</c:forEach>
-        ];
-        
-        var availableRegions = [
-        	<c:forEach var="r" items="${sessionScope.listOfRegions.entrySet()}">
-				"<c:out value="${r.getValue()}"/>",
 			</c:forEach>
         ];
         
@@ -97,20 +259,12 @@
 			</c:forEach>
         ];
         
-        $( "#winery" ).autocomplete({
-          source: availableWineries
-        });
-        
-        $( "#appellation" ).autocomplete({
-          source: availableAppellations
-        });
-        
         $( "#country" ).autocomplete({
-          source: availableCountries
-        });
-        
-        $( "#region" ).autocomplete({
-            source: availableRegions
+          source: availableCountries,
+	          	select: function (e, ui) {
+	          		$("#country").val(ui.item.label);
+	          		validateCountry(document.getElementById("country"));
+	      		}
         });
 
         $( "#grapeVariety" ).autocomplete({

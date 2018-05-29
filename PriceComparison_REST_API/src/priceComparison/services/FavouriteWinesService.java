@@ -31,21 +31,26 @@ public class FavouriteWinesService {
 	
 	public Boolean addFavouriteWine(Integer userId, Integer wineId) throws IOException
 	{
-		relUrl = "userFavouriteWines?action=addUserFavouriteWine";
+		if ( (userId != null) && (userId > 0) && (wineId != null) && (wineId > 0)) {
+			
+			relUrl = "userFavouriteWines?action=addUserFavouriteWine";
 
-		String dateString = new SimpleDateFormat("yyyy-MM-dd").format((new Date()));
-		String content = "{"
-				+ " \"userId\" : " + userId + ","
-				+ " \"wineId\" : " + wineId + ","
-				+ " \"addedDate\" : \"" + dateString + "\", "
-				+ " \"addedTimestamp\" : \"" + new Date().getTime()
-				+ "\" }";
+			String dateString = new SimpleDateFormat("yyyy-MM-dd").format((new Date()));
+			String content = "{"
+					+ " \"userId\" : { \"id\" : "+ userId +" },"
+					+ " \"wineId\" : { \"id\" : "+ wineId +" },"
+					+ " \"addedDate\" : \"" + dateString + "\", "
+					+ " \"addedTimestamp\" : \"" + new Date().getTime()
+					+ "\" }";
+			
+			String response = requestCreator.createPostRequest(urlPath, relUrl, content);
+			
+			return (response != null) && (response.equals("True"));
+			
+		} else {
+			return false;
+		}
 		
-		String response = requestCreator.createPostRequest(urlPath, relUrl, content);
-		if(response == null) { return false; }
-		else if(response.equals("True")) { return true; }
-		
-		return false;
 	}
 	
 	public Boolean deleteFavouriteWine(Integer userId, Integer wineId) throws IOException

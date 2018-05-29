@@ -75,17 +75,21 @@ public class SavedSearchesService {
 	   	if(responseJson == null) { return null; }
 	   	
 	   	ArrayNode searchesNodes = (ArrayNode) responseJson.get("SavedSearches");
-	   	Iterator<JsonNode> searchesIterator = searchesNodes.elements();
-	   	List<tblUserSavedSearches> resultsList = new ArrayList<tblUserSavedSearches>();
-	   	
-	   	while(searchesIterator.hasNext())
-	   	{
-	   		JsonNode searchNode = searchesIterator.next();
-	   		tblUserSavedSearches search = mapper.treeToValue(searchNode, tblUserSavedSearches.class);
-	   		resultsList.add(search);
+		if (searchesNodes != null) {
+		   	Iterator<JsonNode> searchesIterator = searchesNodes.elements();
+		   	List<tblUserSavedSearches> resultsList = new ArrayList<tblUserSavedSearches>();
+		   	
+		   	while(searchesIterator.hasNext())
+		   	{
+		   		JsonNode searchNode = searchesIterator.next();
+		   		tblUserSavedSearches search = mapper.treeToValue(searchNode, tblUserSavedSearches.class);
+		   		resultsList.add(search);
+		   	}
+		   	
+		   	return resultsList;
+		} else {
+	   		return null;
 	   	}
-	   	
-	   	return resultsList;
 	}
 	
 	public Boolean deleteSavedSearch(Integer searchId) throws IOException

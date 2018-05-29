@@ -6,13 +6,13 @@ public class viewUsersWinesReviews {
     public Integer getId() { return id; }
 	public void setId(Integer id) { this.id = id; }
 	
-    private Integer userId;
-	public Integer getUserId() { return userId; }
-	public void setUserId(Integer userId) { this.userId = userId; }
+    private tblUsers userId;
+	public tblUsers getUserId() { return userId; }
+	public void setUserId(tblUsers userId) { this.userId = userId; }
 	
-	private Integer wineId;
-	public Integer getWineId() { return wineId; }
-	public void setWineId(Integer wineId) { this.wineId = wineId; }
+	private tblWines wineId;
+	public tblWines getWineId() { return wineId; }
+	public void setWineId(tblWines wineId) { this.wineId = wineId; }
 	
 	private String reviewDate;
 	public String getReviewDate() { return reviewDate; }

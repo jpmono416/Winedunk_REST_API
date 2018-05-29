@@ -62,13 +62,13 @@
 			<input name="chosenColour" id="chosenColour" type="hidden" value="0"/>
 			<input class="form-control" autocomplete="off" type="text" placeholder="Grape variety" id="grapeVariety" name="grapeVariety">
 			<div class="form-group"></div>
-			<input class="form-control" autocomplete="off" type="text" onchange="countryChanged(this)" placeholder="Country" name="country" id = "country"/>
+			<input class="form-control" autocomplete="off" type="text" onblur="validateCountry(this)" placeholder="Country" name="country" id = "country"/>
 			<div class="form-group"></div>
-			<input class="form-control" autocomplete="off" type="text" placeholder="Region" name="region" id="region"/>
+			<input class="form-control" autocomplete="off" type="text" onblur="validateRegion(this)" disabled placeholder="Region (select country first)" name="region" id="region"/>
 			<div class="form-group"></div>
-			<input class="form-control" autocomplete="off" type="text" placeholder="Appellation" id="appellation" name="appellation">
+			<input class="form-control" autocomplete="off" type="text" onblur="validateAppellation(this)" disabled placeholder="Appellation (select region first)" id="appellation" name="appellation">
 			<div class="form-group"></div>
-			<input class="form-control" autocomplete="off" type="text" placeholder="Winery" id="winery" name="winery">
+			<input class="form-control" autocomplete="off" type="text" onblur="validateWinery(this)" disabled placeholder="Winery (select appellation first)" id="winery" name="winery">
 			<div class="form-group"></div>
 			<div class="row">
 				<div class="col-xs-6">

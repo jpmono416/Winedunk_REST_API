@@ -31,17 +31,21 @@ public class HomeService {
 		if(responseJson == null) { return null; }
 		
 		ArrayNode winesNodes = (ArrayNode) responseJson.get("Wines");
-		Iterator<JsonNode> winesIterator = winesNodes.elements();
-		List<viewRecommendedWines> resultsList = new ArrayList<viewRecommendedWines>();
-		
-		while(winesIterator.hasNext())
-		{
-			JsonNode wineNode = winesIterator.next();
-			viewRecommendedWines wine = mapper.treeToValue(wineNode, viewRecommendedWines.class);
-			resultsList.add(wine);
-		}
-		
-		return resultsList;
+		if (winesNodes != null) {
+			Iterator<JsonNode> winesIterator = winesNodes.elements();
+			List<viewRecommendedWines> resultsList = new ArrayList<viewRecommendedWines>();
+			
+			while(winesIterator.hasNext())
+			{
+				JsonNode wineNode = winesIterator.next();
+				viewRecommendedWines wine = mapper.treeToValue(wineNode, viewRecommendedWines.class);
+				resultsList.add(wine);
+			}
+			
+			return resultsList;
+		} else {
+	   		return null;
+	   	}
 	}
 	
 	public List<viewBestOffersbyMerchants> getBestOffersByMerchant(Integer merchantId) throws IOException

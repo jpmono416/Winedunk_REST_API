@@ -73,8 +73,9 @@ public class Results extends HttpServlet {
 		//Set URL path of CRUD API and load filters
 		generalService.setCrudURL(serviceProperties.getProperty("crud.url"));
 		resultsService.setUrlPath(serviceProperties.getProperty("crud.url"));
+		resultsService.loadStaticFilters(request);
+		resultsService.loadCountriesFilters(request);
 		validationService.setUrlPath(serviceProperties.getProperty("crud.url"));
-		resultsService.loadFilters(request);
 		validationService.validateUser(request, response);
 		
 		//Avoid the "there are no results" card if there are results
@@ -278,9 +279,6 @@ public class Results extends HttpServlet {
 		 * It is also accessed from the Home page's search bar.
 		 * I access a general method that gets the parameters of the applied filters and make a search
 		 */
-		
-		resultsService.setUrlPath(serviceProperties.getProperty("crud.url"));
-		resultsService.loadFilters(request);
 		
 		generalService.setCrudURL(serviceProperties.getProperty("crud.url"));
 		generalService.makeSearch(request);

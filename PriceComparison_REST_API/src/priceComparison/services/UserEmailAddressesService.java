@@ -31,7 +31,7 @@ public class UserEmailAddressesService {
 	public List<userEmails> loadEmailAddresses() throws IOException
 	{
 		relUrl = "userEmails?action=getUserEmailAddressesForUser";
-		String response = requestCreator.createPostRequest(urlPath, relUrl, userId.toString());
+	   	String response = requestCreator.createPostRequest(urlPath, relUrl, userId.toString());
 		
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -40,17 +40,21 @@ public class UserEmailAddressesService {
 	   	if(responseJson == null) { return null; }
 	   	
 	   	ArrayNode emailsNodes = (ArrayNode) responseJson.get("EmailAddresses");
-	   	Iterator<JsonNode> emailsIterator = emailsNodes.elements();
-   	 	List<userEmails> resultsList = new ArrayList<userEmails>();
-   	 	
-	   	while(emailsIterator.hasNext())
-		{
-	   		JsonNode emailNode = emailsIterator.next();
-	   		userEmails email = mapper.treeToValue(emailNode, userEmails.class);
-	   		resultsList.add(email);
-		}
-	   	
-	   	return resultsList;
+		if (emailsNodes != null) {
+		   	Iterator<JsonNode> emailsIterator = emailsNodes.elements();
+	   	 	List<userEmails> resultsList = new ArrayList<userEmails>();
+	   	 	
+		   	while(emailsIterator.hasNext())
+			{
+		   		JsonNode emailNode = emailsIterator.next();
+		   		userEmails email = mapper.treeToValue(emailNode, userEmails.class);
+		   		resultsList.add(email);
+			}
+		   	
+		   	return resultsList;
+		} else {
+	   		return null;
+	   	}
 	}
 	
 	public Boolean addEmailAddress(String emailAddress) throws IOException

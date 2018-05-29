@@ -66,14 +66,16 @@ public class ProductService {
 			if(responseJson == null) { return null; }
 
 			ArrayNode winesNodes = (ArrayNode) responseJson.get("Shops");
-			Iterator<JsonNode> winesIterator = winesNodes.elements();
-			
-			priceComparisonList = new ArrayList<viewWinePriceComparison>();
-			while(winesIterator.hasNext())
-			{
-				JsonNode wineNode = winesIterator.next();
-				viewWinePriceComparison shop = mapper.treeToValue(wineNode, viewWinePriceComparison.class);
-				priceComparisonList.add(shop);
+			if (winesNodes != null) {
+				Iterator<JsonNode> winesIterator = winesNodes.elements();
+				
+				priceComparisonList = new ArrayList<viewWinePriceComparison>();
+				while(winesIterator.hasNext())
+				{
+					JsonNode wineNode = winesIterator.next();
+					viewWinePriceComparison shop = mapper.treeToValue(wineNode, viewWinePriceComparison.class);
+					priceComparisonList.add(shop);
+				}
 			}
     	} catch(Exception e) { e.printStackTrace(); }
 		return priceComparisonList;

@@ -365,18 +365,18 @@
 								<c:forEach items="${requestScope.favouriteWines}" var="i">
 									<div class="col-xs-12 col-sm-6 col-md-4">
 										<div class="card item">
-											<a href="Product?id=<c:out value="${ i.getId() }" />">
-												<div style="width:100%;height:170px;background:url(<c:out value = "${i.getImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
+											<a href="Product?id=<c:out value="${ i.getWineId() }" />">
+												<div style="width:100%;height:170px;background:url(<c:out value = "${i.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
 											</a>
 											<div class="text-wrapper">
 												<a style="text-decoration: none;"
-													href="Product?id=<c:out value="${ i.getId() }" />"><h3 style="color: #800000;" class="name">
-														<c:out value="${i.getName()}" />
+													href="Product?id=<c:out value="${ i.getWineId() }" />"><h3 style="color: #800000;" class="name">
+														<c:out value="${i.getWineName()}" />
 													</h3></a>
 												<p class="description">
-													<c:out value="${i.getShortDescription()}" />
-													<c:if test="${i.getShortDescription().length() == 169}">
-														<a href="Product?id=<c:out value="${ i.getId() }" />">
+													<c:out value="${i.getWineShortDescription()}" />
+													<c:if test="${i.getWineShortDescription().length() == 169}">
+														<a href="Product?id=<c:out value="${ i.getWineId() }" />">
 															See more</a>
 													</c:if>
 												</p>
@@ -384,7 +384,7 @@
 											<div class="row" style="position:absolute; bottom:0; width:100% !important;">
 												<div class="col-xs-6">
 													<a style="text-decoration: none; margin-top:-50px;"
-													href="Product?id=<c:out value="${ i.getId() }" />"
+													href="Product?id=<c:out value="${ i.getWineId() }" />"
 													class="action" data-toggle="tooltip" 
 												    title="Go to product page"><i
 													class="glyphicon glyphicon-circle-arrow-right"></i>
@@ -393,7 +393,7 @@
 												<div class="col-xs-6">
 													<a style="text-decoration: none; margin-top:-50px; cursor:pointer;"
 													class="action" data-toggle="tooltip" 
-												    title="Remove from favourite" onclick="deleteWine(<c:out value="${ i.getId() }" />)"><i
+												    title="Remove from favourite" onclick="deleteWine(<c:out value="${ i.getWineId() }" />)"><i
 													class="glyphicon glyphicon-remove"></i>
 													</a>												
 												</div>
@@ -406,134 +406,116 @@
 					</div>
 				</div>
 				
+				<!-- Wine reviews and ratings -->
                 <div id="wineReviewsArea" <c:if test="${!sessionScope.sectionToBeDisplayed.equals(\"wineReviews\")}"> style="display: none" </c:if>>
+	                
+	                <!-- header -->
 	                <div class="card settingsCard 
 	               	<c:if test="${sessionScope.sectionToBeDisplayed.equals(\"wineReviews\")}"> default </c:if>">
-	                    <h1 class="text-center">Reviews </h1>
+	                    <h1 class="text-center">My wine reviews and ratings</h1>
 	                    <hr class="sep-bar">
 	                </div>
-	                <div class="card settingsCard
-	                <c:if test="${sessionScope.sectionToBeDisplayed.equals(\"wineReviews\")}"> default </c:if>">
-	                    <div class="row">
-	                        <div class="col-md-12">
-	                            <div class="panel panel-default panel-table">
-	                                <div class="panel-heading">
-	                                    <div class="row">
-	                                        <div class="col-md-12">
-	                                            <h3 class="panel-title title-text text-center">Reviews </h3></div>
-	                                    </div>
-	                                </div>
-	                                <div class="panel-body">
-	                                    <div class="table-responsive">
-	                                        <table class="table table-striped table-bordered">
-	                                            <thead>
-	                                                <tr>
-	                                                    <th class="text-center"> <i class="fa fa-gear"></i></th>
-	                                                    <th>Comment </th>
-	                                                    <th>Wine </th>
-	                                                    <th>Your score </th>
-	                                                </tr>
-	                                            </thead>
-	                                            <tbody>
-		                                            <c:if test="${ requestScope.noReviews != true }">
-		                                            	<c:forEach items="${ requestScope.userReviews }" var="review">
-			                                            	<tr>
-			                                                    <td class="text-center">
-																	<form action="Profile" method="POST"
-																		style="display: inline !important">
-																		<input class="hidden" name="reviewId"
-																			value="${review.getId()}"> <a
-																			onclick="populateReviewEdition(this)"
-																			class="btn btn-default" data-id="${ review.getId() }"
-																			data-wineId="${ review.getWineId() }"
-																			data-toggle="modal" data-target="#editReviewModal">
-																			<i class="fa fa-pencil"></i>
-																		</a>
-																	</form>
-																	<form action="Profile" method="POST"
-																		style="display: inline !important">
-																		<input class="hidden" name="reviewId"
-																			value="${review.getId()}"> <input class="hidden"
-																			name="formChosen" value="deleteReview">
-																		<button class="btn btn-danger" type="submit">
-																			<i class="fa fa-trash"></i>
-																		</button>
-																	</form>
-			                                                    </td>
-			                                                    <td><c:out value="${ review.getReviewComments() }"/></td>
-			                                                    <td>${ review.getWineName() }</td>
-			                                                    <td><c:out value="${ review.getUserRating() }"/></td>
-			                                                </tr>
-		                                            	</c:forEach>
-		                                            </c:if>
-	                                            </tbody>
-	                                        </table>
-	                                    </div>
-	                                </div>
-	                            </div>
-	                        </div>
-	                    </div>
-	                </div>
-	                <div class="card settingsCard">
-	                	<h1 class="text-center">Ratings </h1>
-	                    <hr class="sep-bar">
-	                </div>
-	                <div class="card settingsCard">
-	                	<table class="table">
-					        <thead class="text-center">
-					            <tr>
-					                <th>Details</th>
-					                <th>Actions</th>
-					            </tr>
-					        </thead>
-					        <tbody>
-					        	<c:if test="${ requestScope.noRatings != true }">
-					        		<c:forEach items="${requestScope.ratingsList}" var="rating">
-								        <tr>
-							                <td>
-								                <div class="col-xs-12 col-md-3">
-								            		<a style="text-decoration:none;color:#800000;" href="http://www.winedunk.com/Product?id=<c:out value="${rating.getWineId()}"/>"><div style="width:100%;height:170px;background:url(<c:out value="${rating.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div></a>
-								            	</div>
-							                    <div class="col-xs-12 col-md-9">
-							                        <a style="text-decoration:none;color:#800000;" href="http://www.winedunk.com/Product?id=<c:out value="${rating.getWineId()}"/>"><h3 class="text-center"><c:out value="${ rating.getWineName() }"/></h3></a>
-							                    </div>
-							                    <div class="col-xs-12 col-md-9">
-							                        <h1 class="text-center">
-														<span id="stars">
-															<c:forEach varStatus="loop" begin="1" end="${ rating.getUserRating() }"><i class="glyphicon glyphicon-star"></i></c:forEach>
-														</span>
-													</h1>
-							                    </div>
-							                </td>
-							                <td>
-						                    	<form action="Profile" method="POST"
-													style="display: inline !important;">
-													<input class="hidden" name="reviewId"
-														value="${ rating.getId() }"> <a style="margin-top: 50px"
-														onclick="populateRatingEdition(this)"
-														class="btn btn-default" data-id="${ rating.getId() }"
-														data-wineId="${ rating.getWineId() }"
-														data-toggle="modal" data-target="#editRatingModal">
-														<i class="fa fa-pencil"></i>
-													</a>
-												</form>
-												<form action="Profile" method="POST"
-													style="display: inline !important">
-													<input class="hidden" name="ratingId"
-														value="${ rating.getId() }"> <input class="hidden"
-														name="formChosen" value="deleteRating">
-													<button class="btn btn-danger" type="submit" style="margin-top: 50px">
-														<i class="fa fa-trash"></i>
-													</button>
-												</form>
-							                </td>
-							            </tr>
-							        </c:forEach>
-					        	</c:if>
-					        </tbody>
-					    </table>
-	                </div>
+	                
+	                <!-- Reviews + Ratings List -->
+	                <c:choose> 
+	                
+						<c:when test = "${requestScope.userReviewsAndRating != null}">
+							<c:forEach items = "${requestScope.userReviewsAndRating}" var = "record">
+								
+		                            <div class="card">
+		                            
+		                                <div class="row">
+		                                    
+		                                    <!-- wine image -->
+		                                    <div class="col-sm-2">
+			                                    <a href="Product?id=<c:out value="${record.getWineId()}"/>"> <div style="width:100%;height:120px;background:url(<c:out value = "${record.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div> </a>
+		                                    </div>
+		                                    
+		                                    <!-- main content -->
+		                                    <div class="col-sm-10">
+		                                        
+		                                        <div class="row">
+		                                        
+			                                        <!-- wine name and rating -->
+		                                            <div class="col-sm-10">
+			                                            <a style="text-decoration:none;" href="Product?id=<c:out value="${record.getWineId()}"/>">
+				                                            <h4 class="red-text text-center"> <c:out value ="${record.getWineName()}"/> </h4>
+				                                        </a>
+				                                      
+				                                      	<!-- rating -->
+
+														<c:set var = "bicolourStarNumber" value = "${record.ratingValue - (record.ratingValue % 1)}"/>
+														<c:set var = "colourchangePercentage" value = "${(record.ratingValue % 1) * 100}"/>
+														
+														<h4 class="text-center">
+															<span id="stars">
+															
+																<%-- full yellow stars--%>	
+																<c:forEach varStatus="loop" begin="1" end="${bicolourStarNumber}">
+																	<i class="glyphicon glyphicon-star" style="color: #f1c40f;"></i> 
+																</c:forEach>
+															
+																<c:if test="${bicolourStarNumber < 5}">
+																
+																	<%-- two-colours star  stars--%>
+																	<i class="glyphicon glyphicon-star" style="background:-webkit-linear-gradient(left, #f1c40f 0%, #f1c40f <c:out value="${ colourchangePercentage }"></c:out>%, #bdc3c7 <c:out value="${ colourchangePercentage }"></c:out>%, #bdc3c7 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;"></i> 
+																	
+																	<%-- full gray stars--%>
+																	<c:forEach varStatus="loop" begin="${bicolourStarNumber + 2}" end="5">
+																		<i class="glyphicon glyphicon-star" style="color: #bdc3c7;"></i> 
+																	</c:forEach>
+																	
+																</c:if>
+																									
+															</span>
+														</h4>
+				                                        
+		                                            </div>
+		                                            
+		                                            <!-- actions -->
+				                                    <div class="col-sm-2" align="center">
+				                                    
+				                                    	<a onclick="showRatingsAndReviewsModal('<c:out value ="${record.getUserId()}"/>', '<c:out value ="${record.getWineId()}"/>', '<c:out value ="${record.getRatingId()}"/>', '<c:out value ="${record.getRatingValue()}"/>', '<c:out value ="${record.getReviewId()}"/>', '<c:out value ="${record.getReviewTitle()}"/>', '<c:out value ="${record.getReviewComments()}"/>')"
+														   class="btn btn-default btn-sm" style="margin-top:5px; margin-right: 2px;"> <i class="fa fa-pencil"></i> </a>
+				                                    
+				                                    	<a onclick="showDeleteRatingsAndReviewsConfirmationModal('<c:out value ="${record.getRatingId()}"/>', '<c:out value ="${record.getReviewId()}"/>', '<c:out value ="${record.getWineName()}"/>', '<c:out value ="${record.getRatingValue()}"/>', '<c:out value ="${record.getReviewTitle()}"/>', '<c:out value ="${record.getReviewComments()}"/>')"
+														   class="btn btn-danger btn-sm" style="margin-top:5px; margin-right: 2px;"> <i class="fa fa-trash"></i> </a>
+														                                         
+			                                		</div>
+		                                        </div>
+		                                        <div class="row">
+			                                        <!-- review -->
+			                                        <div class="col-sm-12">
+			                                        	<div class="row">
+			                                        		<p><strong><c:out value ="${record.getReviewTitle()}"/></strong></p>
+														</div>		       
+			                                        	<div class="row">
+			                                        		<p><c:out value ="${record.getReviewComments()}"/></p>
+														</div>                                 	
+			                                        </div>
+		                                        </div>
+		                            	</div>
+	                        		</div>
+	                        	</div>
+								
+								
+							</c:forEach>
+	                	</c:when>
+	                	
+	                	<c:otherwise>
+	                		<div class="card settingsCard default">
+			                    <h3 class="text-center">
+			                    	<span class="label label-danger">No ratings or reviews found</span>
+			                    </h3>
+			                    
+			                </div>
+	                	</c:otherwise>
+	                
+	                </c:choose>
+	                
                 </div>
+                
+                
                 <div id="savedSearchesArea" class="card settingsCard <c:if test="${sessionScope.sectionToBeDisplayed.equals(\"savedSearches\")}"> default </c:if>" <c:if test="${!sessionScope.sectionToBeDisplayed.equals(\"savedSearches\")}"> style="display: none" </c:if>>
                     <h1 class="text-center">Saved searches</h1>
                     <hr class="sep-bar">
@@ -765,74 +747,184 @@
 			</div>
 		</div>
 	</div>
-	<div class="modal fade" id="editReviewModal">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"
-						aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					<h4 class="modal-title">Edit review</h4>
-				</div>
-				<div class="modal-body">
-					<form method="POST" action="Profile">
-						<input class="hidden" name="formChosen" type="text"
-							value="editReview"> 
-						<input class="hidden" name="reviewId" id="reviewId" type="text">
-						<input class="hidden" name="reviewWineId" id="reviewWineId" type="text"> 
-						<input
-							class="form-control" name="review" type="text"
-							placeholder="Review">
-						<div class="form-group"></div>
-						<button type="submit" class="btn btn-primary redButton">Save
-							changes</button>
-						<button type="button" class="btn btn-secondary"
-							style="float: right" data-dismiss="modal">Close</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="modal fade" id="editRatingModal">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"
-						aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					<h4 class="modal-title">Edit rating</h4>
-				</div>
-				<div class="modal-body">
-					<h3 class="text-center">Edit rating</h3>
-	                <hr class="sep-bar">
-					<form method="POST" action="Profile">
-						<h1 class="text-center">
-		                	<span id="formStars">
-		                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar1" class="glyphicon glyphicon-star"></i>
-		                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar2" class="glyphicon glyphicon-star"></i>
-		                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar3" class="glyphicon glyphicon-star"></i>
-		                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar4" class="glyphicon glyphicon-star"></i>
-		                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar5" class="glyphicon glyphicon-star"></i>
-		                	</span>
-				        </h1>
-						<input class="hidden" name="formChosen" type="text" value="editRating"> 
-						<input class="hidden" name="ratingId" id="ratingId" type="text">
-						<input class="hidden" name="ratingWineId" id="ratingWineId" type="text">
-						<input id="ratingValue" name="ratingValue" type="hidden">
-						<div class="form-group"></div>
-						<button type="submit" class="btn btn-primary redButton">Save changes</button>
-						<button type="button" class="btn btn-secondary" style="float: right" data-dismiss="modal">Close</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+	
+	
+	<%-- Edit rating & review modal form--%>
+    <div class="modal fade" role="dialog" tabindex="-1" id="modal-feedback">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body" style="background:#f7f7f7;">
+	                <div class="row">
+	                	<div class="col-xs-12">
+		                	<h3 class="text-center">Many thanks for your feedback!!! <i class="fa fa-thumbs-o-up red-text"></i> </h3>
+			                <hr class="sep-bar">
+			                <form method="POST" action="reviewsAndRatingByUsers">
+			                
+			                	<input type="hidden" id="userId" name="userId">
+			                	<input type="hidden" id="wineId" name="wineId">
+			                	<input type="hidden" id="ratingId" name="ratingId">
+			                	<input type="hidden" id="reviewId" name="reviewId">
+						        <input type="hidden" id="ratingValue" name="ratingValue">
+			                	
+			                	<h1 class="text-center">
+				                	<span id="formStars">
+				                		<i onclick="populateRating('1')" onmouseover="illuminateStars(this, '1')" id="formStar1" class="glyphicon glyphicon-star" data-toggle="tooltip" title="New rating: 1 star"></i>
+				                		<i onclick="populateRating('2')" onmouseover="illuminateStars(this, '2')" id="formStar2" class="glyphicon glyphicon-star" data-toggle="tooltip" title="New rating: 2 stars"></i>
+				                		<i onclick="populateRating('3')" onmouseover="illuminateStars(this, '3')" id="formStar3" class="glyphicon glyphicon-star" data-toggle="tooltip" title="New rating: 3 stars"></i>
+				                		<i onclick="populateRating('4')" onmouseover="illuminateStars(this, '4')" id="formStar4" class="glyphicon glyphicon-star" data-toggle="tooltip" title="New rating: 4 stars"></i>
+				                		<i onclick="populateRating('5')" onmouseover="illuminateStars(this, '5')" id="formStar5" class="glyphicon glyphicon-star" data-toggle="tooltip" title="New rating: 5 stars"></i>
+				                	</span>
+					            </h1>
+								<p id="previousRating" class="text-center"></p>
+
+								<hr>
+								
+				                <p>Review:</p>
+				                <input id="reviewTitle" class="form-control" style="margin-bottom: 10px;" name="reviewTitle" placeholder="Give it a short title!" data-toggle="tooltip" title="Review title">
+								<textarea id="reviewComments" name="reviewText" class="form-control" placeholder="Enter your review" rows="3"  data-toggle="tooltip" title="Review comments"></textarea>
+				                
+			                	<hr>
+				                <button style="float: right; margin-right: 5px" class="btn btn-primary btn-md redButton" type="submit" data-toggle="tooltip" title="Apply changes">Submit </button>
+				                <button style="float: right; margin-right: 5px" class="btn btn-default btn-md" type="button" data-dismiss="modal" data-toggle="tooltip" title="Cancel changes">Cancel </button>
+				                		                
+			                </form>
+	                	</div>
+	                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	
+	
+	<%-- delete rating & review confirmation modal form--%>
+    <div class="modal fade" role="dialog" tabindex="-1" id="modal-delete-rating-and-review-confirmation">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body" style="background:#f7f7f7;">
+	                <div class="row" style="padding: 10px;">
+	                	<div class="col-xs-12">
+		                	<h3 class="text-center"><i class="fa fa-warning"></i> Are you sure you want to delete this feedback?</h3>
+			                <hr class="sep-bar">
+			                <form method="POST" action="reviewsAndRatingByUsers">
+			                
+			                	<input type="hidden" id="confirmationRatingId" name="confirmationRatingId">
+			                	<input type="hidden" id="confirmationReviewId" name="reviewId">
+						        
+			                	<hr>
+			                	<div class="row"> Wine name: <span id="confirmationWineName" class="label label-default"></span> </div>
+			                	<div class="row"> Rating value: <span id="confirmationRatingValue" class="label label-default"></span> </div>
+			                	<div class="row"> Review title: <span id="confirmationReviewTitle" class="label label-default"></span> </div>
+			                	<div class="row"> Review comments: <span id="confirmationReviewComments" class="label label-default"></span> </div>
+			                	
+			                	<hr>
+				                <button style="float: right; margin-right: 5px" class="btn btn-primary btn-md redButton" type="submit" data-toggle="tooltip" title="Yes delete feedback">Delete</button>
+				                <button style="float: right; margin-right: 5px" class="btn btn-default btn-md" type="button" data-dismiss="modal" data-toggle="tooltip" title="Cancel">Cancel</button>
+				                		                
+			                </form>
+	                	</div>
+	                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+	
+	
 	<c:import url="../templates/footer.jsp" />
 	<script src="assets/js/jquery.min.js"></script>
 	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
 	<script src="assets/js/userPage.js"></script>
+	
+	<script type="text/javascript">
+	
+		// below function will be triggered on modal-feedback submit event and will process changes into rating and reviews throught AJAX
+		var modalForm = $('#modal-feedback');
+		modalForm.submit(function (e) {
+
+	        e.preventDefault();
+	        
+	        var userId = document.getElementById("userId").value;
+	        var wineId = document.getElementById("wineId").value;
+	        var ratingId = document.getElementById("ratingId").value;
+	        var ratingValue = document.getElementById("ratingValue").value;
+	        var reviewId = document.getElementById("reviewId").value;
+	        var reviewTitle = document.getElementById("reviewTitle").value;
+	        var reviewComments = document.getElementById("reviewComments").value;
+	        
+	        $.when(
+	        		$.ajax({
+	    	        	url:'reviewsAndRatingByUsers',
+	    				type:'POST',
+	    	            data: { 
+	    	            	entity : 'rating',
+	    	            	action : 'update',
+	    	            	userId: userId,
+	    	            	wineId: wineId,
+	    	            	ratingId : ratingId,
+	    	            	ratingValue : ratingValue
+	    	            }
+	    	        }),
+	    	        $.ajax({
+	    	        	url:'reviewsAndRatingByUsers',
+	    				type:'POST',
+	    	            data: { 
+	    	            	entity : 'review',
+	    	            	action : 'update',
+	    	            	userId: userId,
+	    	            	wineId: wineId,
+	    	            	reviewId : reviewId,
+	    	            	reviewTitle : reviewTitle,
+	    	            	reviewComments: reviewComments
+	    	            }
+	    	        })
+			).then( function () {
+				
+				window.location.reload();
+	        });	
+	        
+	    });
+	</script>
+	
+	
+	<script type="text/javascript">
+	
+		// below function will be triggered on modal-delete-rating-and-review-confirmation submit event and will delete selected rating and review throught AJAX
+		var modalForm = $('#modal-delete-rating-and-review-confirmation');
+		modalForm.submit(function (e) {
+
+	        e.preventDefault();
+	        
+	        var ratingId = document.getElementById("confirmationRatingId").value;
+	        var reviewId = document.getElementById("confirmationReviewId").value;
+	        
+	        $.when(
+	        		$.ajax({
+	    	        	url:'reviewsAndRatingByUsers',
+	    				type:'POST',
+	    	            data: { 
+	    	            	entity : 'rating',
+	    	            	action : 'delete',
+	    	            	ratingId : ratingId
+	    	            }
+	    	        }),
+	    	        $.ajax({
+	    	        	url:'reviewsAndRatingByUsers',
+	    				type:'POST',
+	    	            data: { 
+	    	            	entity : 'review',
+	    	            	action : 'delete',
+	    	            	reviewId : reviewId
+	    	            }
+	    	        })
+			).then( function () {
+				
+				window.location.reload();
+	        });	
+	        
+	    });
+	</script>
+	
+
 	<script>
     	
     	/*
@@ -843,8 +935,7 @@
     	var defaultName;
     	var elemId;
     	
-    	function illuminateStars(elem)
-    	{
+    	function illuminateStars(elem, ratingValue) {
    			defaultName = elem.getAttribute('id').slice(0, -1);
    			elemId = elem.getAttribute('id').slice(-1)
    			
@@ -855,6 +946,8 @@
     			if(i > elemId) { star.setAttribute("style", "color: #bdc3c7"); } 
     			else { star.setAttribute("style", "color: #f1c40f"); }
    			}
+    		
+    		document.getElementById("ratingValue").value = ratingValue;
     	}
     
     	/*
@@ -865,21 +958,57 @@
 	   		change colour on mouse hover.
 		*/
 	
-		function populateRating(elem)
+		function populateRating(ratingValue)
 	   	{
-   			defaultName = elem.getAttribute('id').slice(0, -1);
-   			elemId = elem.getAttribute('id').slice(-1)
-   			var i = 0;
-    		for(i = 1; i <= 5; i++)
-   			{
-    			var star = document.getElementById(defaultName + i);
-    			star.removeAttribute("onmouseover");
-    			/* if(i > elemId) { star.setAttribute("style", "color: #bdc3c7 !important;"); } 
-    			else { star.setAttribute("style", "color: #f1c40f !important;"); } */
-   			}
-    		
-    		document.getElementById("ratingValue").value = elemId;
+   			document.getElementById("ratingValue").value = ratingValue;
 	   	}
+    	
+    	function showRatingsAndReviewsModal(userId, wineId, ratingId, ratingValue, reviewId, reviewTitle, reviewComments) {
+    		
+    		var currentRatingText = "";
+    		if (ratingValue == "") {
+    			currentRatingText = "no rating";
+    		} else {
+    			if (ratingValue == "1") {
+    				currentRatingText = "1 star";
+    			} else {
+    				currentRatingText = ratingValue + " stars";
+    			}
+    		}
+    		document.getElementById("userId").value = userId;
+    		document.getElementById("wineId").value = wineId;
+    		document.getElementById("ratingId").value = ratingId;
+    		document.getElementById("reviewId").value = reviewId;
+    		document.getElementById("previousRating").innerHTML = "Current rating: <strong>" + currentRatingText +"</strong>";
+    		document.getElementById("reviewTitle").value = reviewTitle;
+    		document.getElementById("reviewComments").value = reviewComments; 		
+    		
+    		// reset all stars colors and ratingValue
+    		document.getElementById("formStar1").setAttribute("style", "color: #bdc3c7");
+    		document.getElementById("formStar2").setAttribute("style", "color: #bdc3c7");
+    		document.getElementById("formStar3").setAttribute("style", "color: #bdc3c7");
+    		document.getElementById("formStar4").setAttribute("style", "color: #bdc3c7");
+    		document.getElementById("formStar5").setAttribute("style", "color: #bdc3c7");
+    		document.getElementById("ratingValue").value = '0';
+    		
+    		$("#modal-feedback").modal();
+
+    	}
+    	
+    	function showDeleteRatingsAndReviewsConfirmationModal(ratingId, reviewId, wineName, ratingValue, reviewTitle, reviewComments) {
+    		
+    		document.getElementById("confirmationRatingId").value = ratingId;
+    		document.getElementById("confirmationReviewId").value = reviewId;
+    		
+    		document.getElementById("confirmationWineName").innerHTML = wineName;
+    		document.getElementById("confirmationRatingValue").innerHTML = ratingValue;
+    		document.getElementById("confirmationReviewTitle").innerHTML = reviewTitle;
+    		document.getElementById("confirmationReviewComments").innerHTML = reviewComments;
+    		
+    		$("#modal-delete-rating-and-review-confirmation").modal();
+
+    	}
+    	
     	
     </script>
 	<script>

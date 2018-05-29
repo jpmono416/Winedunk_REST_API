@@ -1,11 +1,8 @@
 package priceComparison.services;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,6 +12,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import priceComparison.models.tblUserWineReviews;
+import priceComparison.models.tblUsers;
+import priceComparison.models.tblWines;
+import priceComparison.models.viewRecommendedWines;
 import priceComparison.models.viewUsersWinesReviews;
 
 public class UserReviewsService {  
@@ -33,8 +33,7 @@ public class UserReviewsService {
 	{
 		String relURL = "userWineReviews?action=checkUserHasReviewed";
 		String response = requestCreator.createPostRequest(urlPath, relURL, userId + "," + wineId);
-		if(response.equalsIgnoreCase("true")) { return true; }
-		return false;
+		if (response != null) { return response.equalsIgnoreCase("true"); } else { return false; }
 	}
 
 	
@@ -45,52 +44,62 @@ public class UserReviewsService {
 	 	 * And sending it to the CRUD for inserting it into the DB.
 	 	 * Then it checks it's done properly.
 	 	 */
-	 
-    	if(review == null) { return false; }
+		
+    	if( (review != null) && (review.getUserId() != null) && (review.getWineId() != null) ) {
     	
-    	// Getting date with timestamp
-    	review.setAddedTimestamp(new Date().getTime());
+    		String reviewJSON = "{"
+					  + "\"id\": \"null\","
+					  + "\"userId\": { \"id\" : "+review.getUserId().getId()+"},"
+					  + "\"wineId\": { \"id\" : "+review.getWineId().getId()+"},"
+					  + "\"title\": \""+review.getTitle()+"\","
+	    			  + "\"comments\": \""+review.getComments()+"\""
+					  + "}";
+			
+			String relURL = "userWineReviews?action=addUserWineReview";
+			String response = requestCreator.createPostRequest(urlPath, relURL, reviewJSON);
+			
+			return (response.equalsIgnoreCase("true"));
+	
+    	} else {
+    		return false;
+    	}
     	
-    	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    	Date date = new Date();
-    	
-    	String dateString = dateFormat.format(date);
-    	
-    	review.setAddedDate(dateString);
-    	
-    	String relURL = "userWineReviews?action=addUserWineReview";
-    	String response = requestCreator.createPostRequest(urlPath, relURL, review.toString());
-    	
-    	if(!response.equalsIgnoreCase("true")) { return false; }
-    	return true;
     }
 	
-	public List<viewUsersWinesReviews> getReviewsForWine(Integer wineId) throws IOException
-	{
+	public List<tblUserWineReviews> getReviewsForWine(Integer wineId) throws IOException
+	{ 
 		/*
 		 * This method is for getting the list of reviews that a wine has.
 		 */
 		
-		String relURL = "usersWinesReviewsView?action=getReviewsForWine&id=" + wineId;
-		String response= requestCreator.createGetRequest(urlPath, relURL);
+		String relURL = "userWineReviews?action=getReviewsForWine";
+		String responseString = requestCreator.createPostRequest(urlPath, relURL, wineId.toString());
+		
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-	   	
-		JsonNode responseJson = mapper.readTree(response);
+		JsonNode responseJson = mapper.readTree(responseString);
 		if(responseJson == null) { return null; }
+
+		ArrayNode reviewsNodes = (ArrayNode) responseJson.get("Reviews");
 	   	
-	   	ArrayNode reviewsNodes = (ArrayNode) responseJson.get("Reviews");
-	   	Iterator<JsonNode> reviewsIterator = reviewsNodes.elements();
-	   	List<viewUsersWinesReviews> resultsList = new ArrayList<viewUsersWinesReviews>();
-	   	
-	   	while(reviewsIterator.hasNext())
-	   	{
-	   		JsonNode reviewNode = reviewsIterator.next();
-	   		viewUsersWinesReviews review = mapper.treeToValue(reviewNode, viewUsersWinesReviews.class);
-	   		resultsList.add(review);
+		if (reviewsNodes != null) {
+			Iterator<JsonNode> reviewsIterator = reviewsNodes.elements();
+
+		   	List<tblUserWineReviews> resultsList = new ArrayList<tblUserWineReviews>();
+			while(reviewsIterator.hasNext())
+			{
+		   		JsonNode reviewNode = reviewsIterator.next();
+		   		
+		   		tblUserWineReviews review = mapper.treeToValue(reviewNode, tblUserWineReviews.class);
+		   		resultsList.add(review);
+			}
+		   	
+			return resultsList;
+		   	
+	   	} else {
+	   		return null;
 	   	}
-	   	
-	   	return resultsList;
+		
 	}
 	
 	/**
@@ -99,10 +108,10 @@ public class UserReviewsService {
 	 * @accessed from the Profile servlet
 	 */
 	
-	public List<viewUsersWinesReviews> getReviewsForUser(Integer userId) throws IOException
-	{
-		String relURL = "usersWinesReviewsView?action=getReviewsForUser&id=" + userId;
-		String response= requestCreator.createGetRequest(urlPath, relURL);
+	public List<tblUserWineReviews> getReviewsForUser(Integer userId) throws IOException {
+		
+		String relURL = "userWineReviews?action=getReviewsForUser";
+		String response= requestCreator.createPostRequest(urlPath, relURL, userId.toString()); 
 		
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -111,23 +120,30 @@ public class UserReviewsService {
 		if(responseJson == null) { return null; }
 	   	
 	   	ArrayNode reviewsNodes = (ArrayNode) responseJson.get("Reviews");
-	   	Iterator<JsonNode> reviewsIterator = reviewsNodes.elements();
-	   	List<viewUsersWinesReviews> resultsList = new ArrayList<viewUsersWinesReviews>();
-	   	
-	   	while(reviewsIterator.hasNext())
-	   	{
-	   		JsonNode reviewNode = reviewsIterator.next();
-	   		viewUsersWinesReviews review = mapper.treeToValue(reviewNode, viewUsersWinesReviews.class);
-	   		resultsList.add(review);
+	   	if (reviewsNodes != null) {
+	   		
+	   		Iterator<JsonNode> reviewsIterator = reviewsNodes.elements();
+		   	List<tblUserWineReviews> resultsList = new ArrayList<tblUserWineReviews>();
+		   	
+		   	while(reviewsIterator.hasNext())
+		   	{
+		   		JsonNode reviewNode = reviewsIterator.next();
+		   		tblUserWineReviews review = mapper.treeToValue(reviewNode, tblUserWineReviews.class);
+		   		resultsList.add(review);
+		   	}
+		   	
+		   	return resultsList;
+		   	
+	   	} else {
+		   	return null;
 	   	}
 	   	
-	   	return resultsList;
 	}
 	
 	public Integer getCountForWine(Integer wineId) throws IOException
 	{
 		try {
-			String relURL = "usersWinesReviewsView?action=getAmountOfReviewsForWine&id=" + wineId;
+			String relURL = "userWineReviews?action=getAmountOfReviewsForWine&wineId=" + wineId;
 			String response = requestCreator.createGetRequest(urlPath, relURL);
 			
 			return Integer.parseInt(response);
@@ -139,28 +155,34 @@ public class UserReviewsService {
 	
 	public Boolean editReview(String reviewComment, String reviewId, String wineId) throws IOException
 	{
-		String relUrl = "userWineReviews?action=updateUserWineReview";
-		tblUserWineReviews review = new tblUserWineReviews();
-		
-		
-		// Set all the parameters normally, then get the object's string
-		// And send it to the crud
-		review.setComments(reviewComment);
-		review.setId(Integer.parseInt(reviewId));
-		review.setNumericWineId(Integer.parseInt(wineId));
-		review.setNumericUserId(userId);
-		review.setAddedTimestamp(new Date().getTime());
-    	
-    	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    	Date date = new Date();
-    	String dateString = dateFormat.format(date);
-    	review.setAddedDate(dateString);
-    	
-		String contentString = review.toString();
-		String response = requestCreator.createPostRequest(urlPath, relUrl, contentString);
-		
-		if(response.equalsIgnoreCase("true")) { return true; }
-		return false;
+		tblWines wine = new tblWines();
+		tblUsers user = new tblUsers();
+		Integer wineIdInt = 0;
+		try {
+			wineIdInt = Integer.parseInt(wineId);
+		} catch (Exception e) {
+			wineIdInt = 0;
+		}
+		if ( (wineIdInt > 0) && (userId > 0) ) {
+
+			wine.setId(wineIdInt);
+			user.setId(userId);
+			
+			String relUrl = "userWineReviews?action=updateUserWineReview";
+			tblUserWineReviews review = new tblUserWineReviews();
+			
+			review.setComments(reviewComment);
+			review.setId(Integer.parseInt(reviewId));
+			review.setUserId(user);
+			review.setWineId(wine);
+			String contentString = review.toString();
+			String response = requestCreator.createPostRequest(urlPath, relUrl, contentString);
+			
+			return (response.equalsIgnoreCase("true"));
+			
+		} else {
+			return false;
+		}
 	}
 	
 	public Boolean deleteReview(String reviewId) throws IOException

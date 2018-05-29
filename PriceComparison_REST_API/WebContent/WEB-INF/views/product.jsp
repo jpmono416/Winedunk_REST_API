@@ -57,30 +57,60 @@
 						<div class="card settingsCard">
 							<h3 class="text-center">Ratings </h3>
 							<hr class="sep-bar" />
-							<c:if test="${ requestScope.noRatings != true }">
+							
+							<%-- ratingsTotalAmount --%>
+							<c:if test="${ requestScope.ratingsTotalAmount > 0 }">
+								<c:set var = "bicolourStarNumber" value = "${requestScope.ratingsAvg - (requestScope.ratingsAvg % 1)}"/>
+								<c:set var = "colourchangePercentage" value = "${(requestScope.ratingsAvg % 1) * 100}"/>
+								
+								
 								<h1 class="text-center">
 									<span id="stars">
-										<c:forEach varStatus="loop" begin="1" end="${ requestScope.wine.getAvgRating() }"><i class="glyphicon glyphicon-star"></i></c:forEach>
+									
+										<%-- full yellow stars--%>	
+										<c:forEach varStatus="loop" begin="1" end="${bicolourStarNumber}">
+											<i class="glyphicon glyphicon-star" style="color: #f1c40f;"></i> 
+										</c:forEach>
+									
+										<c:if test="${bicolourStarNumber < 5}">
+										
+											<%-- two-colours star  stars--%>
+											<i class="glyphicon glyphicon-star" style="background:-webkit-linear-gradient(left, #f1c40f 0%, #f1c40f <c:out value="${ colourchangePercentage }"></c:out>%, #bdc3c7 <c:out value="${ colourchangePercentage }"></c:out>%, #bdc3c7 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;"></i> 
+											
+											<%-- full gray stars--%>
+											<c:forEach varStatus="loop" begin="${bicolourStarNumber + 2}" end="5">
+												<i class="glyphicon glyphicon-star" style="color: #bdc3c7;"></i> 
+											</c:forEach>
+											
+										</c:if>
+																			
 									</span>
 								</h1>
-								<p class="text-center">Based on <c:out value="${ requestScope.amountOfRatings }"/> rating<c:if test="${ requestScope.amountOfRatings > 1 }">s</c:if></p>
-								<c:if test="${ requestScope.hasRated == true }">
-									<div id="hasRated" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"
-									data-toggle="tooltip" title="To edit or delete the rating please refer to your profile page.">
-										<span><strong>You already gave a rating.</strong></span>
-									</div>
-								</c:if>
-								<c:if test="${ requestScope.ratingSuccessful == true }">
-									<div id="ratingSuccessful" role="alert" class="alert alert-success" style="margin-top:10px; margin-bottom: 0;"><span><strong>Rating saved!</strong></span></div>
-								</c:if>
-								<c:if test="${ requestScope.blankRating == true }">
-									<div id="blankRating" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span><strong>Please click a star!</strong></span></div>
-								</c:if>
-								<c:if test="${ requestScope.userNotRegisteredRating == true }">
-									<div  id="userNotRegisteredRating" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span><strong>Please <a href="http://winedunk.com/Login?action=signUp">register</a>!</strong></span></div>
-								</c:if>
+								<p class="text-center">Avg rating: <strong><c:out value="${ requestScope.ratingsAvg }"/></strong> (<c:out value="${ requestScope.ratingsTotalAmount }"/> rating<c:if test="${ requestScope.ratingsTotalAmount > 1 }">s</c:if>)</p>
+								
 							</c:if>
-							<a data-toggle="modal" data-target="#modal-giveRating" class="btn btn-primary btn-block redButton" type="button">Give a rating</a>
+							
+							<%-- ratingsUserRatingValue --%>
+							
+							<c:choose>
+         
+					        	<c:when test = "${requestScope.ratingsUserRatingValue <= 0}">
+						        	<c:choose>
+							        	<c:when test = "${ !sessionScope.isLoggedIn }">
+											<div  id="userNotRegisteredRating" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span><strong>Please <a href="Login?action=signUp">register</a> / <a href="Login?action=login">login</a></strong></span></div>
+										</c:when>
+										<c:otherwise>
+						            		<a data-toggle="modal" data-target="#modal-feedback" class="btn btn-primary btn-block redButton" type="button">Give a rating</a>
+						         		</c:otherwise>
+					         		</c:choose>
+					         	</c:when>
+					         
+					         	<c:otherwise>
+					            	<div id="userHasRated" role="alert" class="alert alert-success text-center" style="margin-top:10px; margin-bottom: 0;" data-toggle="tooltip" title="To edit or delete your rating please refer to your profile page."><a href="Profile?section=wineReviews">Your rating: <strong><c:out value="${ratingsUserRatingValue}"></c:out></strong>! <i class="fa fa-thumbs-o-up red-text" style="font-size: 20px;"></i></a></div>
+					         	</c:otherwise>
+
+					      	</c:choose>
+							
 						</div>
 					</div> 
 					
@@ -89,25 +119,33 @@
 						<div class="card settingsCard">
 							<h3 class="text-center">Reviews </h3>
 							<hr class="sep-bar" />
-							<c:if test="${ requestScope.amountOfReviews > 0 }">
-								<p class="text-center"><c:out value="${ requestScope.amountOfReviews }" /> review<c:if test="${ requestScope.amountOfReviews > 1 }">s</c:if></p>
+						
+							<%-- reviewsTotalAmount --%>
+							<c:if test="${ requestScope.reviewsTotalAmount > 0 }">
+								<p class="text-center"><strong><c:out value="${ requestScope.reviewsTotalAmount }" /></strong> review<c:if test="${ requestScope.reviewsTotalAmount > 1 }">s</c:if> available<c:if test="${ requestScope.reviewsTotalAmount > 1 }">s</c:if></p>
 							</c:if>
-							<a data-toggle="modal" data-target="#modal-writeReview" class="btn btn-primary btn-block redButton" type="button">Write a review</a>
-							<c:if test="${ requestScope.hasReviewed == true }">
-								<div id="hasRated" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"
-								data-toggle="tooltip" title="To edit or delete the review please refer to your profile page.">
-									<span><strong>You already gave a review.</strong></span>
-								</div>
-							</c:if>
-							<c:if test="${ requestScope.reviewSuccessful == true }">
-								<div id="reviewSuccessful" role="alert" class="alert alert-success" style="margin-top:10px; margin-bottom: 0;"><span><strong>Review saved!</strong></span></div>
-							</c:if>
-							<c:if test="${ requestScope.blanReview == true }">
-								<div id="blanReview" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span><strong>Please enter a title or comment!</strong></span></div>
-							</c:if>
-							<c:if test="${ requestScope.userNotRegisteredReview == true }">
-								<div id="userNotRegisteredReview" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span><strong>Please <a href="http://winedunk.com/Login?action=signUp">register</a>!</strong></span></div>
-							</c:if>
+							
+							<%-- reviewsUserHasReviewed --%>
+							
+							<c:choose>
+         
+					        	<c:when test = "${requestScope.reviewsUserHasReviewed == false}">
+						        	<c:choose>
+							        	<c:when test = "${ !sessionScope.isLoggedIn }">
+											<div id="userNotRegisteredReview" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span><strong>Please <a href="Login?action=signUp">register</a> / <a href="Login?action=login">login</a></strong></span></div>
+										</c:when>
+										<c:otherwise>
+						            		<a data-toggle="modal" data-target="#modal-feedback" class="btn btn-primary btn-block redButton" type="button">Write a review</a>
+						         		</c:otherwise>
+					         		</c:choose>
+					         	</c:when>
+					         
+					         	<c:otherwise>
+					            	<div id="userHasReviewed" role="alert" class="alert alert-success text-center" style="margin-top:10px; margin-bottom: 0;" data-toggle="tooltip" title="To edit or delete the review please refer to your profile page."><a href="Profile?section=wineReviews">You've reviewed this product! </a><i class="fa fa-thumbs-o-up red-text" style="font-size: 20px;"></i></div>
+					         	</c:otherwise>
+
+					      	</c:choose>
+											
 						</div>
 					</div>
 					
@@ -299,29 +337,33 @@
 	                   	</div>
                    </div>
                    
-                 
                    
-                   <%-- All reviews --%>
-                   <c:if test="${ requestScope.amountOfReviews > 0 }">
+                   <%-- All product reviews --%>
+                   
+                   <c:if test="${ requestScope.reviewsTotalAmount > 0 }">
                     <div class="row">
                     	<div class="col-xs-12">
                     		<div class="card settingsCard">
-                    			<h1 class="text-center">All reviews</h1>
+                    			<h1 class="text-center">Product reviews</h1>
 	                            <hr class="sep-bar">
                     		</div>
                     	</div>
                     	<c:forEach items="${ requestScope.reviewsList }" var="review">
 	                    	<div class="col-xs-12">
 	                    		<div data-aos="fade-up" data-aos-duration="800" data-aos-delay="50" data-aos-once="true" class="card settingsCard aos-init aos-animate">
-	                                <c:if test="${ review.getReviewComments() != null && !review.getReviewComments().equals('') }">
+	                                <c:if test="${ review.getComments() != null && !review.getComments().equals('') }">
 	                                	<div class="row">
-	                                		<div class="col-md-12">
-	                                			<p class="text-right text-muted">${ review.getReviewDate() }</p>
+	                                		<div class="col-md-10">
+	                                			<span><strong><c:out value="${ review.getTitle() }"></c:out></strong></span>
+	                                		 	<span><small> - by <c:out value="${ review.getUserId().getName() }"></c:out></small></span>
+	                                		</div>
+	                                		<div class="col-md-2">
+	                                		 	<span class="text-right text-muted"><fmt:formatDate type = "date" value = "${ review.getAddedDate() }" /></span>
 	                                		</div>
 	                                	</div>
 		                                <div class="row">
 		                                    <div class="col-md-12">
-		                                        <h3 style="color:#800000;"><c:out value="${ review.getReviewComments() }"/></h3>
+		                                        <h5 style="color:#800000;"><c:out value="${ review.getComments() }"/></h5>
 		                                    </div>
 		                                </div>
 	                                </c:if>
@@ -354,7 +396,9 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" role="dialog" tabindex="-1" id="modal-giveRating">
+    
+    <%-- Give rating & review modal form--%>
+    <div class="modal fade" role="dialog" tabindex="-1" id="modal-feedback">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header" style="background:#f7f7f7;">
@@ -363,60 +407,41 @@
                 <div class="modal-body" style="background:#f7f7f7;">
 	                <div class="row">
 	                	<div class="col-xs-12">
-		                	<h3 class="text-center">Give a rating</h3>
+		                	<h3 class="text-center">Many thanks for your feedback!!! <i class="fa fa-thumbs-o-up red-text"></i> </h3>
 			                <hr class="sep-bar">
 			                <form method="POST" action="Product">
-								<h1 class="text-center">
-			                	<span id="formStars">
-			                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar1" class="glyphicon glyphicon-star"></i>
-			                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar2" class="glyphicon glyphicon-star"></i>
-			                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar3" class="glyphicon glyphicon-star"></i>
-			                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar4" class="glyphicon glyphicon-star"></i>
-			                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar5" class="glyphicon glyphicon-star"></i>
-			                	</span>
-				                </h1>
-				                <input type="hidden" id="ratingValue" name="ratingValue">
-				                <input name="wineId" value="${requestScope.wine.getWineId()}" type="hidden">
-				                <input name="formChosen" value="ratingsForm" type="hidden">
-				                <p>Why don't you provide some more information to this rating with a short <span style="color:#800000"><strong>review</strong></span>? <a id="showReviewsInput" style="cursor: pointer;"> Do it!</a></p>
-				                <input class="form-control" id="reviewTitleOnRatingForm" name="reviewTitleOnRatingForm" placeholder="Give it a short title!" style="display:none; margin-bottom:10px;">
-				                <textarea placeholder="Enter your review" rows="3" id="reviewsOnRatingForm" name="reviewsOnRatingForm" class="form-control" style="display:none; margin-bottom:10px;"></textarea>
-				                <button style="float:right;" class="btn btn-primary btn-md redButton" type="submit">Submit </button>			                
-			                </form>
-	                	</div>
-	                </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" role="dialog" tabindex="-1" id="modal-writeReview">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header" style="background:#f7f7f7;">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                </div>
-                <div class="modal-body" style="background:#f7f7f7;">
-	                <div class="row">
-	                	<div class="col-xs-12">
-		                	<h3 class="text-center">Write review</h3>
-			                <hr class="sep-bar">
-			                <form method="POST" action="Product">
-			                	<input class="form-control" style="margin-bottom: 10px;" id="reviewTitle" name="reviewTitle" placeholder="Give it a short title!">
+			                
+			                	<%-- making the decision whether show rating or not based on if user has already rated the product --%>
+				                <c:choose>
+						        	<c:when test = "${ratingsUserRatingValue <= 0}">
+										<h1 class="text-center">
+					                	<span id="formStars">
+					                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar1" class="glyphicon glyphicon-star"></i>
+					                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar2" class="glyphicon glyphicon-star"></i>
+					                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar3" class="glyphicon glyphicon-star"></i>
+					                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar4" class="glyphicon glyphicon-star"></i>
+					                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="formStar5" class="glyphicon glyphicon-star"></i>
+					                	</span>
+						                </h1>
+						         	</c:when>
+						         	<c:otherwise>
+						            	<div id="userHasRated" role="alert" class="alert alert-success text-center" style="margin-top:10px; margin-bottom: 0;"><span>Your rating: <c:out value="${ratingsUserRatingValue}"></c:out>,<strong> thanks!</strong></span></div>
+						         	</c:otherwise>
+						      	</c:choose>
+			                
+								<hr>
+								
+				                <p>Providing some information about this product you are helping winedunk community to make right decisions!</a></p>
+				                <input class="form-control" style="margin-bottom: 10px;" id="reviewTitle" name="reviewTitle" placeholder="Give it a short title!">
 								<textarea id="reviewText" name="reviewText" class="form-control" placeholder="Enter your review" rows="3"></textarea>
-				                <p>Why don't you complete your review by giving it a <span style="color:#800000"><strong>rating</strong></span> as well? <a id="showRatingInput" style="cursor: pointer;">Do it!</a></p>
-				                <h1 class="text-center" style="display:none;" id="ratingStarsOnReviews">
-				                	<span id="formStars">
-				                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="reviewsStar1" class="glyphicon glyphicon-star"></i>
-				                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="reviewsStar2" class="glyphicon glyphicon-star"></i>
-				                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="reviewsStar3" class="glyphicon glyphicon-star"></i>
-				                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="reviewsStar4" class="glyphicon glyphicon-star"></i>
-				                		<i onclick="populateRating(this)" onmouseover="illuminateStars(this)" id="reviewsStar5" class="glyphicon glyphicon-star"></i>
-				                	</span>
-				                </h1>
-				                <input id="ratingOnReviewsForm" name="ratingOnReviewsForm" type="hidden">
+				                
+						        <input type="hidden" id="ratingValue" name="ratingValue">
 				                <input name="wineId" value="${requestScope.wine.getWineId()}" type="hidden">
-				                <input name="formChosen" value="reviewsForm" type="hidden">
-				                <button style="float: right;" class="btn btn-primary btn-md redButton" type="submit">Submit </button>			                
+				                <input name="formChosen" value="feedbackForm" type="hidden">
+				                
+			                	<hr>
+				                <button style="float: right;" class="btn btn-primary btn-md redButton" type="submit">Submit </button>
+				                		                
 			                </form>
 	                	</div>
 	                </div>
@@ -424,6 +449,7 @@
             </div>
         </div>
     </div>
+    
     <hr class="sep-bar">
    	<c:import url="../templates/footer.jsp"/>
 	<script src="assets/js/jquery.min.js"></script>
@@ -503,20 +529,7 @@
 	   	}
     </script>
     <script>
-    
-    	/*
-    		This script is used for handling the hidden inputs
-    		on the modal forms of the reviews and the ratings
-    	*/
-    	
-   		$('#showRatingInput').click(function(){
-   			$('#ratingStarsOnReviews').fadeIn();
-   		});
-       	
-       	$('#showReviewsInput').click(function(){
-       		$('#reviewTitleOnRatingForm').fadeIn();
-       		$('#reviewsOnRatingForm').fadeIn();
-   		});    		
+	
        	
     </script>
     <script>
@@ -564,7 +577,6 @@
     			else { star.setAttribute("style", "color: #f1c40f !important;"); } */
    			}
     		
-    		document.getElementById("ratingOnReviewsForm").value = elemId;
     		document.getElementById("ratingValue").value = elemId;
 	   	}
     	

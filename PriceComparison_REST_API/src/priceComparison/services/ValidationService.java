@@ -52,16 +52,27 @@ public class ValidationService {
 					String responseString = requestsCreator.createPostRequest(urlPath, relUrl, ourCookie.getValue());
 					if(responseString == null || responseString.equals("null")) { return false; }
 					ObjectMapper objectMapper = new ObjectMapper();
-					user = objectMapper.readValue(responseString, viewUsers.class);
-					// Compare token to DB and identify User
-					if(!user.getLoginToken().equals(ourCookie.getValue())) { return false; }
+					try {
+						user = objectMapper.readValue(responseString, viewUsers.class);
+					} catch (Exception e) {
+						user = null;
+					}
+					if (user != null) {
 					
-					request.getSession().setAttribute("userLoggedIn", user);
-					request.getSession().setAttribute("isLoggedIn", true);
+						// Compare token to DB and identify User
+						if(!user.getLoginToken().equals(ourCookie.getValue())) { return false; }
+						
+						request.getSession().setAttribute("userLoggedIn", user);
+						request.getSession().setAttribute("isLoggedIn", true);
+						
+						ourCookie.setMaxAge(60*60*24*90); // 3 months
+						response.addCookie(ourCookie);
+						return true;
+						
+					} else {
+						return false;
+					}
 					
-					ourCookie.setMaxAge(60*60*24*90); // 3 months
-					response.addCookie(ourCookie);
-					return true;
 				}
 			}
 		}

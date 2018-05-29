@@ -86,41 +86,45 @@ public class ProfileService {
 		   	if(responseJson == null) { return null; }
 		   	
 		   	ArrayNode favouriteNode = (ArrayNode) responseJson.get("FavouriteWines");
-		   	Iterator<JsonNode> favouriteWinesIterator = favouriteNode.elements();
-		   	
-		   	/*
-		   	 * Create and populate the list of favouriteWines. These act like a pointer to the
-		   	 * Actual wine. They contain the ID, which I will use to then get the wines
-		   	 */
-		   	List<tblUserFavouriteWines> resultsList = new ArrayList<tblUserFavouriteWines>();
-		   	
-		   	while(favouriteWinesIterator.hasNext())
-		   	{
-		   		JsonNode favWineNode = favouriteWinesIterator.next();
-		   		tblUserFavouriteWines wine = mapper.treeToValue(favWineNode, tblUserFavouriteWines.class);
-		   		resultsList.add(wine);
+			if (favouriteNode != null) {
+			   	Iterator<JsonNode> favouriteWinesIterator = favouriteNode.elements();
+			   	
+			   	/*
+			   	 * Create and populate the list of favouriteWines. These act like a pointer to the
+			   	 * Actual wine. They contain the ID, which I will use to then get the wines
+			   	 */
+			   	List<tblUserFavouriteWines> resultsList = new ArrayList<tblUserFavouriteWines>();
+			   	
+			   	while(favouriteWinesIterator.hasNext())
+			   	{
+			   		JsonNode favWineNode = favouriteWinesIterator.next();
+			   		tblUserFavouriteWines wine = mapper.treeToValue(favWineNode, tblUserFavouriteWines.class);
+			   		resultsList.add(wine);
+			   	}
+			   	
+			   	/*
+			   	 * Create the list of wines that will be returned and stored to request
+			   	 * These have the actual information about the wine that will be shown
+			   	 * On screen. Then iterate over the favouriteWines to get each wine
+			   	 * And populate the actual list that will be used 
+			   	 */
+			   	
+			   	List<viewWines> actualWines = new ArrayList<viewWines>();
+			   	
+			   	for(tblUserFavouriteWines favWine : resultsList)
+			   	{
+			   		relUrl = "winesView?action=getWine&id=";
+			   		String fullRelUrl = relUrl += favWine.getNumericWineId();
+			   		String actualWineString = requestCreator.createGetRequest(urlPath, fullRelUrl);
+			   		
+			   		viewWines actualWine = mapper.readValue(actualWineString, viewWines.class);
+			   		actualWines.add(actualWine);
+			   	}
+			   	
+			   	return actualWines;
+			} else {
+		   		return null;
 		   	}
-		   	
-		   	/*
-		   	 * Create the list of wines that will be returned and stored to request
-		   	 * These have the actual information about the wine that will be shown
-		   	 * On screen. Then iterate over the favouriteWines to get each wine
-		   	 * And populate the actual list that will be used 
-		   	 */
-		   	
-		   	List<viewWines> actualWines = new ArrayList<viewWines>();
-		   	
-		   	for(tblUserFavouriteWines favWine : resultsList)
-		   	{
-		   		relUrl = "winesView?action=getWine&id=";
-		   		String fullRelUrl = relUrl += favWine.getNumericWineId();
-		   		String actualWineString = requestCreator.createGetRequest(urlPath, fullRelUrl);
-		   		
-		   		viewWines actualWine = mapper.readValue(actualWineString, viewWines.class);
-		   		actualWines.add(actualWine);
-		   	}
-		   	
-		   	return actualWines;
 		} catch(Exception e) { e.printStackTrace(); return null; }
 	}
 	

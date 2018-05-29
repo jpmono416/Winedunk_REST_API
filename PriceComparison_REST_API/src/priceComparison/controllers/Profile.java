@@ -16,13 +16,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import priceComparison.models.ViewWineReviewsAndRatingByUsers;
 import priceComparison.models.tblUserSavedSearches;
 import priceComparison.models.tblUsers;
 import priceComparison.models.userEmails;
 import priceComparison.models.userPhoneNumbers;
-import priceComparison.models.viewUserWinesRatings;
 import priceComparison.models.viewUsers;
-import priceComparison.models.viewUsersWinesReviews;
 import priceComparison.models.viewWines;
 import priceComparison.services.FavouriteWinesService;
 import priceComparison.services.ProfileService;
@@ -30,8 +29,8 @@ import priceComparison.services.SavedSearchesService;
 import priceComparison.services.UserEmailAddressesService;
 import priceComparison.services.UserPhoneNumbersService;
 import priceComparison.services.UserRatingsService;
-import priceComparison.services.UserReviewsService;
 import priceComparison.services.ValidationService;
+import priceComparison.services.ViewWineReviewsAndRatingByUsersService;
 
 /**
  * Servlet implementation class Results
@@ -45,7 +44,7 @@ public class Profile extends HttpServlet {
 	FavouriteWinesService favWinesService = new FavouriteWinesService();
 	UserPhoneNumbersService phoneNumbersService = new UserPhoneNumbersService();
 	UserEmailAddressesService emailAddressService = new UserEmailAddressesService();
-	UserReviewsService reviewsService = new UserReviewsService(); 
+	ViewWineReviewsAndRatingByUsersService viewWineReviewsAndRatingByUsersService = new ViewWineReviewsAndRatingByUsersService();
 	UserRatingsService ratingsService = new UserRatingsService();
 	SavedSearchesService searchesService = new SavedSearchesService();
 	
@@ -53,6 +52,7 @@ public class Profile extends HttpServlet {
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+		
 		HttpSession session = request.getSession();
 		if (request.getParameter("JSESSIONID") != null) {
 		    Cookie userCookie = new Cookie("JSESSIONID", request.getParameter("JSESSIONID"));
@@ -63,6 +63,8 @@ public class Profile extends HttpServlet {
 		    response.addCookie(userCookie);
 		}
 		
+		
+		
 		final String webInfPath = getServletContext().getRealPath("/WEB-INF/");
 		final String sep = System.getProperty("file.separator");
 		final Properties serviceProperties = new Properties();
@@ -72,18 +74,32 @@ public class Profile extends HttpServlet {
 		if(user == null) { request.getRequestDispatcher("/Login").forward(request, response); return; }
 		Integer userId = user.getId();
 		
+
+		
 		// Check that any user is logged in
-		if(!userId.equals("")) { profileService.setUserId(userId); }
+		if ( (userId != null) && (userId > 0) ) {
+			profileService.setUserId(userId);
+			emailAddressService.setUserId(userId);
+			phoneNumbersService.setUserId(userId);
+			viewWineReviewsAndRatingByUsersService.setUserId(userId);
+			ratingsService.setUserId(userId);
+			searchesService.setUserId(userId);
+		}
 		else { return; }
+		
+		
 		
 		// Set CRUD's URL where needed
 		String crudURL = serviceProperties.getProperty("crud.url");
 		profileService.setUrlPath(crudURL);
-		reviewsService.setUrlPath(crudURL);
+		emailAddressService.setUrlPath(crudURL);
+		phoneNumbersService.setUrlPath(crudURL);
+		viewWineReviewsAndRatingByUsersService.setUrlPath(crudURL);
 		ratingsService.setUrlPath(crudURL);
 		validationService.setUrlPath(crudURL);
 		searchesService.setUrlPath(crudURL);
 		validationService.validateUser(request, response);
+		
 		
 		//Load various user lists
 		try
@@ -93,32 +109,36 @@ public class Profile extends HttpServlet {
 			else { request.setAttribute("noEmails", true);}
 		} catch(Exception e) { e.printStackTrace(); }
 		
+		
 		try {
 			List<userPhoneNumbers> phoneNumbers = phoneNumbersService.loadPhoneNumbers();
 			if(phoneNumbers != null) { request.setAttribute("phoneNumbersList", phoneNumbers); }
 			else { request.setAttribute("noPhoneNumbers", true);}
 		} catch(Exception e) { e.printStackTrace(); }
-		
+
+
 		try {
+			
 			List<viewWines> favouriteWines = profileService.loadFavouriteWines();
+			
 			if(favouriteWines != null) { request.setAttribute("favouriteWines", favouriteWines); }
 			else { request.setAttribute("noFavourite", true);}
 		} catch(Exception e) { e.printStackTrace(); }
-		
+
+
 		try {
-			List<viewUsersWinesReviews> reviews = reviewsService.getReviewsForUser(userId);
-			if(reviews != null) { request.setAttribute("userReviews", reviews); }
-			else { request.setAttribute("noReviews", true); }
+			
+			List<ViewWineReviewsAndRatingByUsers> reviews = viewWineReviewsAndRatingByUsersService.getAllForUser(userId);
+			
+			if(reviews != null) {
+				request.setAttribute("userReviewsAndRating", reviews);
+			} else {
+				request.setAttribute("userReviewsAndRating", null);
+			}
+			
 		} catch(Exception e) { e.printStackTrace(); }
-		
+
 		try {
-			List<viewUserWinesRatings> ratingsList = ratingsService.getRatingsForUser(userId);
-			if(ratingsList != null) { request.setAttribute("ratingsList", ratingsList); }
-			else { request.setAttribute("noRatings", true); }
-		} catch(Exception e) { e.printStackTrace(); }
-		
-		try {
-			searchesService.setUserId(userId);
 			List<tblUserSavedSearches> searches = searchesService.getSavedSearchesForUser();
 			if(searches != null) 
 			{ 
@@ -140,7 +160,17 @@ public class Profile extends HttpServlet {
 		tblUsers userToBeLoaded = profileService.loadUserDetails();
 		request.setAttribute("userForDetails", userToBeLoaded);
 		
-		if(session.getAttribute("sectionToBeDisplayed") == null) { session.setAttribute("sectionToBeDisplayed", "user"); } 
+		
+		String section = "";
+		try {
+			section = request.getParameter("section");
+		} catch (Exception e) {
+			section = "";
+		}
+		if (section.equals("")) {
+			section = "user";
+		}
+		session.setAttribute("sectionToBeDisplayed", section);  
 		RequestDispatcher profilePage = request.getRequestDispatcher("WEB-INF/views/profile.jsp");
 
 		profilePage.forward(request, response);
@@ -161,6 +191,7 @@ public class Profile extends HttpServlet {
 		
 		 // Get the action that needs to be done
 		String formChosen = request.getParameter("formChosen");
+		
 		if(formChosen == null || formChosen.equals("")) { return; }
 		
 		final String webInfPath = getServletContext().getRealPath("/WEB-INF/");
@@ -293,28 +324,35 @@ public class Profile extends HttpServlet {
 					break;
 					
 				case "editReview" :
+					/*
 					String editReview = request.getParameter("review");
 					String reviewId = request.getParameter("reviewId");
 					String wineId = request.getParameter("reviewWineId");
 					
-					if(editReview.equals("")) { break; }
-					reviewsService.setUserId(userId);
-					
-					if(!reviewsService.editReview(editReview, reviewId, wineId))
-					{
-						request.setAttribute("error", true); 
-						break;
+					if (!editReview.equals("")) {
+
+						viewWineReviewsAndRatingByUsersService.setUserId(userId);
+						if(!viewWineReviewsAndRatingByUsersService.editReview(editReview, reviewId, wineId))
+						{
+							request.setAttribute("error", true); 
+							break;
+						}
+						
+						session.setAttribute("successful", true);
+						session.setAttribute("sectionToBeDisplayed", "wineReviews");
+						
+	
 					}
+					*/
 					
-					session.setAttribute("successful", true);
-					session.setAttribute("sectionToBeDisplayed", "wineReviews");
 				break;
 				
 				case "deleteReview" :
+					/*
 					if(request.getParameter("reviewId").equals("")) { break; }
 					
 					String reviewToBeDeletedId = request.getParameter("reviewId");
-					if(!reviewsService.deleteReview(reviewToBeDeletedId))
+					if(!viewWineReviewsAndRatingByUsersService.deleteReview(reviewToBeDeletedId))
 					{
 						request.setAttribute("error", true); 
 						break;
@@ -322,9 +360,11 @@ public class Profile extends HttpServlet {
 					
 					session.setAttribute("successful", true);
 					session.setAttribute("sectionToBeDisplayed", "wineReviews");
+					*/
 				break;
 				
 				case "editRating" :
+					/*
 					String editRating = request.getParameter("ratingValue");
 					String ratingId = request.getParameter("ratingId");
 					String ratingWineId = request.getParameter("ratingWineId");
@@ -339,9 +379,11 @@ public class Profile extends HttpServlet {
 					
 					session.setAttribute("successful", true);
 					session.setAttribute("sectionToBeDisplayed", "wineReviews");
+					*/
 				break;
 				
-				case "deleteRating" : 
+				case "deleteRating" :
+					/*
 					if(request.getParameter("ratingId").equals("")) { break; }
 					
 					String ratingToBeDeletedId = request.getParameter("ratingId");
@@ -353,6 +395,7 @@ public class Profile extends HttpServlet {
 					
 					session.setAttribute("successful", true);
 					session.setAttribute("sectionToBeDisplayed", "wineReviews");
+					*/
 				break;
 				
 				case "changePassword" :
@@ -412,7 +455,7 @@ public class Profile extends HttpServlet {
 					
 					break;
 					
-				case "addFavouriteWine" :
+				case "addFavouriteWine" : {
 					Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
 					
 					if(isLoggedIn == null || isLoggedIn == false)
@@ -420,23 +463,42 @@ public class Profile extends HttpServlet {
 						response.getWriter().write("False");
 						return;
 					}
-					
-					Integer favouriteWineId = Integer.parseInt(request.getParameter("wineId"));
-					favWinesService.addFavouriteWine(userId, favouriteWineId);
-					response.getWriter().write("True");
-					return;
+					Integer favouriteWineId = 0;
+					try {
+						favouriteWineId = Integer.parseInt(request.getParameter("wineId"));	
+					} catch (Exception e) {
+						favouriteWineId = 0;
+					}
+					if (favouriteWineId > 0) {
+						favWinesService.addFavouriteWine(userId, favouriteWineId);
+						response.getWriter().write("True");
+						return;	
+					} else {
+						response.getWriter().write("False");
+						return;
+					}
+				}
 					
 				case "deleteFavouriteWine" :
-					Integer favWineId = Integer.parseInt(request.getParameter("wineId"));
-					
-					if(!favWinesService.deleteFavouriteWine(userId, favWineId))
-					{
+					Integer favouriteWineId = 0;
+					try {
+						favouriteWineId = Integer.parseInt(request.getParameter("wineId"));
+					} catch (Exception e) {
+						favouriteWineId = 0;
+					}
+					if (favouriteWineId > 0) {
+						if(!favWinesService.deleteFavouriteWine(userId, favouriteWineId))
+						{
+							session.setAttribute("error", true); 
+							return;
+						}
+						
+						session.setAttribute("successful", true); 
+						session.setAttribute("sectionToBeDisplayed", "favouriteWines");
+					} else {
 						session.setAttribute("error", true); 
 						return;
 					}
-					
-					session.setAttribute("successful", true); 
-					session.setAttribute("sectionToBeDisplayed", "favouriteWines");
 					
 				break;
 					

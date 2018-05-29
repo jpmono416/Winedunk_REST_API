@@ -36,10 +36,6 @@ public class viewUserWinesRatings {
     private Integer userRating;
     public Integer getUserRating() { return userRating; }
 	public void setUserRating(Integer userRating) { this.userRating = userRating; }
-
-	private Integer numericWineId;
-	public Integer getNumericWineId() { return numericWineId; }
-	public void setNumericWineId(Integer numericWineId) { this.numericWineId = numericWineId; }
 	
 	private Integer numericUserId;
     public Integer getNumericUserId() { return numericUserId; } 
@@ -57,7 +53,6 @@ public class viewUserWinesRatings {
         this.addedTimestamp = null;
         this.userRating = null;
         this.numericUserId = null;
-        this.numericWineId = null;
     }
     
 	@Override

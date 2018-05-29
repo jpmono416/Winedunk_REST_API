@@ -40,17 +40,21 @@ public class UserPhoneNumbersService {
 	   	if(responseJson == null) { return null; }
 	   	
 	   	ArrayNode phonesNodes = (ArrayNode) responseJson.get("PhoneNumbers");
-	   	Iterator<JsonNode> phoneNumbersIterator = phonesNodes.elements();
-   	 	List<userPhoneNumbers> resultsList = new ArrayList<userPhoneNumbers>();
-   	 	
-	   	 while(phoneNumbersIterator.hasNext())
-		 {
-			 JsonNode phoneNumberNode = phoneNumbersIterator.next();
-			 userPhoneNumbers phoneNumber = mapper.treeToValue(phoneNumberNode, userPhoneNumbers.class);
-			 resultsList.add(phoneNumber);
-		 }
-		
-		 return resultsList;
+		if (phonesNodes != null) {
+		   	Iterator<JsonNode> phoneNumbersIterator = phonesNodes.elements();
+	   	 	List<userPhoneNumbers> resultsList = new ArrayList<userPhoneNumbers>();
+	   	 	
+		   	 while(phoneNumbersIterator.hasNext())
+			 {
+				 JsonNode phoneNumberNode = phoneNumbersIterator.next();
+				 userPhoneNumbers phoneNumber = mapper.treeToValue(phoneNumberNode, userPhoneNumbers.class);
+				 resultsList.add(phoneNumber);
+			 }
+			
+			 return resultsList;
+		} else {
+	   		return null;
+	   	}
 	}
 	
 	public Boolean addPhoneNumber(String phoneNumber) throws IOException

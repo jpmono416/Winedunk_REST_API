@@ -88,16 +88,20 @@ public class ResultsService {
     	 if(responseJson == null) { return null; }
 		
     	 ArrayNode winesNodes = (ArrayNode) responseJson.get("Wines");
-    	 Iterator<JsonNode> winesIterator = winesNodes.elements();
-    	 List<viewWines> resultsList = new ArrayList<viewWines>();
-		
-    	 while(winesIterator.hasNext())
-    	 {
-    		 JsonNode wineNode = winesIterator.next();
-    		 viewWines wine = mapper.treeToValue(wineNode, viewWines.class);
-    		 resultsList.add(wine);
-    	 }
-    	 return resultsList;
+ 		 if (winesNodes != null) {
+	    	 Iterator<JsonNode> winesIterator = winesNodes.elements();
+	    	 List<viewWines> resultsList = new ArrayList<viewWines>();
+			
+	    	 while(winesIterator.hasNext())
+	    	 {
+	    		 JsonNode wineNode = winesIterator.next();
+	    		 viewWines wine = mapper.treeToValue(wineNode, viewWines.class);
+	    		 resultsList.add(wine);
+	    	 }
+	    	 return resultsList;
+ 		} else {
+	   		return null;
+	   	}
     }
      
     public Integer getCountOfPages(String urlParameters) throws IOException
@@ -117,10 +121,11 @@ public class ResultsService {
 		}
     } 
     
-    public void loadFilters(HttpServletRequest request)
+    public void loadStaticFilters(HttpServletRequest request)
  	{
  		String[] filtersToGet = new String[]
- 				{"Regions", "WineTypes", "Colours", "Wineries", "Appellations", "Countries", "GrapeVarieties", "ShopsView"};
+ 				{"WineTypes", "Colours", "ShopsView", "GrapeVarieties"};
+ 		
  		try 
  		{ 
  			for(String urlParam : filtersToGet) 
@@ -128,5 +133,176 @@ public class ResultsService {
  				request.getSession().setAttribute("listOf" + urlParam, GetFilters(urlParam));
  			}
  		} catch (Exception e) { e.printStackTrace(); }
+ 		
+ 		// Regions, Appellations and Wineries will be loaded dynamically
+ 		request.getSession().setAttribute("listOfRegions", null);request.getSession().setAttribute("listOfRegions", null);
+ 		request.getSession().setAttribute("listOfAppellations", null);
+ 		request.getSession().setAttribute("listOfWineries", null);
+ 		
  	}
+    
+
+    public void loadCountriesFilters(HttpServletRequest request) {
+    	// loading countries with wine only rather than all countries
+    	try {
+    		
+			String responseString = requestCreator.createGetRequest(urlPath, "countries?action=getCountryWithWines" );
+			JsonNode responseJson = new ObjectMapper().readTree(responseString);
+			
+			Map<Integer, String> dbRecordsMap = new HashMap<Integer, String>();
+			for (Integer i = 0; i < responseJson.size(); i++) {
+				dbRecordsMap.put(responseJson.get(i).get("id").asInt(), responseJson.get(i).get("name").asText());
+			}
+			
+	 		request.getSession().setAttribute("listOfCountries", dbRecordsMap);
+			
+    	} catch (Exception e) {
+    		request.getSession().setAttribute("listOfCountries", null);
+    	}
+    }
+	
+    
+    public void loadRegionFilters(HttpServletRequest request, Integer countryId) {
+		    		
+		if (countryId > 0) {
+
+			try {
+		
+				String responseString = requestCreator.createGetRequest(urlPath, "regions?action=getRegionsByCountryId&countryId="+countryId );
+				JsonNode responseJson = new ObjectMapper().readTree(responseString);
+				
+				Map<Integer, String> dbRecordsMap = new HashMap<Integer, String>();
+				for (Integer i = 0; i < responseJson.size(); i++) {
+					dbRecordsMap.put(responseJson.get(i).get("id").asInt(), responseJson.get(i).get("name").asText());
+				}
+				
+		 		request.getSession().setAttribute("listOfRegions", dbRecordsMap);
+				
+	    	} catch (Exception e) {
+	    		request.getSession().setAttribute("listOfRegions", null);request.getSession().setAttribute("listOfRegions", null);
+	    	}
+						
+		} else {
+			request.getSession().setAttribute("listOfRegions", null);request.getSession().setAttribute("listOfRegions", null);
+		}
+	}
+    
+    public void loadAppellationFilters(HttpServletRequest request, Integer regionId) {
+    	
+    	if (regionId > 0) {
+
+    		String responseString;
+			try {
+				responseString = requestCreator.createGetRequest(urlPath, "appellations?action=getAppellationsByRegionId&regionId="+regionId );
+				JsonNode responseJson = new ObjectMapper().readTree(responseString);
+				Map<Integer, String> dbRecordsMap = new HashMap<Integer, String>();
+				for (Integer i = 0; i < responseJson.size(); i++) {
+					dbRecordsMap.put(responseJson.get(i).get("id").asInt(), responseJson.get(i).get("name").asText());
+				}
+
+		 		request.getSession().setAttribute("listOfAppellations", dbRecordsMap);
+		 		
+			} catch (IOException e) {
+				request.getSession().setAttribute("listOfAppellations", null);
+				e.printStackTrace();
+			}
+			
+    	} else {
+			request.getSession().setAttribute("listOfAppellations", null);
+		}
+    }
+    
+    public void loadWineryFilters(HttpServletRequest request, Integer appellationId) {
+    	
+    	if (appellationId > 0) {    		
+			try {
+		
+				String responseString = requestCreator.createGetRequest(urlPath, "wineries?action=getWineriesByAppellationId&appellationId="+appellationId );
+				JsonNode responseJson = new ObjectMapper().readTree(responseString);
+				Map<Integer, String> dbRecordsMap = new HashMap<Integer, String>();
+				for (Integer i = 0; i < responseJson.size(); i++) {
+					dbRecordsMap.put(responseJson.get(i).get("id").asInt(), responseJson.get(i).get("name").asText());
+				}
+
+		 		request.getSession().setAttribute("listOfWineries", dbRecordsMap);
+				
+	    	} catch (Exception e) {
+	    		request.getSession().setAttribute("listOfWineries", null);
+	    	}
+						
+		} else {
+			request.getSession().setAttribute("listOfWineries", null);
+		}
+	}
+    
+    public ArrayList<String> getRegionFilters(Integer countryId) {
+		
+    	if ( (countryId != null) && (countryId > 0) ) {
+    	
+    		ArrayList<String> regionsList = new ArrayList<String>();
+			try {
+		
+				String responseString = requestCreator.createGetRequest(urlPath, "regions?action=getRegionsByCountryId&countryId="+countryId );
+				JsonNode responseJson = new ObjectMapper().readTree(responseString);
+				for (Integer i = 0; i < responseJson.size(); i++) {
+					regionsList.add(responseJson.get(i).get("name").asText());
+				}
+				return regionsList;
+				
+	    	} catch (Exception e) {
+	    		return null;
+	    	}
+						
+		} else {
+			return null;
+		}
+	}
+    
+	public ArrayList<String> getAppellationFilters(Integer regionId) {
+		
+    	if ( (regionId != null) && (regionId > 0) ) {
+    	
+    		ArrayList<String> appellationsList = new ArrayList<String>();
+			try {
+		
+				String responseString = requestCreator.createGetRequest(urlPath, "appellations?action=getAppellationsByRegionId&regionId="+regionId );
+				JsonNode responseJson = new ObjectMapper().readTree(responseString);
+				for (Integer i = 0; i < responseJson.size(); i++) {
+					appellationsList.add(responseJson.get(i).get("name").asText());
+				}
+				return appellationsList;
+				
+	    	} catch (Exception e) {
+	    		return null;
+	    	}
+						
+		} else {
+			return null;
+		}
+	}
+	
+	public ArrayList<String> getWineryFilters(Integer appellationId) {
+		
+    	if ( (appellationId != null) && (appellationId > 0) ) {
+    	
+    		ArrayList<String> regionsList = new ArrayList<String>();
+			try {
+		
+				String responseString = requestCreator.createGetRequest(urlPath, "wineries?action=getWineriesByAppellationId&appellationId="+appellationId );
+				JsonNode responseJson = new ObjectMapper().readTree(responseString);
+				for (Integer i = 0; i < responseJson.size(); i++) {
+					regionsList.add(responseJson.get(i).get("name").asText());
+				}
+				return regionsList;
+				
+	    	} catch (Exception e) {
+	    		return null;
+	    	}
+						
+		} else {
+			return null;
+		}
+	}
+    
+    
 }
