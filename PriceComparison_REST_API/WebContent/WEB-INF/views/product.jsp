@@ -44,12 +44,10 @@
 							<p class="text-center">At: <strong><c:out value="${requestScope.wine.getMinimumPriceShopName()}"/></strong></p>
 							<hr class="sep-bar">
 							<button class="btn btn-primary btn-block secondaryButton" id="toBasketButton" onclick="addToCart(<c:out value="${requestScope.wine.getWineId()}"/>)">To basket</button>
-							<button class="btn btn-primary btn-block secondaryButton" id="toFavouriteButton" onclick="addToFav(<c:out value="${requestScope.wine.getWineId()}"/>)"><i class="fa fa-heart linkIcon"></i>Add to favourites</button>
 							<a class="btn btn-primary btn-block redButton" target="_blank" style="text-decoration: none;" href="<c:out value="${requestScope.wine.getMinimumPriceDestinationURL() }"/>">Buy now</a>
 							<div id="successfulMessage" role="alert" class="alert alert-success" style="margin-top:10px; margin-bottom: 0; display:none;"><span><strong>Added to basket!</strong></span></div>
 							<div id="errorMessage" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0; display:none;"><span><strong>We encountered a problem</strong></span></div>
 							
-							<div id="successfulFavMessage" role="alert" class="alert alert-success text-center" style="margin-top:10px; margin-bottom: 0; display:none;" data-toggle="tooltip" title="To review your favourite wines please refer to your profile page."><a href="Profile?section=favouriteWines">Added to favourites! <i class="fa fa-thumbs-o-up red-text" style="font-size: 20px;"></i></a></div>
 							
 						</div>
 					</div>
@@ -99,7 +97,7 @@
 					        	<c:when test = "${requestScope.ratingsUserRatingValue <= 0}">
 						        	<c:choose>
 							        	<c:when test = "${ !sessionScope.isLoggedIn }">
-											<div  id="userNotRegisteredRating" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span><strong>Please <a href="Login?action=signUp">register</a> / <a href="Login?action=login">login</a></strong></span></div>
+											<div  id="userNotRegisteredRating" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span>Please <strong><a href="Login?action=signUp">register</a></strong> / <strong><a href="Login?action=login">login</a></strong></span></div>
 										</c:when>
 										<c:otherwise>
 						            		<a data-toggle="modal" data-target="#modal-feedback" class="btn btn-primary btn-block redButton" type="button">Give a rating</a>
@@ -134,7 +132,7 @@
 					        	<c:when test = "${requestScope.reviewsUserHasReviewed == false}">
 						        	<c:choose>
 							        	<c:when test = "${ !sessionScope.isLoggedIn }">
-											<div id="userNotRegisteredReview" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span><strong>Please <a href="Login?action=signUp">register</a> / <a href="Login?action=login">login</a></strong></span></div>
+											<div  id="userNotRegisteredRating" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span>Please <strong><a href="Login?action=signUp">register</a></strong> / <strong><a href="Login?action=login">login</a></strong></span></div>
 										</c:when>
 										<c:otherwise>
 						            		<a data-toggle="modal" data-target="#modal-feedback" class="btn btn-primary btn-block redButton" type="button">Write a review</a>
@@ -144,6 +142,52 @@
 					         
 					         	<c:otherwise>
 					            	<div id="userHasReviewed" role="alert" class="alert alert-success text-center" style="margin-top:10px; margin-bottom: 0;" data-toggle="tooltip" title="To edit or delete the review please refer to your profile page."><a href="Profile?section=wineReviews">You've reviewed this product! </a><i class="fa fa-thumbs-o-up red-text" style="font-size: 20px;"></i></div>
+					         	</c:otherwise>
+
+					      	</c:choose>
+											
+						</div>
+					</div>
+					
+					<%-- Favourite wines panel --%>
+					<div class="col-md-12">
+						<div class="card settingsCard">
+							<h3 class="text-center">Favourite wines </h3>
+							<hr class="sep-bar" />
+						
+							<%-- favouritedTotalAmount --%>
+							<c:if test="${ requestScope.favouritedTotalAmount > 0 }">
+								<c:choose>
+									<c:when test = "${ requestScope.favouritedTotalAmount == 1 }">
+										<p class="text-center">Selected <strong>once</strong> as favourite</p>
+									</c:when>
+									<c:when test = "${ requestScope.favouritedTotalAmount == 2 }">
+										<p class="text-center">Selected <strong>twice</strong> as favourite</p>
+									</c:when>
+									<c:otherwise>
+										<p class="text-center">Selected <strong><c:out value="${ requestScope.favouritedTotalAmount }" /></strong> times as favourite</p>
+					         		</c:otherwise>
+								</c:choose> 
+							</c:if>
+							
+							<%-- wineFlaggedAsFavourite --%>
+							
+							<c:choose>
+							
+								<c:when test="${!requestScope.wineFlaggedAsFavourite}">
+						        	<c:choose>
+							        	<c:when test="${ !sessionScope.isLoggedIn }">
+											<div  id="userNotRegisteredRating" role="alert" class="alert alert-danger" style="margin-top:10px; margin-bottom: 0;"><span>Please <strong><a href="Login?action=signUp">register</a></strong> / <strong><a href="Login?action=login">login</a></strong></span></div>
+										</c:when>
+										<c:otherwise>
+						            		<button class="btn btn-primary btn-block redButton" id="toFavouriteButton" onclick="addToFav(<c:out value="${requestScope.wine.getWineId()}"/>)"><i class="fa fa-heart linkIcon"></i>Add to favourites</button>
+						            		<div id="successfulFavMessage" role="alert" class="alert alert-success text-center" style="margin-top:10px; margin-bottom: 0; display:none;" data-toggle="tooltip" title="To review your favourite wines please refer to your profile page.">It is added to <a href="Profile?section=favouriteWines">your favourites</a>! <i class="fa fa-thumbs-o-up red-text" style="font-size: 20px;"></i></div>
+						         		</c:otherwise>
+					         		</c:choose>
+					         	</c:when>
+					         
+					         	<c:otherwise>
+					            	<div id="successfulFavMessage" role="alert" class="alert alert-success text-center" style="margin-top:10px; margin-bottom: 0;" data-toggle="tooltip" title="To review your favourite wines please refer to your profile page.">Added to <a href="Profile?section=favouriteWines">your favourites</a>! <i class="fa fa-thumbs-o-up red-text" style="font-size: 20px;"></i></div>
 					         	</c:otherwise>
 
 					      	</c:choose>
@@ -271,14 +315,13 @@
 	                                          </tr>
 	                                      </c:if>
 	                                      </tbody>
-	                                      <%-- <caption class="text-center">Details </caption> --%>
 	                                  </table>
 	                              </div>
 	                          </div>
 	                      </div>
 	                      
 	                      <%-- Description --%>
-	                      <div class="row">
+	                      <div class="row" style="padding:10px;">
 	                      	<div class="col-xs-12">
                              	<c:if test="${requestScope.wine.getDefaultDescription() !=null && !requestScope.wine.getDefaultDescription().equals(\"\") }">
                              		<strong>Description: </strong><c:out value="${requestScope.wine.getDefaultDescription()}"/>
@@ -290,91 +333,94 @@
                    </div>
                    
                    <%-- Price comparison header --%>
-                   <div class="row">
-                   		<div class="col-xs-12">
-	                   		<div class="card settingsCard">
-                                <h1 class="text-center">Price comparison</h1>
-                           		<hr class="sep-bar">
-	                   		</div>
-	                   	</div>
-                   </div>
                    
-                    <%-- Price comparison merchant offers --%>
-                   <div class="row">
-                   		<div class="col-xs-12">
-                   			<c:forEach items="${requestScope.priceComparisonList}" var="shop">
-                             	<div class="card settingsCard">
-                             		<div class="row">
-		                             			
-                             			<%-- Making sure both % off and was are displayed only if saving --%>
-						                
-						                <div class="col-xs-4">
-                             				<div class="price-comparison-column-content-container" style="background:url(<c:out value="${shop.getShopImageURL()}"/>) no-repeat center center;/*background-repeat:no-repeat;*/background-size:contain;"></div>
-                             			</div>
-                             			
-                             			<div class="col-xs-2">
-                             				<c:if test="${ shop.getMoneySaving() > 0 }">
-                             					<div class="price-comparison-column-content-container"><span class="label label-default price-comparison-column-content price-comparison-column-content-label">Save <fmt:formatNumber type="currency" value="${shop.getMoneySaving()}"/> (-<c:out value="${shop.getPercentageOff()}"/>%)</span></div> 
-                             				</c:if>
-                             			</div>
-                             		
-                             			<div class="col-xs-2">
-                             				<c:if test="${ shop.getMoneySaving() > 0 }">
-                             					<div class="price-comparison-column-content-container"><span class="price-comparison-column-content price-comparison-column-content-was-price h4">Was <fmt:formatNumber type="currency" value="${shop.getOldProductPrice() }"/></span></div>
-                             				</c:if>
-                             			</div>
-								
-										<div class="col-xs-2">
-                             				<div class="price-comparison-column-content-container"><span class="red-text h3"><fmt:formatNumber type="currency" value="${shop.getProductPrice()}"/></span></div>
-                             			</div>
-                             		
-                             			<div class="col-xs-2">
-                             				<div class="price-comparison-column-content-container"><a target="_blank" href="<c:out value="${shop.getDestinationURL()}"/>"><button class="btn btn-primary redButton" type="button" >Buy now</button></a></div>
-                             			</div>
-                             			
-                             		</div>
+					<div class="row articles">
+	                   <div class="row">
+	                   		<div class="col-xs-12">
+		                   		<div class="card settingsCard">
+	                                <h1 class="text-center">Price comparison</h1>
+	                           		<hr class="sep-bar">
+		                   		</div>
+		                   	</div>
+	                   </div>
+	                   
+	                    <%-- Price comparison merchant offers --%>
+	                   <div class="row">
+	                   		<div class="col-xs-12">
+	                   			<c:forEach items="${requestScope.priceComparisonList}" var="shop">
+	                             	<div class="card settingsCard">
+	                             		<div class="row">
+			                             			
+	                             			<%-- Making sure both % off and was are displayed only if saving --%>
+							                
+							                <div class="col-xs-4">
+	                             				<div class="price-comparison-column-content-container" style="background:url(<c:out value="${shop.getShopImageURL()}"/>) no-repeat center center;/*background-repeat:no-repeat;*/background-size:contain;"></div>
+	                             			</div>
+	                             			
+	                             			<div class="col-xs-2">
+	                             				<c:if test="${ shop.getMoneySaving() > 0 }">
+	                             					<div class="price-comparison-column-content-container"><span class="label label-default price-comparison-column-content price-comparison-column-content-label">Save <fmt:formatNumber type="currency" value="${shop.getMoneySaving()}"/> (-<c:out value="${shop.getPercentageOff()}"/>%)</span></div> 
+	                             				</c:if>
+	                             			</div>
+	                             		
+	                             			<div class="col-xs-2">
+	                             				<c:if test="${ shop.getMoneySaving() > 0 }">
+	                             					<div class="price-comparison-column-content-container"><span class="price-comparison-column-content price-comparison-column-content-was-price h4">Was <fmt:formatNumber type="currency" value="${shop.getOldProductPrice() }"/></span></div>
+	                             				</c:if>
+	                             			</div>
 									
-                                </div>
-                            </c:forEach>
-	                   	</div>
+											<div class="col-xs-2">
+	                             				<div class="price-comparison-column-content-container"><span class="red-text h3"><fmt:formatNumber type="currency" value="${shop.getProductPrice()}"/></span></div>
+	                             			</div>
+	                             		
+	                             			<div class="col-xs-2">
+	                             				<div class="price-comparison-column-content-container"><a target="_blank" href="<c:out value="${shop.getDestinationURL()}"/>"><button class="btn btn-primary redButton" type="button" >Buy now</button></a></div>
+	                             			</div>
+	                             			
+	                             		</div>
+										
+	                                </div>
+	                            </c:forEach>
+		                   	</div>
+	                   </div>
                    </div>
-                   
                    
                    <%-- All product reviews --%>
                    
-                   <c:if test="${ requestScope.reviewsTotalAmount > 0 }">
-                    <div class="row">
-                    	<div class="col-xs-12">
-                    		<div class="card settingsCard">
-                    			<h1 class="text-center">Product reviews</h1>
-	                            <hr class="sep-bar">
-                    		</div>
-                    	</div>
-                    	<c:forEach items="${ requestScope.reviewsList }" var="review">
+                   <div class="row articles">
+	                   <c:if test="${ requestScope.reviewsTotalAmount > 0 }">
+	                    <div class="row">
 	                    	<div class="col-xs-12">
-	                    		<div data-aos="fade-up" data-aos-duration="800" data-aos-delay="50" data-aos-once="true" class="card settingsCard aos-init aos-animate">
-	                                <c:if test="${ review.getComments() != null && !review.getComments().equals('') }">
-	                                	<div class="row">
-	                                		<div class="col-md-10">
-	                                			<span><strong><c:out value="${ review.getTitle() }"></c:out></strong></span>
-	                                		 	<span><small> - by <c:out value="${ review.getUserId().getName() }"></c:out></small></span>
-	                                		</div>
-	                                		<div class="col-md-2">
-	                                		 	<span class="text-right text-muted"><fmt:formatDate type = "date" value = "${ review.getAddedDate() }" /></span>
-	                                		</div>
-	                                	</div>
-		                                <div class="row">
-		                                    <div class="col-md-12">
-		                                        <h5 style="color:#800000;"><c:out value="${ review.getComments() }"/></h5>
-		                                    </div>
-		                                </div>
-	                                </c:if>
-	                            </div>
+	                    		<div class="card settingsCard">
+	                    			<h1 class="text-center">Product reviews</h1>
+		                            <hr class="sep-bar">
+	                    		</div>
 	                    	</div>
-                    	</c:forEach>
-                    </div>
-                   </c:if>
-                   
+	                    	<c:forEach items="${ requestScope.reviewsList }" var="review">
+		                    	<div class="col-xs-12">
+		                    		<div data-aos="fade-up" data-aos-duration="800" data-aos-delay="50" data-aos-once="true" class="card settingsCard aos-init aos-animate">
+		                                <c:if test="${ review.getComments() != null && !review.getComments().equals('') }">
+		                                	<div class="row">
+		                                		<div class="col-md-10">
+		                                			<span><strong><c:out value="${ review.getTitle() }"></c:out></strong></span>
+		                                		 	<span><small> - by <c:out value="${ review.getUserId().getName() }"></c:out></small></span>
+		                                		</div>
+		                                		<div class="col-md-2">
+		                                		 	<span class="text-right text-muted"><fmt:formatDate type = "date" value = "${ review.getAddedDate() }" /></span>
+		                                		</div>
+		                                	</div>
+			                                <div class="row">
+			                                    <div class="col-md-12">
+			                                        <h5 style="color:#800000;"><c:out value="${ review.getComments() }"/></h5>
+			                                    </div>
+			                                </div>
+		                                </c:if>
+		                            </div>
+		                    	</div>
+	                    	</c:forEach>
+	                    </div>
+	                   </c:if>
+                   </div>
                </div>      
 
         </div>
@@ -509,11 +555,10 @@
                {
             	   if(responseText == 'True') 
             	   { 
-            		   $('#toFavouriteButton').animate({
-                 		  height: 'toggle'
-                 	   });
-                 	   
+            		   
+            		   $('#toFavouriteButton').fadeOut();
                  	   $('#successfulFavMessage').fadeIn();
+                 	   
             	   } else
            		   {
             		   $("#modal-register").modal('show');

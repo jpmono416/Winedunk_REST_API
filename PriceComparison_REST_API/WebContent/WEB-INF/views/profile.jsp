@@ -1,8 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 
@@ -357,56 +357,93 @@
                    
                 <!-- Favourite wines section -->
 				<div id="favouriteWinesArea" <c:if test="${!sessionScope.sectionToBeDisplayed.equals(\"favouriteWines\")}">style="display: none;"</c:if>>
-					<div class="card settingsCard <c:if test="${sessionScope.sectionToBeDisplayed.equals(\"favouriteWines\")}"> default </c:if>"
-					>
+					<div class="card settingsCard <c:if test="${sessionScope.sectionToBeDisplayed.equals(\"favouriteWines\")}"> default </c:if>">
 						<h1 class="text-center"><i class="fa fa-heart linkIcon"></i> My favourite wines</h1>
 						<hr class="sep-bar">
 					</div>
-					<div>
-						<div class="row articles">
-							<c:if test="${ requestScope.noFavourites != true }">
-								<c:forEach items="${requestScope.favouriteWines}" var="i">
-									<div class="col-xs-12 col-sm-6 col-md-4">
-										<div class="card item">
-											<a href="Product?id=<c:out value="${ i.getWineId() }" />">
-												<div style="width:100%;height:170px;background:url(<c:out value = "${i.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
-											</a>
-											<div class="text-wrapper">
-												<a style="text-decoration: none;"
-													href="Product?id=<c:out value="${ i.getWineId() }" />"><h3 style="color: #800000;" class="name">
-														<c:out value="${i.getWineName()}" />
-													</h3></a>
-												<p class="description">
-													<c:out value="${i.getWineShortDescription()}" />
-													<c:if test="${i.getWineShortDescription().length() == 169}">
-														<a href="Product?id=<c:out value="${ i.getWineId() }" />">
-															See more</a>
-													</c:if>
-												</p>
-											</div>
-											<div class="row" style="position:absolute; bottom:0; width:100% !important;">
-												<div class="col-xs-6">
-													<a style="text-decoration: none; margin-top:-50px;"
-													href="Product?id=<c:out value="${ i.getWineId() }" />"
-													class="action" data-toggle="tooltip" 
-												    title="Go to product page"><i
-													class="glyphicon glyphicon-circle-arrow-right"></i>
-													</a>												
-												</div>
-												<div class="col-xs-6">
-													<a style="text-decoration: none; margin-top:-50px; cursor:pointer;"
-													class="action" data-toggle="tooltip" 
-												    title="Remove from favourite" onclick="deleteWine(<c:out value="${ i.getWineId() }" />)"><i
-													class="glyphicon glyphicon-remove"></i>
-													</a>												
-												</div>
-											</div>
-										</div>
-									</div>
-								</c:forEach>
-							</c:if>
-						</div>
-					</div>
+					<div class="row articles">
+		                <c:choose> 
+		                
+							<c:when test = "${requestScope.favouriteWines != null}">
+								<c:forEach items = "${requestScope.favouriteWines}" var = "wine">
+			                    	<div class="col-sm-12 result-card">
+			                            <div class="card">
+			                                <div class="row">
+			                                    <div class="col-sm-3">
+				                                    <a href="Product?id=<c:out value="${wine.getWineId()}"/>">
+				                                    	<div style="width:100%;height:170px;background:url(<c:out value = "${wine.getWineImageURL()}"/>) no-repeat center center;background-size:contain;"></div>
+				                                    </a>
+			                                    </div>
+			                                    <div class="col-md-7 col-sm-8">
+			                                        <div class="row">
+			                                            <div class="col-sm-12">
+				                                            <a style="text-decoration:none;" href="Product?id=<c:out value="${wine.getWineId()}"/>">
+					                                            <h3 class="red-text wine-name">
+					                                            	<c:out value ="${wine.getWineName()}"/>
+					                                            </h3>
+					                                        </a>
+			                                            </div>
+			                                        </div>
+			                                        <p style="margin-left:10px;">
+			                                        	<c:out value="${wine.getWineShortDescription()}"/>
+														<c:if test="${wine.getWineShortDescription().length() == 169}">
+															<a href="Product?id=<c:out value="${wine.getWineId()}" />"> See more</a>
+														</c:if>
+													</p>
+			                                    </div>
+			                                    <div class="col-md-2" align="center">
+													<%-- Making sure both % off and was are displayed only if saving --%>
+									                <c:choose>
+													  <c:when test="${wine.getWineMoneySaving() > 0}">
+													    <div class="row"> <span class="label label-default"><small>Save <fmt:formatNumber type="currency" value="${wine.getWineMoneySaving()}"/> (-<c:out value="${wine.getWinePercentageOff()}"/>%)</small></span> </div>
+										                <div class="row"> <h6 class="text-center" style="text-decoration: line-through;">Was: <fmt:formatNumber type="currency" value="${wine.getWinePreviousMaxPrice()}"/></h6> </div>
+										                <div class="row"> <h5 class="text-center red-text" style="margin-top:0;">Now: <fmt:formatNumber type="currency" value="${wine.getWineMinimumPrice()}"/></h5> </div>
+													  </c:when>
+													  <c:otherwise>
+													    <div class="row"> <h3 class="text-center red-text" style="margin-top:0;"><fmt:formatNumber type="currency" value="${wine.getWineMinimumPrice()}"/></h3> </div>
+													  </c:otherwise>
+													</c:choose>
+													
+									                <div class="row">
+									                	<a class="btn btn-primary redButton" target="_blank" style="text-decoration: none;" href="<c:out value = "${wine.getWineMinimumPriceClicktag()}"/>">Buy now</a>
+														<a class="btn btn-primary secondaryButton" target="_blank" style="text-decoration: none;" href="Product?id=<c:out value="${ wine.getWineId() }" />">Compare</a>
+														
+														<c:set var="singleQuote" value="'" />
+            											<c:set var="singleQuoteReplace" value="\\'" />
+									                	<a class="btn btn-primary secondaryButton" onclick="showDeleteFavouriteConfirmationModal('<c:out value ="${sessionScope.userLoggedIn.getId()}"/>', '<c:out value ="${wine.getWineId()}"/>', '<c:out value ="${wine.getWineImageURL()}"/>', '<c:out value ="${ fn:replace(wine.getWineName(), singleQuote, singleQuoteReplace) }"/>', '<c:out value ="${ fn:replace(wine.getWineShortDescription(), singleQuote, singleQuoteReplace) }"/>')" style="text-decoration: none;">Remove</a>
+									                </div>
+	
+			                                        <div class="row visible-xs-block visible-sm-block">
+			                                            <div class="col-xs-12">
+			                                                <hr class="sep-bar">
+			                                            </div>
+			                                            <div class="col-xs-4">
+			                                                <h4 class="text-center">&pound<c:out value="${wine.getWineMinimumPrice()}"/></h4></div>
+			                                            <div class="col-xs-4 nopadding">
+				                                            <a href="Product?id=<c:out value="${wine.getWineId()}"/>">
+				                                                <button class="btn btn-primary btn-sm btnGoToShop redButton" type="button">Compare price</button>
+				                                            </a>
+			                                            </div>
+			                                        </div>
+			                                        
+			                                	</div>
+			                            	</div>
+		                        		</div>
+			                        </div>
+			                    </c:forEach>
+		                	</c:when>
+		                	
+		                	<c:otherwise>
+		                		<div class="card settingsCard default">
+				                    <h3 class="text-center">
+				                    	<span class="label label-danger">No favourite wines found</span>
+				                    </h3>
+				                    
+				                </div>
+		                	</c:otherwise>
+		                
+		                </c:choose>
+	            	</div>    
 				</div>
 				
 				<!-- Wine reviews and ratings section -->
@@ -831,7 +868,52 @@
         </div>
     </div>
     
-	
+	<%-- delete favourite confirmation modal form--%>
+    <div class="modal fade" role="dialog" tabindex="-1" id="modal-delete-favourite-confirmation">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body" style="background:#f7f7f7;">
+	                <div class="row" style="padding: 10px;">
+	                	<div class="col-xs-12">
+		                	<h3 class="text-center"><i class="fa fa-warning"></i> Do you want to remove this favourite wine?</h3>
+			                <hr class="sep-bar">
+			                <form method="POST" action="Profile">
+			                
+			                	<input type="hidden" id="removeFavouriteConfirmationUserId" name="removeFavouriteConfirmationUserId">
+			                	<input type="hidden" id="removeFavouriteConfirmationWineId" name="removeFavouriteConfirmationWineId">
+						        
+			                	<hr>
+			                	
+			                	<div class="row">
+                                    <div class="col-sm-3">
+	                                    <a id="removeFavouriteConfirmationImageProductURL">
+	                                    	<div id="removeFavouriteConfirmationBackgroundImage"></div>
+	                                    </a>
+                                    </div>
+                                    <div class="col-md-7 col-sm-9">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+	                                            <a id="removeFavouriteConfirmationNameProductURL" style="text-decoration:none;" >
+		                                            <span id="removeFavouriteConfirmationWineName" class="h4 red-text wine-name"></span>
+		                                        </a>
+                                            </div>
+                                        </div>
+                                        <p id="removeFavouriteConfirmationWineDescription" style="margin-left:10px;"></p>
+                                    </div>
+			                	</div>
+			                	
+			                	<hr>
+				                <button id="removeFavouriteConfirmationRemoveButton" style="float: right; margin-right: 5px" class="btn btn-primary btn-md redButton" type="submit" data-toggle="tooltip" title="Remove this wine from favourite">Remove</button>
+				                <button id="removeFavouriteConfirmationCancelButton" style="float: right; margin-right: 5px" class="btn btn-default btn-md" type="button" data-dismiss="modal" data-toggle="tooltip" title="Cancel">Cancel</button>
+				                		                
+			                </form>
+	                	</div>
+	                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 	
 	<c:import url="../templates/footer.jsp" />
 	<script src="assets/js/jquery.min.js"></script>
@@ -888,7 +970,6 @@
 	    });
 	</script>
 	
-	
 	<script type="text/javascript">
 	
 		// below function will be triggered on modal-delete-rating-and-review-confirmation submit event and will delete selected rating and review throught AJAX
@@ -927,6 +1008,36 @@
 	    });
 	</script>
 	
+	<script type="text/javascript">
+	
+		// below function will be triggered on modal-delete-favourite-confirmation submit event and will remove the wine from user favourite wines
+		var modalForm = $('#modal-delete-favourite-confirmation');
+		modalForm.submit(function (e) {
+
+	        e.preventDefault();
+	        
+	        document.getElementById("removeFavouriteConfirmationRemoveButton").disabled = true;
+	        document.getElementById("removeFavouriteConfirmationCancelButton").disabled = true;
+	        
+	        var wineId = document.getElementById("removeFavouriteConfirmationWineId").value;
+	        
+	        $.ajax({
+	        	url:'Profile',
+				type:'POST',
+	            data: { 
+					formChosen : 'deleteFavouriteWine',
+		            wineId : wineId,
+	            },
+	            success: function()
+		       	{
+	            	window.location.replace("../Profile?section=favouriteWines");
+	            	document.getElementById("removeFavouriteConfirmationRemoveButton").disabled = false;
+	    	        document.getElementById("removeFavouriteConfirmationCancelButton").disabled = false;
+		       	}	
+	       });
+	        
+	    });
+	</script>
 
 	<script>
     	
@@ -1010,6 +1121,19 @@
     		
     		$("#modal-delete-rating-and-review-confirmation").modal();
 
+    	}
+    	
+    	function showDeleteFavouriteConfirmationModal(userId, wineId, wineImageURL, wineName, wineDescription) {
+    		
+    		document.getElementById("removeFavouriteConfirmationUserId").value = userId;
+    		document.getElementById("removeFavouriteConfirmationWineId").value = wineId;
+    		document.getElementById("removeFavouriteConfirmationImageProductURL").href="Product?id="+wineId;
+    		document.getElementById("removeFavouriteConfirmationBackgroundImage").style.cssText = "width:100%;height:170px;background:url("+wineImageURL+") no-repeat center center;background-size:contain;";
+    		document.getElementById("removeFavouriteConfirmationNameProductURL").href="Product?id="+wineId;
+    		document.getElementById("removeFavouriteConfirmationWineName").innerHTML = wineName;
+    		document.getElementById("removeFavouriteConfirmationWineDescription").innerHTML = wineDescription;
+    		
+    		$("#modal-delete-favourite-confirmation").modal();
     	}
     	
     	
@@ -1167,24 +1291,7 @@
 		}
 		
 	</script>
-	<script>
-		function deleteWine(wineId)
-	   	{ 
-	   		var id = wineId;
-	   		$.ajax({
-	           url:'Profile',
-	           type:'POST',
-	           data: 
-	           { 
-					wineId : id,
-					formChosen : 'deleteFavouriteWine'
-	           },
-	           success: function()
-	       	   {
-	       	   		location.reload();
-	       	   }});
-	   	}
-	</script>
+	
 	<script>
 		$('#wellName').click(function(){
 			$('#wellName').fadeOut();

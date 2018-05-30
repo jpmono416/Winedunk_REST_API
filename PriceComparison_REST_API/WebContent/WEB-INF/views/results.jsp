@@ -300,6 +300,7 @@
 								</div>
 							</c:when>
 							<c:otherwise> <%-- Displaying wines --%>
+							
 								<c:forEach items = "${requestScope.resultsList}" var = "wine">
 			                    	<div class="col-sm-12 result-card">
 			                            <div class="card">
@@ -313,9 +314,9 @@
 			                                        <div class="row">
 			                                            <div class="col-sm-12">
 				                                            <a style="text-decoration:none;" href="Product?id=<c:out value="${wine.getWineId()}"/>">
-					                                            <h2 class="red-text wine-name">
+					                                            <h3 class="red-text wine-name">
 					                                            	<c:out value ="${wine.getWineName()}"/>
-					                                            </h2>
+					                                            </h3>
 					                                        </a>
 			                                            </div>
 			                                        </div>
@@ -362,6 +363,7 @@
 		                        		</div>
 			                        </div>
 			                    </c:forEach>
+
 							</c:otherwise>
 						</c:choose>
 	                     

@@ -3,7 +3,6 @@ package priceComparison.controllers;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
@@ -25,8 +24,9 @@ import priceComparison.models.tblUserWinesRatings;
 import priceComparison.models.tblUsers;
 import priceComparison.models.tblWines;
 import priceComparison.models.viewUsers;
-import priceComparison.models.viewUsersWinesReviews;
+import priceComparison.models.viewWinePriceComparison;
 import priceComparison.models.viewWinesMinimumPrice;
+import priceComparison.services.FavouriteWinesService;
 import priceComparison.services.ProductService;
 import priceComparison.services.ResultsService;
 import priceComparison.services.UserRatingsService;
@@ -49,6 +49,7 @@ public class Product extends HttpServlet {
 	UserRatingsService ratingsService = new UserRatingsService(); 
 	WinesService winesService = new WinesService();
 	UsersService usersService = new UsersService();
+	FavouriteWinesService favouriteWinesService = new FavouriteWinesService();
 	
 
     public Product() { super(); }
@@ -87,6 +88,7 @@ public class Product extends HttpServlet {
 		productService.setUrlPath(serviceProperties.getProperty("crud.url"));
 		resultsService.setUrlPath(serviceProperties.getProperty("crud.url"));
 		validationService.setUrlPath(serviceProperties.getProperty("crud.url"));
+		favouriteWinesService.setUrlPath(serviceProperties.getProperty("crud.url"));
 		
 		validationService.validateUser(request, response);
 
@@ -150,7 +152,8 @@ public class Product extends HttpServlet {
 				request.setAttribute("ratingsAvg", AvgRatings);
 				
 				// user rating value (from DB)
-				Integer userRatingsValue = ratingsService.getUserRatingValue(wineId, user.getId());
+				Integer userRatingsValue = null;
+				if ( (user != null) && (user.getId() != null) ) { userRatingsValue = ratingsService.getUserRatingValue(wineId, user.getId()); }
 				if( userRatingsValue == null || userRatingsValue <= 0 ) { userRatingsValue = 0; }
 				request.setAttribute("ratingsUserRatingValue", userRatingsValue);
 				
@@ -178,9 +181,23 @@ public class Product extends HttpServlet {
 				if ( userHasReviewed == null ) { userHasReviewed = false; }
 				request.setAttribute("reviewsUserHasReviewed", userHasReviewed);
 			
+				// favourite wines management
+				
+				// amount of time flagged as favourite
+				Integer amountOfTimesAsFavourite = favouriteWinesService.getCountForWine(wineId); 
+				if( amountOfTimesAsFavourite == null || amountOfTimesAsFavourite <= 0 ) { amountOfTimesAsFavourite = 0; }
+				request.setAttribute("favouritedTotalAmount", amountOfTimesAsFavourite);
+				
+				// wine flagged as favourite by this user (from DB)
+				Boolean wineInUserFavouriteWines = false;
+				if ( (user != null) && (user.getId() != null) && (user.getId() > 0) ) { wineInUserFavouriteWines = favouriteWinesService.isWineFlaggedAsFavouriteWineForUser(user.getId(), wineId); };
+				if (wineInUserFavouriteWines==null) { wineInUserFavouriteWines = false; }
+				request.setAttribute("wineFlaggedAsFavourite", wineInUserFavouriteWines);
+				
 				// Store the wine to be displayed and its shops' information
 				request.setAttribute("wine", wine);
-				request.setAttribute("priceComparisonList", productService.getPriceComparison(wineId.toString()));
+				List<viewWinePriceComparison> priceComparison = productService.getPriceComparison(wineId.toString());
+				if (priceComparison != null) { request.setAttribute("priceComparisonList", priceComparison); }
 				productPage.forward(request, response);
 				
 			} 

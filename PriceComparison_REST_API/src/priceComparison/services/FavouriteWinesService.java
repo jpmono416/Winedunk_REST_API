@@ -83,4 +83,29 @@ public class FavouriteWinesService {
 	   	if(deleteResponse == null) { return false; }
 	   	return true;
 	}
+	
+	public Boolean isWineFlaggedAsFavouriteWineForUser(Integer userId, Integer wineId) {
+		
+		relUrl = "userFavouriteWines?action=isWineFlaggedAsFavouriteWineForUser";
+		String content = userId + "," + wineId;
+		
+		try {
+		
+			String response = requestCreator.createPostRequest(urlPath, relUrl, content);
+			return (response.equalsIgnoreCase("true"));
+			
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	public Integer getCountForWine(Integer wineId) {
+		try {
+			String relURL = "userFavouriteWines?action=getAmountOfForWine";
+			String response = requestCreator.createPostRequest(urlPath, relURL, wineId.toString());
+			return Integer.parseInt(response);
+		} catch (Exception e) {
+			return 0;
+		}
+		
+	}
 }

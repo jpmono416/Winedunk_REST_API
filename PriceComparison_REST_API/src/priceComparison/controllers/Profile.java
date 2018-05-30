@@ -121,8 +121,12 @@ public class Profile extends HttpServlet {
 			
 			List<viewWines> favouriteWines = profileService.loadFavouriteWines();
 			
-			if(favouriteWines != null) { request.setAttribute("favouriteWines", favouriteWines); }
-			else { request.setAttribute("noFavourite", true);}
+			if(favouriteWines != null) {
+				request.setAttribute("favouriteWines", favouriteWines);
+			} else {
+				request.setAttribute("favouriteWines", null);
+			}
+			
 		} catch(Exception e) { e.printStackTrace(); }
 
 
